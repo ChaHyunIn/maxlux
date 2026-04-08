@@ -2,24 +2,26 @@
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFilterStore } from "@/stores/filterStore"
+import { useTranslations } from 'next-intl';
 
 export function HotelFilters({ brands }: { brands: string[] }) {
     const { searchQuery, selectedBrand, sortBy, setSearchQuery, setSelectedBrand, setSortBy } = useFilterStore();
+    const t = useTranslations('hotel');
 
     return (
         <div className="flex flex-wrap gap-4 mb-6">
             <Input
-                placeholder="호텔명 검색..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 bg-white"
             />
             <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "all")}>
                 <SelectTrigger className="w-full sm:w-48 bg-white">
-                    <SelectValue placeholder="브랜드 선택" />
+                    <SelectValue placeholder={t('allBrands')} />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">전체 브랜드</SelectItem>
+                    <SelectItem value="all">{t('allBrands')}</SelectItem>
                     {brands.map(brand => (
                         <SelectItem key={brand} value={brand}>{brand}</SelectItem>
                     ))}
@@ -27,11 +29,11 @@ export function HotelFilters({ brands }: { brands: string[] }) {
             </Select>
             <Select value={sortBy} onValueChange={(val) => setSortBy((val as 'price' | 'name') || 'price')}>
                 <SelectTrigger className="w-full sm:w-48 bg-white">
-                    <SelectValue placeholder="정렬 방식" />
+                    <SelectValue placeholder={t('sortByPrice')} />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="price">최저가순</SelectItem>
-                    <SelectItem value="name">이름순</SelectItem>
+                    <SelectItem value="price">{t('sortByPrice')}</SelectItem>
+                    <SelectItem value="name">{t('sortByName')}</SelectItem>
                 </SelectContent>
             </Select>
         </div>

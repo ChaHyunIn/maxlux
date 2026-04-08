@@ -1,9 +1,10 @@
 import { getHotelBySlug } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
 interface Props {
-    params: { slug: string; 'yyyy-mm': string };
+    params: { locale: string; slug: string; 'yyyy-mm': string };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -16,6 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function MonthlyLandingPage({ params }: Props) {
+    setRequestLocale(params.locale);
+
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) notFound();
 

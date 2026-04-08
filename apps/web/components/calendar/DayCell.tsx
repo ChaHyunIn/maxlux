@@ -3,12 +3,14 @@ import { getPriceLevel, cn } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import { PRICE_COLORS } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
+import { useTranslations } from 'next-intl';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
     const { sniperMode } = useCalendarStore();
+    const t = useTranslations('calendar');
 
     const day = date.getDate();
-    const dayOfWeek = date.getDay(); // 0=Sun, 6=Sat
+    const dayOfWeek = date.getDay();
 
     if (!rate) {
         return (
@@ -34,30 +36,21 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
         if (level === 'high') style = PRICE_COLORS.high;
     }
 
-    // Sniper Filter Logic
     let opacityClass = '';
     if (sniperMode !== 'none') {
-        if (sniperMode === 'fri_sat' && !isFriEve && !isSat && dayOfWeek !== 5) {
-            opacityClass = 'opacity-20';
-        }
-        if (sniperMode === 'holiday_low' && !isHoliday && !isFriEve) {
-            opacityClass = 'opacity-20';
-        }
-        if (sniperMode === 'cheapest_sat' && !isSat) {
-            opacityClass = 'opacity-20';
-        }
+        if (sniperMode === 'fri_sat' && !isFriEve && !isSat && dayOfWeek !== 5) opacityClass = 'opacity-20';
+        if (sniperMode === 'holiday_low' && !isHoliday && !isFriEve) opacityClass = 'opacity-20';
+        if (sniperMode === 'cheapest_sat' && !isSat) opacityClass = 'opacity-20';
     }
 
-    const priceText = is_sold_out ? '매진' : `${Math.round(price_krw / 10000)}만`;
+    const priceText = is_sold_out ? t('soldOut') : `${Math.round(price_krw / 10000)}${t('priceUnit')}`;
 
     return (
         <div
             onClick={() => console.log(rate)}
             className={cn(
                 "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/10",
-                style.bg,
-                style.text,
-                opacityClass
+                style.bg, style.text, opacityClass
             )}
         >
             <span className={cn("text-xs font-semibold self-start", dayOfWeek === 0 ? "text-red-700/80" : dayOfWeek === 6 ? "text-blue-700/80" : "")}>

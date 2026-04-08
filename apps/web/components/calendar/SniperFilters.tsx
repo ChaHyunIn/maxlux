@@ -2,18 +2,20 @@
 import { Badge } from '@/components/ui/badge';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export function SniperFilters() {
     const { sniperMode, setSniperMode } = useCalendarStore();
+    const t = useTranslations('calendar');
 
     const handleToggle = (mode: 'fri_sat' | 'holiday_low' | 'cheapest_sat') => {
         setSniperMode(sniperMode === mode ? 'none' : mode);
     };
 
     const chips = [
-        { id: 'fri_sat', label: '금/토만 보기' },
-        { id: 'cheapest_sat', label: '가장 싼 토요일' },
-        { id: 'holiday_low', label: '연휴 저점 찾기' }
+        { id: 'fri_sat', label: t('friSatOnly') },
+        { id: 'cheapest_sat', label: t('cheapestSat') },
+        { id: 'holiday_low', label: t('holidayLow') }
     ] as const;
 
     return (

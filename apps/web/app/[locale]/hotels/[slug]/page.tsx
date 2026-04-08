@@ -2,14 +2,19 @@ import { notFound } from 'next/navigation';
 import { getHotelBySlug, getRates } from '@/lib/supabase/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
+import { setRequestLocale } from 'next-intl/server';
 
 export const revalidate = 3600;
 
-export default async function HotelDetailPage({ params }: { params: { slug: string } }) {
+export default async function HotelDetailPage({
+    params,
+}: {
+    params: { locale: string; slug: string };
+}) {
+    setRequestLocale(params.locale);
+
     const hotel = await getHotelBySlug(params.slug);
-    if (!hotel) {
-        notFound();
-    }
+    if (!hotel) notFound();
 
     const rates = await getRates(hotel.id);
 

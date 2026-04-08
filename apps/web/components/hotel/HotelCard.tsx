@@ -1,23 +1,22 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Hotel } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
-// If there is a cityMapper, you could use it here. For now falling back to hotel.city.
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) {
+    const t = useTranslations('hotel');
+
     return (
         <Link href={`/hotels/${hotel.slug}`}>
             <Card className="overflow-hidden hover:shadow-md transition-shadow h-full cursor-pointer flex flex-col">
                 <div className="relative w-full aspect-video bg-slate-200">
                     {hotel.image_url && (
-                        <Image
+                        <img
                             src={hotel.image_url}
                             alt={hotel.name_ko}
-                            fill
-                            className="object-cover rounded-t-xl"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover w-full h-full rounded-t-xl"
                         />
                     )}
                 </div>
@@ -32,14 +31,14 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                                     {hotel.brand}
                                 </Badge>
                             )}
-                            <span className="text-sm text-gray-500">{hotel.city || '서울'}</span>
+                            <span className="text-sm text-gray-500">{hotel.city || t('defaultCity')}</span>
                         </div>
                     </div>
                     <div className="mt-4 pt-2 border-t border-slate-50">
                         {hotel.min_price ? (
                             <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
                         ) : (
-                            <p className="text-gray-400 font-medium tracking-tight">가격 수집 중</p>
+                            <p className="text-gray-400 font-medium tracking-tight">{t('priceCollecting')}</p>
                         )}
                     </div>
                 </CardContent>

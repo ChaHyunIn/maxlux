@@ -1,0 +1,55 @@
+{
+    "hotel": {
+        "searchPlaceholder": "Search hotels...",
+        "allBrands": "All Brands",
+        "sortByPrice": "Lowest Price",
+        "sortByName": "Name",
+        "priceCollecting": "Collecting prices",
+        "priceTBD": "Price TBD",
+        "benefitsTitle": "HotelLux Partner Benefits",
+        "defaultCity": "Seoul",
+        "imageUnavailable": "Image Unavailable"
+    },
+    "calendar": {
+        "title": "Rate Calendar",
+        "legendLow": "Cheap (Bottom 25%)",
+        "legendMid": "Average",
+        "legendHigh": "Expensive (Top 25%)",
+        "legendSoldOut": "Sold Out",
+        "soldOut": "Sold Out",
+        "friSatOnly": "Fri/Sat Only",
+        "cheapestSat": "Cheapest Saturdays",
+        "holidayLow": "Holiday Deals",
+        "noData": "No pricing data available yet.",
+        "priceUnit": "만",
+        "weekdays": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
+        "monthFormat": "{month} {year}"
+    },
+    "common": {
+        "dataLoading": "Collecting data...",
+        "noResults": "No hotels match your criteria.",
+        "errorOccurred": "An error occurred",
+        "retry": "Try Again",
+        "refresh": "Refresh",
+        "errorMessage": "Something went wrong. Please refresh the page.",
+        "notFound": "Page not found.",
+        "notFoundCode": "404"
+    },
+    "layout": {
+        "copyright": "© 2026 MaxLux",
+        "disclaimer": "Prices are for reference only and may differ from actual rates",
+        "dataSource": "Data source: HotelLux"
+    },
+    "settings": {
+        "language": "Language",
+        "currency": "Currency"
+    }
+}
