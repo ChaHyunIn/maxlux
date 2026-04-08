@@ -1,6 +1,6 @@
 import httpx
 import asyncio
-from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception
 from src.config import (
     HOTELLUX_BASE_URL, HOTELLUX_SESSION_COOKIE,
     DEFAULT_HEADERS, PAGING_LIMIT, REQUEST_DELAY_SEC,
@@ -22,7 +22,6 @@ class HotelLuxClient:
         self.base_url = HOTELLUX_BASE_URL
         self.headers = {
             **DEFAULT_HEADERS,
-            "cookie": f"connect.sid={HOTELLUX_SESSION_COOKIE}",
         }
         self._client: httpx.AsyncClient | None = None
 
@@ -40,7 +39,7 @@ class HotelLuxClient:
     @retry(
         stop=stop_after_attempt(MAX_RETRIES),
         wait=wait_fixed(RETRY_WAIT_SEC),
-        retry=retry_if_exception_type((httpx.HTTPStatusError, httpx.ConnectTimeout)),
+        retry=retry_if_exception(should_retry),
         reraise=True
     )
     async def search_hotels(self, city: str, check_in: str, check_out: str, skip: int = 0) -> dict:
@@ -57,10 +56,16 @@ class HotelLuxClient:
         client = await self._get_client()
         resp = await client.post(url, json=payload)
         if resp.status_code in (401, 403):
-            log.error("session_expired", message="connect.sid cookie is expired or invalid")
-            raise SessionExpiredError("Session cookie expired")
+            # Attempting without session cookie should theoretically bypass this. 
+            # If not, throw explicitly for upper-level recovery
+            log.error("auth_error", message="Authentication failed, API may require specific tokens")
+            raise SessionExpiredError("Authentication Error")
         resp.raise_for_status()
-        data = resp.json()
+        
+        try:
+            data = resp.json()
+        except Exception as e:
+            raise Exception("Invalid JSON response") from e
 
         # If no asyncJobId, the result is already complete
         if not data.get("asyncJobId"):
@@ -71,8 +76,8 @@ class HotelLuxClient:
         # Poll for async result
         job_id = data["asyncJobId"]
         poll_url = f"{self.base_url}/search?mode=async&asyncJobId={job_id}"
-        for _ in range(30):
-            await asyncio.sleep(REQUEST_DELAY_SEC)
+        for i in range(30):
+            await asyncio.sleep(min(REQUEST_DELAY_SEC * (2 ** i), 10))
             poll_resp = await client.post(poll_url, json=payload)
             poll_resp.raise_for_status()
             if not poll_resp.content:
@@ -97,8 +102,14 @@ class HotelLuxClient:
             all_hotels.extend(hotels)
             paging = data.get("paging", {})
             total = paging.get("count", 0)
-            if skip + PAGING_LIMIT >= total:
+            
+            if total == 0:
                 break
+            if skip >= total:
+                break
+            if skip > 10000:
+                raise Exception("pagination runaway")
+                
             skip += PAGING_LIMIT
             await asyncio.sleep(REQUEST_DELAY_SEC)
         log.info("search_all_complete", city=city, total=len(all_hotels))

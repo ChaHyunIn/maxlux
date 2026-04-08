@@ -17,7 +17,11 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
         hotellux_id = h.get("_id")
         price_detail = h.get("minBasePriceDetail", {})
         price_krw = price_detail.get("amount")
-        if hotellux_id and price_krw:
+        
+        if hotellux_id and price_krw is not None:
+            if not isinstance(price_krw, (int, float)):
+                continue
+                
             parsed_rates.append({
                 "hotellux_id": hotellux_id,
                 "price_krw": price_krw,
@@ -50,14 +54,16 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
                 "tag": rate["tag"],
                 "is_sold_out": rate["is_sold_out"]
             })
+        else:
+            log.warning("hotel_mapping_missing", hotellux_id=rate["hotellux_id"])
 
     if not valid_rates:
         return {"inserted": 0, "updated": 0, "skipped": len(parsed_rates)}
 
     # Pre-load existing prices for CDC diffing
     hotel_ids = [r["hotel_id"] for r in valid_rates]
-    existing_res = client.table("daily_rates").select("hotel_id, price_krw").eq("stay_date", check_in).eq("room_type", "standard").in_("hotel_id", hotel_ids).execute()
-    existing_price_map = {row["hotel_id"]: row["price_krw"] for row in existing_res.data} if existing_res.data else {}
+    existing_res = client.table("daily_rates").select("hotel_id, room_type, price_krw").eq("stay_date", check_in).in_("hotel_id", hotel_ids).execute()
+    existing_price_map = {f'{row["hotel_id"]}_{row.get("room_type", "standard")}': row["price_krw"] for row in existing_res.data} if existing_res.data else {}
 
     inserted, updated, skipped = 0, 0, len(parsed_rates) - len(valid_rates)
     
@@ -66,10 +72,14 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
         valid_rates, on_conflict="hotel_id,stay_date,room_type"
     ).execute()
     
+    if upsert_res is None or hasattr(upsert_res, "error"):
+        raise Exception("DB upsert failed")
+    
     # Log CDC
     for rate in valid_rates:
         hotel_uuid = rate["hotel_id"]
-        old_price = existing_price_map.get(hotel_uuid)
+        key = f'{hotel_uuid}_{rate["room_type"]}'
+        old_price = existing_price_map.get(key)
         new_price = rate["price_krw"]
         # Skip saving identical prices to CDC logically, but keep logging
         log_price_change(hotel_uuid, rate["stay_date"], rate["room_type"], old_price, new_price)

@@ -33,6 +33,8 @@ async def run():
     errors = []
 
     try:
+        semaphore = asyncio.Semaphore(5)
+
         for city in CITIES:
             log.info("city_started", city=city)
             today = date.today()
@@ -42,27 +44,59 @@ async def run():
             sync_hotels(hotels_data)
             total_hotels_count += len(hotels_data)
 
-            for day_offset in range(SCRAPE_DAYS_AHEAD):
+            async def process_day(day_offset):
                 check_in = today + timedelta(days=day_offset)
                 check_out = check_in + timedelta(days=1)
-                try:
-                    hotels_with_prices = await hotellux.search_all_hotels(
-                        city, check_in.isoformat(), check_out.isoformat())
-                    result = save_rates_from_search(
-                        hotels_with_prices, check_in.isoformat(), holidays)
-                    total_inserted += result["inserted"]
-                    total_updated += result["updated"]
-                except Exception as e:
-                    error_msg = f"{city}/{check_in}: {str(e)}"
-                    log.error("date_failed", error=error_msg)
-                    errors.append(error_msg)
-                await asyncio.sleep(REQUEST_DELAY_SEC)
+                
+                # Setup retries locally against DB locks and external glitches
+                for i in range(3):
+                    async with semaphore:
+                        try:
+                            hotels_with_prices = await hotellux.search_all_hotels(
+                                city, check_in.isoformat(), check_out.isoformat())
+                            result = save_rates_from_search(
+                                hotels_with_prices, check_in.isoformat(), holidays)
+                            return result, None
+                        except Exception as e:
+                            if i == 2:
+                                log.error("date_failed", exc_info=True, city=city, date=check_in)
+                                return None, {
+                                    "type": type(e).__name__,
+                                    "message": str(e),
+                                    "context": f"{city}/{check_in}"
+                                }
+                            await asyncio.sleep(2 ** i)
+
+            tasks = [process_day(i) for i in range(SCRAPE_DAYS_AHEAD)]
+            results = await asyncio.gather(*tasks)
+
+            for res, err in results:
+                if err:
+                    errors.append(err)
+                if res:
+                    total_inserted += res["inserted"]
+                    total_updated += res["updated"]
+
             log.info("city_completed", city=city)
     except Exception as e:
-        log.error("run_failed", error=str(e))
-        errors.append(str(e))
+        log.error("run_failed", exc_info=True, error=str(e))
+        errors.append({"type": type(e).__name__, "message": str(e), "context": "global"})
 
-    status = "success" if not errors else "partial" if total_inserted > 0 else "failed"
+    total_tasks = len(CITIES) * SCRAPE_DAYS_AHEAD
+    success_rate = 1.0 - (len(errors) / total_tasks) if total_tasks else 1.0
+
+    if success_rate < 0.7 or total_inserted == 0:
+        status = "failed"
+    elif errors:
+        status = "partial"
+    else:
+        status = "success"
+
+    if success_rate < 0.8:
+        log.warning("alert", reason="Low success rate", rate=success_rate, errors=len(errors))
+    if total_inserted == 0:
+        log.warning("alert", reason="Zero insertions")
+
     client.table("scrape_logs").update({
         "finished_at": datetime.utcnow().isoformat(),
         "hotels_count": total_hotels_count,
@@ -71,7 +105,7 @@ async def run():
         "errors": errors, "status": status,
     }).eq("run_id", run_id).execute()
 
-    log.info("run_completed", run_id=run_id, status=status,
+    log.info("run_completed", run_id=run_id, status=status, success_rate=success_rate,
              inserted=total_inserted, updated=total_updated, errors=len(errors))
 
     await hotellux.close()
