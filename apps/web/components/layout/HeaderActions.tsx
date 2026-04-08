@@ -19,7 +19,12 @@ export function HeaderActions() {
     if (!mounted) return null;
 
     const handleLocaleChange = (newLocale: string | null) => {
-        if (newLocale) router.replace(pathname, { locale: newLocale as any });
+        if (newLocale) {
+            router.replace(pathname, { locale: newLocale as any });
+            // Auto-sync currency with locale
+            if (newLocale === 'en') setCurrency('USD');
+            if (newLocale === 'ko') setCurrency('KRW');
+        }
     };
 
     return (
