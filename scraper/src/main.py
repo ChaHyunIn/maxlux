@@ -6,8 +6,11 @@ from src.clients.hotellux import HotelLuxClient
 from src.clients.supabase_client import get_client
 from src.services.hotel_sync import sync_hotels
 from src.services.rate_collector import save_rates_from_search
+from src.services.stats_aggregator import compress_old_data
+from src.services.ota_collector import collect_ota_prices
+from src.services.alert_checker import check_and_send_alerts
 from src.services.tagger import load_holidays
-from src.utils.holidays import seed_holidays
+from src.utils.holidays import seed_holidays, seed_holidays_auto
 from src.utils.logger import get_logger
 
 log = get_logger("main")
@@ -28,8 +31,12 @@ async def run():
             "status": "running",
         }).execute()
 
-        # Seed holidays & load into memory once
-        seed_holidays(client)
+        # Seed holidays (async API with fallback) & load into memory
+        current_year = date.today().year
+        await seed_holidays_auto(client, current_year)
+        # Also seed next year if scraping window crosses year boundary
+        if date.today().month >= 10:
+            await seed_holidays_auto(client, current_year + 1)
         holidays = load_holidays(client)
 
         total_inserted = 0
@@ -183,6 +190,27 @@ async def run():
             updated=total_updated,
             errors=len(errors),
         )
+
+        # Post-scrape: OTA price collection (agoda, booking)
+        try:
+            ota_result = await collect_ota_prices()
+            log.info("ota_result", **ota_result)
+        except Exception as e:
+            log.warning("ota_collection_failed", error=str(e))
+
+        # Post-scrape: check price alerts and send notifications
+        try:
+            alert_result = await check_and_send_alerts()
+            log.info("alert_result", **alert_result)
+        except Exception as e:
+            log.warning("alert_check_failed", error=str(e))
+
+        # Post-scrape: compress old data (runs monthly, safe to call daily)
+        try:
+            compress_result = await asyncio.to_thread(compress_old_data)
+            log.info("compress_result", **compress_result)
+        except Exception as e:
+            log.warning("compress_failed", error=str(e))
 
     finally:
         await hotellux.close()

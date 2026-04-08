@@ -68,6 +68,42 @@
         "language": "Language",
         "currency": "Currency"
     },
+    "priceAlert": {
+        "button": "Price Alert",
+        "title": "Set Price Alert",
+        "description": "Get notified when {hotel} drops below your target price.",
+        "targetPriceLabel": "Target Price (KRW)",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "you@example.com",
+        "emailRequired": "Please enter your email.",
+        "emailInvalid": "Invalid email format.",
+        "currentMin": "Current lowest",
+        "submitButton": "Set Alert",
+        "submitError": "Failed to create alert. Please try again.",
+        "successMessage": "Price alert has been set!",
+        "disclaimer": "We'll email you when the price drops. You can unsubscribe anytime."
+    },
+    "priceTrend": {
+        "title": "Price Trend",
+        "lowest": "Lowest",
+        "average": "Average",
+        "highest": "Highest",
+        "trendDown": "{pct}% down",
+        "trendUp": "{pct}% up",
+        "trendStable": "Stable"
+    },
+    "dayDetail": {
+        "soldOut": "Sold Out",
+        "levelLow": "Cheap",
+        "levelMid": "Average",
+        "levelHigh": "Expensive",
+        "priceComparison": "Price Comparison",
+        "lowestBadge": "Lowest",
+        "noOtaData": "No other OTA prices available yet",
+        "bookNow": "Book Now",
+        "roomType": "Room Type",
+        "standardRoom": "Standard"
+    },
     "seo": {
         "monthlyTitle": "{name} {month} Prices | MaxLux",
         "monthlyDescription": "Check the monthly prices for {name} in {month}.",

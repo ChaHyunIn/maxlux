@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useFilterStore } from "@/stores/filterStore"
 import { useTranslations } from 'next-intl';
-import { Search, X, SlidersHorizontal, Heart } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Search, X, SlidersHorizontal, Heart, MapPin } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import type { Hotel } from '@/lib/types';
+import { Link } from '@/i18n/navigation';
 
 const CITY_KEYS = ['seoul', 'busan', 'jeju'] as const;
 const CITY_LABELS: Record<string, { ko: string; en: string }> = {
@@ -16,18 +18,92 @@ const CITY_LABELS: Record<string, { ko: string; en: string }> = {
     jeju: { ko: '제주', en: 'Jeju' },
 };
 
-function useCityLabel(city: string, locale: string) {
-    if (city === 'all') return null;
-    return CITY_LABELS[city]?.[locale as 'ko' | 'en'] || city;
+interface AutocompleteItem {
+    id: string;
+    slug: string;
+    name: string;
+    city: string;
+    brand: string | null;
+}
+
+function SearchAutocomplete({
+    query,
+    hotels,
+    locale,
+    onSelect,
+    visible,
+    onClose,
+}: {
+    query: string;
+    hotels: (Hotel & { min_price?: number })[];
+    locale: string;
+    onSelect: (name: string) => void;
+    visible: boolean;
+    onClose: () => void;
+}) {
+    const suggestions = useMemo<AutocompleteItem[]>(() => {
+        if (!query.trim() || query.trim().length < 1) return [];
+        const lowerQ = query.toLowerCase();
+        return hotels
+            .filter(h =>
+                h.name_ko.toLowerCase().includes(lowerQ) ||
+                h.name_en.toLowerCase().includes(lowerQ) ||
+                (h.brand && h.brand.toLowerCase().includes(lowerQ))
+            )
+            .slice(0, 6)
+            .map(h => ({
+                id: h.id,
+                slug: h.slug,
+                name: locale === 'en' ? h.name_en : h.name_ko,
+                city: h.city,
+                brand: h.brand,
+            }));
+    }, [query, hotels, locale]);
+
+    if (!visible || suggestions.length === 0) return null;
+
+    return (
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+            {suggestions.map((item) => (
+                <Link
+                    key={item.id}
+                    href={`/hotels/${item.slug}`}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer border-b last:border-b-0 border-slate-100"
+                    onClick={() => {
+                        onSelect(item.name);
+                        onClose();
+                    }}
+                >
+                    <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-slate-800 truncate">
+                            {item.name}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <span className="flex items-center text-xs text-slate-400">
+                                <MapPin className="w-3 h-3 mr-0.5" />
+                                {CITY_LABELS[item.city]?.[locale as 'ko' | 'en'] || item.city}
+                            </span>
+                            {item.brand && (
+                                <span className="text-xs text-slate-400">{item.brand}</span>
+                            )}
+                        </div>
+                    </div>
+                    <Search className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+                </Link>
+            ))}
+        </div>
+    );
 }
 
 function FilterContent({
     brands,
+    hotels,
     t,
     locale,
     onClose,
 }: {
     brands: string[];
+    hotels: (Hotel & { min_price?: number })[];
     t: ReturnType<typeof useTranslations>;
     locale: string;
     onClose?: () => void;
@@ -43,18 +119,32 @@ function FilterContent({
     } = useFilterStore();
 
     const searchRef = useRef<HTMLInputElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [localSearch, setLocalSearch] = useState(searchQuery);
+    const [showAutocomplete, setShowAutocomplete] = useState(false);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         setLocalSearch(searchQuery);
     }, [searchQuery]);
 
-    const handleSearchChange = (val: string) => {
+    // Close autocomplete on outside click
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setShowAutocomplete(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleSearchChange = useCallback((val: string) => {
         setLocalSearch(val);
+        setShowAutocomplete(val.trim().length > 0);
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => setSearchQuery(val), 300);
-    };
+    }, [setSearchQuery]);
 
     const PRICE_OPTIONS = [
         { value: '0-2000000', label: t('priceAll') },
@@ -70,24 +160,36 @@ function FilterContent({
 
     return (
         <div className="flex flex-col gap-4 w-full">
-            {/* Search bar */}
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            {/* Search bar with autocomplete */}
+            <div className="relative" ref={containerRef}>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                 <Input
                     ref={searchRef}
                     placeholder={t('searchPlaceholder')}
                     value={localSearch}
                     onChange={(e) => handleSearchChange(e.target.value)}
+                    onFocus={() => { if (localSearch.trim()) setShowAutocomplete(true); }}
                     className="pl-9 pr-9 bg-white"
                 />
                 {localSearch && (
                     <button
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10"
                         onClick={() => { handleSearchChange(''); searchRef.current?.focus(); }}
                     >
                         <X className="w-4 h-4" />
                     </button>
                 )}
+                <SearchAutocomplete
+                    query={localSearch}
+                    hotels={hotels}
+                    locale={locale}
+                    onSelect={(name) => {
+                        setLocalSearch(name);
+                        setSearchQuery(name);
+                    }}
+                    visible={showAutocomplete}
+                    onClose={() => setShowAutocomplete(false)}
+                />
             </div>
 
             {/* City chips */}
@@ -158,13 +260,50 @@ function FilterContent({
     );
 }
 
-export function HotelFilters({ brands, resultCount, locale }: { brands: string[]; resultCount: number; locale: string }) {
+export function HotelFilters({
+    brands,
+    resultCount,
+    locale,
+    hotels = [],
+}: {
+    brands: string[];
+    resultCount: number;
+    locale: string;
+    hotels?: (Hotel & { min_price?: number })[];
+}) {
     const t = useTranslations('hotel');
     const {
         searchQuery, selectedBrand, selectedCity, sortBy, priceRange,
-        showFavoritesOnly, resetFilters,
+        showFavoritesOnly, resetFilters, setSearchQuery,
     } = useFilterStore();
     const [sheetOpen, setSheetOpen] = useState(false);
+
+    // Mobile autocomplete state
+    const mobileContainerRef = useRef<HTMLDivElement>(null);
+    const [mobileSearch, setMobileSearch] = useState(searchQuery);
+    const [showMobileAutocomplete, setShowMobileAutocomplete] = useState(false);
+    const mobileDebouncRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        setMobileSearch(searchQuery);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (mobileContainerRef.current && !mobileContainerRef.current.contains(e.target as Node)) {
+                setShowMobileAutocomplete(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleMobileSearch = useCallback((val: string) => {
+        setMobileSearch(val);
+        setShowMobileAutocomplete(val.trim().length > 0);
+        if (mobileDebouncRef.current) clearTimeout(mobileDebouncRef.current);
+        mobileDebouncRef.current = setTimeout(() => setSearchQuery(val), 300);
+    }, [setSearchQuery]);
 
     const DEFAULT_PRICE_RANGE = [0, 2000000];
     const activeCount = [
@@ -180,7 +319,7 @@ export function HotelFilters({ brands, resultCount, locale }: { brands: string[]
         <div className="mb-6">
             {/* Desktop */}
             <div className="hidden sm:flex flex-wrap items-center gap-4">
-                <FilterContent brands={brands} t={t} locale={locale} />
+                <FilterContent brands={brands} hotels={hotels} t={t} locale={locale} />
                 {activeCount > 0 && (
                     <Button
                         variant="ghost"
@@ -196,13 +335,25 @@ export function HotelFilters({ brands, resultCount, locale }: { brands: string[]
 
             {/* Mobile */}
             <div className="flex sm:hidden items-center justify-between gap-3">
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <div className="relative flex-1" ref={mobileContainerRef}>
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                     <Input
                         placeholder={t('searchPlaceholder')}
-                        value={searchQuery}
-                        onChange={(e) => useFilterStore.getState().setSearchQuery(e.target.value)}
+                        value={mobileSearch}
+                        onChange={(e) => handleMobileSearch(e.target.value)}
+                        onFocus={() => { if (mobileSearch.trim()) setShowMobileAutocomplete(true); }}
                         className="pl-9 bg-white"
+                    />
+                    <SearchAutocomplete
+                        query={mobileSearch}
+                        hotels={hotels}
+                        locale={locale}
+                        onSelect={(name) => {
+                            setMobileSearch(name);
+                            setSearchQuery(name);
+                        }}
+                        visible={showMobileAutocomplete}
+                        onClose={() => setShowMobileAutocomplete(false)}
                     />
                 </div>
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -221,7 +372,7 @@ export function HotelFilters({ brands, resultCount, locale }: { brands: string[]
                         <SheetHeader className="mb-4">
                             <SheetTitle>{t('filterTitle')}</SheetTitle>
                         </SheetHeader>
-                        <FilterContent brands={brands} t={t} locale={locale} onClose={() => setSheetOpen(false)} />
+                        <FilterContent brands={brands} hotels={hotels} t={t} locale={locale} onClose={() => setSheetOpen(false)} />
                         <div className="flex gap-3 mt-6">
                             {activeCount > 0 && (
                                 <Button variant="outline" className="flex-1" onClick={resetFilters}>

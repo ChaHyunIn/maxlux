@@ -8,7 +8,7 @@ import { formatPrice } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
-    const { sniperMode } = useCalendarStore();
+    const { sniperMode, openDayDetail } = useCalendarStore();
     const { currency } = useSettingStore();
     const t = useTranslations('calendar');
 
@@ -52,11 +52,15 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
             : `${Math.round(price_krw / 10000)}${t('priceUnit')}`
     );
 
+    const handleClick = () => {
+        openDayDetail(rate);
+    };
+
     return (
         <div
-            onClick={() => { if (process.env.NODE_ENV === 'development') console.log(rate); }}
+            onClick={handleClick}
             className={cn(
-                "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/10",
+                "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/20 hover:scale-[1.02] active:scale-[0.98]",
                 style.bg, style.text, opacityClass
             )}
         >

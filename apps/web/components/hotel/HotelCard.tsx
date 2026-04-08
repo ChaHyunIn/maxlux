@@ -8,11 +8,11 @@ import { formatPrice } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Building2, Heart } from 'lucide-react';
+import { Building2, Heart, TrendingDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
 
-export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) {
+export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; recent_drops?: number } }) {
     const t = useTranslations('hotel');
     const locale = useLocale();
     const [imageError, setImageError] = useState(false);
@@ -36,6 +36,8 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
             setIsFavorite(true);
         }
     };
+
+    const hasRecentDrop = (hotel as any).recent_drops > 0;
 
     return (
         <Link href={`/hotels/${hotel.slug}`}>
@@ -82,26 +84,22 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                             <span className="text-sm text-gray-500">{hotel.city || t('defaultCity')}</span>
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col gap-3">
+                    <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col gap-2">
                         {hotel.min_price ? (
                             <div className="flex flex-col items-end gap-1">
                                 <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
-                                <p className="text-xs text-red-500 font-medium">{t('priceChanged')}</p>
+                                {hasRecentDrop && (
+                                    <p className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                                        <TrendingDown className="w-3 h-3" />
+                                        {t('priceChanged')}
+                                    </p>
+                                )}
                             </div>
                         ) : (
                             <div className="flex flex-col items-end gap-1">
                                 <p className="text-gray-400 font-medium tracking-tight">{t('priceCollecting')}</p>
                             </div>
                         )}
-                        <button
-                            className="w-full mt-1 py-2 text-sm text-blue-600 font-semibold border border-blue-100 rounded-lg bg-blue-50/50 hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                // TODO: Connect to explicit notification hook (Spec 5)
-                            }}
-                        >
-                            {t('priceAlert')}
-                        </button>
                     </div>
                 </CardContent>
             </Card>

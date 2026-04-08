@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Hotel, DailyRate, PricePercentiles } from '../types';
+import type { Hotel, DailyRate, PricePercentiles, OtaPrice, PriceChange } from '../types';
 import { FALLBACK_PERCENTILES } from '../constants';
 
 const supabase = createClient(
@@ -58,4 +58,35 @@ export async function getPercentiles(hotelId: string): Promise<PricePercentiles>
     const { data } = await supabase.rpc('get_percentiles', { hotel_uuid: hotelId });
     // fallback if RPC not set up yet
     return data ?? FALLBACK_PERCENTILES;
+}
+
+export async function getOtaPrices(hotelId: string, stayDate: string): Promise<OtaPrice[]> {
+    const { data, error } = await supabase
+        .from('ota_prices')
+        .select('*')
+        .eq('hotel_id', hotelId)
+        .eq('stay_date', stayDate)
+        .order('price_krw');
+    if (error) return [];
+    return data;
+}
+
+export async function getOtaSources(): Promise<{ code: string; name_ko: string; name_en: string; logo_url: string | null }[]> {
+    const { data, error } = await supabase
+        .from('ota_sources')
+        .select('code, name_ko, name_en, logo_url')
+        .eq('is_active', true);
+    if (error) return [];
+    return data;
+}
+
+export async function getPriceChanges(hotelId: string, limit = 20): Promise<PriceChange[]> {
+    const { data, error } = await supabase
+        .from('price_changes')
+        .select('*')
+        .eq('hotel_id', hotelId)
+        .order('changed_at', { ascending: false })
+        .limit(limit);
+    if (error) return [];
+    return data;
 }

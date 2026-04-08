@@ -86,7 +86,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-            <HotelFilters brands={brands} resultCount={filteredHotels.length} locale={locale} />
+            <HotelFilters brands={brands} resultCount={filteredHotels.length} locale={locale} hotels={hotels} />
             {filteredHotels.length === 0 ? (
                 <EmptyState />
             ) : (

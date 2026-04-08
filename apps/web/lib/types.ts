@@ -19,6 +19,18 @@ export interface Hotel {
     address: string | null;
     latitude: number | null;
     longitude: number | null;
+    booking_url: string | null;
+}
+
+export interface PriceChange {
+    id: number;
+    hotel_id: string;
+    stay_date: string;
+    room_type: string;
+    source: string;
+    old_price: number | null;
+    new_price: number;
+    changed_at: string;
 }
 
 export interface DailyRate {
@@ -45,4 +57,16 @@ export interface OtaPrice {
 export interface PricePercentiles {
     p25: number;
     p75: number;
+}
+
+export interface PriceAlert {
+    id: number;
+    hotel_id: string;
+    email: string;
+    target_price: number;
+    stay_date_from: string | null;
+    stay_date_to: string | null;
+    is_active: boolean;
+    triggered_at: string | null;
+    created_at: string;
 }

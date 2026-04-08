@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getHotelBySlug, getRates } from '@/lib/supabase/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
+import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
 import { setRequestLocale } from 'next-intl/server';
 
 export const revalidate = 3600;
@@ -21,7 +22,10 @@ export default async function HotelDetailPage({
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <HotelHeroHeader hotel={hotel} />
-            <HeatmapCalendar rates={rates} hotel={hotel} />
+            <PriceTrendChart rates={rates} />
+            <div className="mt-8">
+                <HeatmapCalendar rates={rates} hotel={hotel} />
+            </div>
         </div>
     );
 }

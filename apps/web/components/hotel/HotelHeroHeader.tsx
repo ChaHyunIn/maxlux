@@ -2,6 +2,7 @@
 import { MapPin, Building, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { HotelHeroImage } from '@/components/hotel/HotelHeroImage';
+import { PriceAlertButton } from '@/components/hotel/PriceAlertButton';
 import { mapBenefitText } from '@/lib/benefitMapper';
 import { getCityDisplayName } from '@/lib/cityMapper';
 import type { Hotel } from '@/lib/types';
@@ -40,6 +41,13 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                             <span>{hotel.address}</span>
                         </div>
                     )}
+                    {/* Price Alert Button */}
+                    <div className="mt-4">
+                        <PriceAlertButton
+                            hotelId={hotel.id}
+                            hotelName={primaryName}
+                        />
+                    </div>
                 </div>
             </div>
             {hotel.benefits && hotel.benefits.length > 0 && (
