@@ -1,10 +1,12 @@
 import { getHotels } from '@/lib/supabase/server';
 import { HotelList } from '@/components/hotel/HotelList';
+import type { Hotel } from '@/lib/types';
 
 export const revalidate = 300; // 5 minutes ISR
 
 export default async function HomePage() {
-    let hotels: any[] = [];
+    let hotels: (Hotel & { min_price?: number })[] = [];
+
     try {
         hotels = await getHotels();
     } catch {
