@@ -1,78 +1,70 @@
-'use client';
-
+import { getPriceLevel, cn } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
-import { PRICE_COLORS, LOCALE_DEFAULTS } from '@/lib/constants';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { useSettingStore } from '@/stores/settingStore';
+import { PRICE_COLORS } from '@/lib/constants';
+import { useCalendarStore } from '@/stores/calendarStore';
 
-interface DayCellProps {
-    date: Date;
-    rate: DailyRate | null;
-    p25: number;
-    p75: number;
-}
+export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
+    const { sniperMode } = useCalendarStore();
 
-export function DayCell({ date, rate, p25, p75 }: DayCellProps) {
-    const dayNum = format(date, 'd');
-    const { currency } = useSettingStore();
+    const day = date.getDate();
+    const dayOfWeek = date.getDay(); // 0=Sun, 6=Sat
 
     if (!rate) {
         return (
-            <div className="flex flex-col items-center justify-center p-1 sm:p-2 border rounded-md min-h-[60px] sm:min-h-[70px] bg-muted/20 text-muted-foreground opacity-50">
-                <span className="text-xs sm:text-sm font-medium">{dayNum}</span>
-                <span className="text-[10px] sm:text-xs mt-1">정보없음</span>
+            <div className="min-h-[60px] sm:min-h-[70px] rounded-md p-1 flex flex-col items-center justify-start bg-slate-50 text-slate-300">
+                <span className="text-xs font-medium mt-1">{day}</span>
             </div>
         );
     }
 
-    if (rate.is_sold_out) {
-        const style = PRICE_COLORS.soldOut;
-        return (
-            <div
-                className={cn(
-                    "flex flex-col items-center justify-center p-1 sm:p-2 rounded-md min-h-[60px] sm:min-h-[70px] cursor-pointer transition-colors border shadow-sm",
-                    style.bg,
-                    style.text
-                )}
-            >
-                <span className="text-xs sm:text-sm font-medium">{dayNum}</span>
-                <div className="flex items-center gap-0.5 mt-1">
-                    <span className="text-[10px] sm:text-xs font-bold leading-none">{style.icon} 매진</span>
-                </div>
-            </div>
-        );
-    }
+    const { price_krw, is_sold_out, tags } = rate;
+    const isHoliday = tags && tags.includes('HOL');
+    const isFriEve = tags && tags.includes('FRI_EVE');
+    const isSat = dayOfWeek === 6;
 
-    const price = rate.price_krw;
-    let style: { bg: string; text: string; icon: string } = PRICE_COLORS.mid;
-    if (price <= p25) style = PRICE_COLORS.low;
-    else if (price >= p75) style = PRICE_COLORS.high;
+    let level: 'low' | 'mid' | 'high' = 'mid';
+    let style = PRICE_COLORS.mid;
 
-    // Currency-aware price formatting
-    let displayPrice: string;
-    let displaySuffix = '';
-    if (currency === 'USD') {
-        displayPrice = `$${Math.round(price / LOCALE_DEFAULTS.exchangeRateUsd).toLocaleString()}`;
+    if (is_sold_out) {
+        style = PRICE_COLORS.soldOut;
     } else {
-        displayPrice = Math.floor(price / LOCALE_DEFAULTS.priceUnitManDivisor).toString();
-        displaySuffix = '만';
+        level = getPriceLevel(price_krw, p25, p75);
+        if (level === 'low') style = PRICE_COLORS.low;
+        if (level === 'high') style = PRICE_COLORS.high;
     }
+
+    // Sniper Filter Logic
+    let opacityClass = '';
+    if (sniperMode !== 'none') {
+        if (sniperMode === 'fri_sat' && !isFriEve && !isSat && dayOfWeek !== 5) {
+            opacityClass = 'opacity-20';
+        }
+        if (sniperMode === 'holiday_low' && !isHoliday && !isFriEve) {
+            opacityClass = 'opacity-20';
+        }
+        if (sniperMode === 'cheapest_sat' && !isSat) {
+            opacityClass = 'opacity-20';
+        }
+    }
+
+    const priceText = is_sold_out ? '매진' : `${Math.round(price_krw / 10000)}만`;
 
     return (
         <div
+            onClick={() => console.log(rate)}
             className={cn(
-                "flex flex-col items-center justify-center p-1 sm:p-2 rounded-md min-h-[60px] sm:min-h-[70px] cursor-pointer transition-transform hover:scale-105 hover:shadow-md border shadow-sm",
+                "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/10",
                 style.bg,
-                style.text
+                style.text,
+                opacityClass
             )}
         >
-            <span className="text-xs sm:text-sm font-medium">{dayNum}</span>
-            <div className="flex items-center gap-0.5 mt-1 sm:mt-1.5">
-                <span className="text-[10px] sm:text-xs">{style.icon}</span>
-                <span className="text-[10px] sm:text-[13px] font-bold leading-none tracking-tighter">
-                    {displayPrice}{displaySuffix}
-                </span>
+            <span className={cn("text-xs font-semibold self-start", dayOfWeek === 0 ? "text-red-700/80" : dayOfWeek === 6 ? "text-blue-700/80" : "")}>
+                {day}
+            </span>
+            <div className="flex flex-col items-center font-bold tracking-tight">
+                <span className="text-[11px] sm:text-[13px]">{priceText}</span>
+                {!is_sold_out && <span className="text-xs mt-0.5 leading-none">{style.icon}</span>}
             </div>
         </div>
     );

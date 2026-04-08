@@ -3,18 +3,22 @@ import { cn } from '@/lib/utils';
 
 export function CalendarLegend() {
     return (
-        <div className="flex items-center gap-3 bg-card px-4 py-2 rounded-full border shadow-sm text-sm">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium text-slate-600">
             <div className="flex items-center gap-1.5">
-                <div className={cn("w-3 h-3 rounded-sm border", PRICE_COLORS.low.bg)}></div>
-                <span className="text-muted-foreground mr-2">저렴 (<span className="text-[10px]">{PRICE_COLORS.low.icon}</span>)</span>
+                <div className={cn("w-3 h-3 rounded-full", PRICE_COLORS.low.bg)} />
+                <span>저렴 (하위25%)</span>
             </div>
             <div className="flex items-center gap-1.5">
-                <div className={cn("w-3 h-3 rounded-sm border", PRICE_COLORS.mid.bg)}></div>
-                <span className="text-muted-foreground mr-2">보통 (<span className="text-[10px]">{PRICE_COLORS.mid.icon}</span>)</span>
+                <div className={cn("w-3 h-3 rounded-full", PRICE_COLORS.mid.bg)} />
+                <span>보통</span>
             </div>
             <div className="flex items-center gap-1.5">
-                <div className={cn("w-3 h-3 rounded-sm border", PRICE_COLORS.high.bg)}></div>
-                <span className="text-muted-foreground">비쌈 (<span className="text-[10px]">{PRICE_COLORS.high.icon}</span>)</span>
+                <div className={cn("w-3 h-3 rounded-full", PRICE_COLORS.high.bg)} />
+                <span>비쌈 (상위25%)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <div className={cn("w-3 h-3 rounded-full", PRICE_COLORS.soldOut.bg)} />
+                <span className="line-through text-slate-400">매진</span>
             </div>
         </div>
     );

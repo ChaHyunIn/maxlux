@@ -1,60 +1,40 @@
 import type { DailyRate } from '@/lib/types';
 import { DayCell } from './DayCell';
-import { format, parseISO, getDaysInMonth, getDay, addDays } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { getDaysInMonth, startOfMonth, getDay } from 'date-fns';
 
-interface MonthGridProps {
-    monthStart: string; // ISO string or 'yyyy-MM-dd' of the start of the month
-    rates: DailyRate[];
-    p25: number;
-    p75: number;
-}
+export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, month: number, rates: DailyRate[], p25: number, p75: number }) {
+    const header = `${year}년 ${month}월`;
+    const daysInMonth = getDaysInMonth(new Date(year, month - 1));
+    const startDay = getDay(startOfMonth(new Date(year, month - 1))); // 0=Sun
 
-export function MonthGrid({ monthStart, rates, p25, p75 }: MonthGridProps) {
-    const startDate = parseISO(monthStart);
-    const monthName = format(startDate, 'yyyy년 M월', { locale: ko });
-
-    const daysInMonth = getDaysInMonth(startDate);
-    const startDayOfWeek = getDay(startDate); // 0=Sun
-
-    // Map rates by date string for O(1) lookup
-    const rateMap = new Map<string, DailyRate>();
-    rates.forEach(r => rateMap.set(r.stay_date, r));
-
-    // Pad empty cells for the start of the month
-    const cells = Array.from({ length: startDayOfWeek }).map((_, i) => (
-        <div key={`empty-${i}`} className="min-h-[60px] p-2 bg-transparent" />
-    ));
-
-    // Generate days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = addDays(startDate, day - 1);
-        const dateStr = format(date, 'yyyy-MM-dd');
-        const rate = rateMap.get(dateStr) || null;
-
-        cells.push(
-            <DayCell
-                key={dateStr}
-                date={date}
-                rate={rate}
-                p25={p25}
-                p75={p75}
-            />
-        );
+    // Fill empty cells for padding
+    const cells = [];
+    for (let i = 0; i < startDay; i++) {
+        cells.push(null); // empty padding
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+        cells.push(new Date(year, month - 1, i));
     }
 
     return (
-        <div className="bg-card border rounded-2xl shadow-sm overflow-hidden flex flex-col h-full bg-white">
-            <div className="bg-muted/40 p-4 border-b text-center font-bold text-lg text-primary">
-                {monthName}
-            </div>
-            <div className="p-3 sm:p-5 grid grid-cols-7 gap-1 sm:gap-2 flex-1 content-start">
-                {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-                    <div key={day} className="text-center text-xs font-semibold text-muted-foreground mb-2">
-                        {day}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 className="text-lg font-bold mb-4 ml-1">{header}</h3>
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+                {['일', '월', '화', '수', '목', '금', '토'].map((d, i) => (
+                    <div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? 'text-red-500/80' : i === 6 ? 'text-blue-500/80' : 'text-slate-500'}`}>
+                        {d}
                     </div>
                 ))}
-                {cells}
+            </div>
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
+                {cells.map((d, idx) => {
+                    if (!d) return <div key={`empty-${idx}`} className="min-h-[60px]" />;
+
+                    const dateStr = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+                    const rate = rates.find(r => r.stay_date === dateStr) || null;
+
+                    return <DayCell key={dateStr} date={d} rate={rate} p25={p25} p75={p75} />;
+                })}
             </div>
         </div>
     );

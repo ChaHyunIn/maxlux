@@ -1,0 +1,26 @@
+nohup: ignoring input
+
+> web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1091ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1611ms (1020 modules)
+ ✓ Compiled in 189ms (492 modules)
+ GET / 200 in 2524ms
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ ✓ Compiled /hotels/[slug] in 391ms (1080 modules)
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ GET / 200 in 773ms
+ GET / 200 in 172ms
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null
+ GET / 200 in 657ms
+ ⨯ The requested resource isn't a valid image for https://qiniu-uploads-cdn.charmdeer.com/FqAGj1MLVGjdY18Xh9ftB19MVpkF received null

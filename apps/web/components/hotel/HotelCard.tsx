@@ -1,73 +1,48 @@
-'use client';
-import { useState } from 'react';
-import type { Hotel } from '@/lib/types';
-import { useSettingStore } from '@/stores/settingStore';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import Image from 'next/image';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import type { Hotel } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
-import { getCityDisplayName } from '@/lib/cityMapper';
-import { MapPin, Building } from 'lucide-react';
+// If there is a cityMapper, you could use it here. For now falling back to hotel.city.
 
-interface HotelCardProps {
-    hotel: Hotel & { min_price?: number };
-}
-
-export function HotelCard({ hotel }: HotelCardProps) {
-    const [imgError, setImgError] = useState(false);
-    const { currency } = useSettingStore();
-
+export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) {
     return (
         <Link href={`/hotels/${hotel.slug}`}>
-            <Card className="overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col group">
-                <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                    {hotel.image_url && !imgError ? (
+            <Card className="overflow-hidden hover:shadow-md transition-shadow h-full cursor-pointer flex flex-col">
+                <div className="relative w-full aspect-video bg-slate-200">
+                    {hotel.image_url && (
                         <Image
                             src={hotel.image_url}
                             alt={hotel.name_ko}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="object-cover rounded-t-xl"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            onError={() => setImgError(true)}
                         />
-                    ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-muted-foreground">
-                            <Building className="w-8 h-8 mb-2 opacity-30" />
-                            <span className="text-xs font-medium tracking-wide opacity-50 uppercase">Image Unavailable</span>
-                        </div>
-                    )}
-                    {hotel.brand && (
-                        <div className="absolute top-3 left-3">
-                            <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm shadow-sm hover:bg-background/90 text-foreground">
-                                {hotel.brand}
-                            </Badge>
-                        </div>
                     )}
                 </div>
-                <CardContent className="p-4 flex-1 flex flex-col gap-1.5">
-                    <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">
-                        {hotel.name_ko}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-1">
-                        {hotel.name_en}
-                    </p>
-                    <div className="flex items-center text-xs text-muted-foreground mt-1 gap-1">
-                        <MapPin className="w-3 h-3" />
-                        <span className="capitalize">{getCityDisplayName(hotel.city)}</span>
+                <CardContent className="p-4 flex flex-col flex-1 justify-between">
+                    <div>
+                        <div className="flex items-start justify-between mb-2">
+                            <h3 className="text-lg font-bold line-clamp-1">{hotel.name_ko}</h3>
+                        </div>
+                        <div className="flex items-center gap-2 mb-4">
+                            {hotel.brand && (
+                                <Badge variant="secondary" className="rounded-full bg-slate-100 text-slate-700">
+                                    {hotel.brand}
+                                </Badge>
+                            )}
+                            <span className="text-sm text-gray-500">{hotel.city || '서울'}</span>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-2 border-t border-slate-50">
+                        {hotel.min_price ? (
+                            <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
+                        ) : (
+                            <p className="text-gray-400 font-medium tracking-tight">가격 수집 중</p>
+                        )}
                     </div>
                 </CardContent>
-                <CardFooter className="p-4 pt-0 flex justify-end items-baseline gap-1">
-                    {hotel.min_price ? (
-                        <>
-                            <span className="text-xs text-muted-foreground">최저</span>
-                            <span className="font-bold text-lg">{formatPrice(hotel.min_price, currency)}</span>
-                            <span className="text-sm text-muted-foreground">~</span>
-                        </>
-                    ) : (
-                        <span className="text-sm text-muted-foreground">가격 정보 없음</span>
-                    )}
-                </CardFooter>
             </Card>
         </Link>
     );

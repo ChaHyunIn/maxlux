@@ -1,43 +1,42 @@
-import { getHotelBySlug, getRates, getPercentiles } from '@/lib/supabase/server';
-import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
-import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import Image from 'next/image';
+import { getHotelBySlug, getRates } from '@/lib/supabase/server';
+import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
+import { Badge } from '@/components/ui/badge';
 
-interface Props {
-    params: { slug: string };
-}
+export const revalidate = 3600; // 1 hour
 
-export const revalidate = 300; // 5 minutes ISR
-
-export default async function HotelDetailPage({ params }: Props) {
+export default async function HotelDetailPage({ params }: { params: { slug: string } }) {
     const hotel = await getHotelBySlug(params.slug);
-    if (!hotel) notFound();
+    if (!hotel) {
+        notFound();
+    }
 
-    const [rates, percentiles] = await Promise.all([
-        getRates(hotel.id),
-        getPercentiles(hotel.id),
-    ]);
+    const rates = await getRates(hotel.id);
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-7xl animate-in fade-in duration-500">
-            <Link href="/" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground mb-6 transition-colors">
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                호텔 목록으로 돌아가기
-            </Link>
-
-            <HotelHeroHeader hotel={hotel} />
-
-            <section className="mb-12">
-                <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="mb-8 p-6 bg-white rounded-2xl border border-slate-100 flex flex-col md:flex-row gap-6 items-start">
+                <div className="w-full md:w-1/3 aspect-video relative rounded-xl overflow-hidden bg-slate-100">
+                    {hotel.image_url && (
+                        <Image src={hotel.image_url} alt={hotel.name_ko} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                    )}
+                </div>
+                <div className="flex-1 space-y-4">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight mb-2">요금 캘린더</h2>
-                        <p className="text-muted-foreground text-lg">기본 스탠다드 룸 기준 최저가 히트맵을 확인하세요.</p>
+                        <div className="flex items-center gap-2 mb-2">
+                            {hotel.brand && (
+                                <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-0">{hotel.brand}</Badge>
+                            )}
+                            <span className="text-gray-500 text-sm">{hotel.city || '서울'}</span>
+                        </div>
+                        <h1 className="text-2xl font-bold text-gray-900">{hotel.name_ko}</h1>
+                        <p className="text-gray-500 text-sm">{hotel.name_en}</p>
                     </div>
                 </div>
-                <HeatmapCalendar hotel={hotel} rates={rates} percentiles={percentiles} />
-            </section>
+            </div>
+
+            <HeatmapCalendar rates={rates} hotel={hotel} />
         </div>
     );
 }

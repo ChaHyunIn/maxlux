@@ -1,15 +1,13 @@
 import { create } from 'zustand';
 
+type SniperMode = 'none' | 'fri_sat' | 'cheapest_sat' | 'holiday_low';
+
 interface CalendarState {
-    visibleMonthOffset: number; // 0 = current month
-    selectedDate: string | null;
-    setMonthOffset: (offset: number) => void;
-    setSelectedDate: (date: string | null) => void;
+    sniperMode: SniperMode;
+    setSniperMode: (mode: SniperMode) => void;
 }
 
 export const useCalendarStore = create<CalendarState>((set) => ({
-    visibleMonthOffset: 0,
-    selectedDate: null,
-    setMonthOffset: (offset) => set({ visibleMonthOffset: offset }),
-    setSelectedDate: (date) => set({ selectedDate: date }),
+    sniperMode: 'none',
+    setSniperMode: (mode) => set({ sniperMode: mode }),
 }));
