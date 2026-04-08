@@ -12,7 +12,18 @@
         "imageUnavailable": "Image Unavailable",
         "hotDeal": "🔥 Hot Deal",
         "priceChanged": "📉 Recent price change",
-        "priceAlert": "🔔 Get Price Alerts"
+        "priceAlert": "🔔 Get Price Alerts",
+        "sortByBenefit": "🎁 Best Benefits",
+        "allCities": "All Cities",
+        "favoritesOnly": "♥️ Favorites",
+        "priceAll": "All Prices",
+        "priceUnder300": "Under \u20a9300k",
+        "price300to500": "\u20a9300-500k",
+        "priceOver500": "\u20a9500k+",
+        "resetFilters": "Reset Filters",
+        "resultCount": "{count} hotels",
+        "filterButton": "Filter",
+        "filterTitle": "Filter Options"
     },
     "calendar": {
         "title": "Rate Calendar",

@@ -1,16 +1,25 @@
 'use client'
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { Hotel } from '@/lib/types';
 import { HotelCard } from './HotelCard';
 import { HotelFilters } from './HotelFilters';
 import { useFilterStore } from '@/stores/filterStore';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
+import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
-    const { searchQuery, selectedBrand, sortBy } = useFilterStore();
-    const t = useTranslations('common');
+    const { searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly } = useFilterStore();
     const locale = useLocale();
+    const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+    // Load favorites from localStorage on mount
+    useEffect(() => {
+        if (showFavoritesOnly) {
+            const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
+            setFavoriteIds(favs);
+        }
+    }, [showFavoritesOnly]);
 
     const brands = useMemo(() => {
         const unique = new Set(hotels.map(h => h.brand).filter(Boolean) as string[]);
@@ -19,6 +28,8 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
 
     const filteredHotels = useMemo(() => {
         let result = [...hotels];
+
+        // Text search
         if (searchQuery.trim()) {
             const lowerQ = searchQuery.toLowerCase();
             result = result.filter(h =>
@@ -26,30 +37,56 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
                 h.name_en.toLowerCase().includes(lowerQ)
             );
         }
+
+        // Brand filter
         if (selectedBrand !== 'all') {
             result = result.filter(h => h.brand === selectedBrand);
         }
+
+        // City filter
+        if (selectedCity !== 'all') {
+            result = result.filter(h => h.city === selectedCity);
+        }
+
+        // Price range filter
+        const [minPrice, maxPrice] = priceRange;
+        if (minPrice > 0 || maxPrice < 2000000) {
+            result = result.filter(h => {
+                if (!h.min_price) return minPrice === 0;
+                return h.min_price >= minPrice && h.min_price <= maxPrice;
+            });
+        }
+
+        // Favorites filter
+        if (showFavoritesOnly && favoriteIds.length >= 0) {
+            result = result.filter(h => favoriteIds.includes(h.id));
+        }
+
+        // Sort
         result.sort((a, b) => {
             if (sortBy === 'price') {
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'discount') {
-                // Approximate discount metric for sorting priorities (e.g., lower price compared to market or history)
-                // Assuming hot deals are cheaper, we push them top. Or just mock it if there's no explicitly real field yet.
-                // Here we sort them placing items with min_price <= 350000 prioritizing the hottest deals
-                const aIsHot = a.min_price && a.min_price <= 350000 ? 1 : 0;
-                const bIsHot = b.min_price && b.min_price <= 350000 ? 1 : 0;
-                if (aIsHot !== bIsHot) return bIsHot - aIsHot; // Push hot deals to top
-                return (a.min_price ?? Infinity) - (b.min_price ?? Infinity); // then sort by price
+                const aIsHot = a.min_price && a.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
+                const bIsHot = b.min_price && b.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
+                if (aIsHot !== bIsHot) return bIsHot - aIsHot;
+                return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
+            }
+            if (sortBy === 'benefit') {
+                const aVal = (a as any).benefit_value_krw ?? 0;
+                const bVal = (b as any).benefit_value_krw ?? 0;
+                return bVal - aVal;
             }
             return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);
         });
+
         return result;
-    }, [hotels, searchQuery, selectedBrand, sortBy]);
+    }, [hotels, searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly, favoriteIds, locale]);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-            <HotelFilters brands={brands} />
+            <HotelFilters brands={brands} resultCount={filteredHotels.length} locale={locale} />
             {filteredHotels.length === 0 ? (
                 <EmptyState />
             ) : (

@@ -12,7 +12,18 @@
         "imageUnavailable": "이미지 없음",
         "hotDeal": "🔥 특가",
         "priceChanged": "📉 최근 가격 변동 있음",
-        "priceAlert": "🔔 가격 알림 받기"
+        "priceAlert": "🔔 가격 알림 받기",
+        "sortByBenefit": "🎁 혜택 가치순",
+        "allCities": "전체 도시",
+        "favoritesOnly": "♥️ 즐겨찾기만",
+        "priceAll": "가격 전체",
+        "priceUnder300": "30만 이하",
+        "price300to500": "30~50만",
+        "priceOver500": "50만 이상",
+        "resetFilters": "필터 초기화",
+        "resultCount": "{count}개 호텔",
+        "filterButton": "필터",
+        "filterTitle": "필터 설정"
     },
     "calendar": {
         "title": "요금 캘린더",
