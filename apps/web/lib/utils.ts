@@ -6,8 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price_krw: number | undefined, currency: 'KRW' | 'USD' = 'KRW'): string {
-  if (!price_krw) return "가격 미정";
+export function formatPrice(price_krw: number | undefined | null, currency: 'KRW' | 'USD' = 'KRW'): string {
+  if (price_krw === undefined || price_krw === null) return "가격 미정";
   if (currency === 'USD') {
     return `$${Math.round(price_krw / LOCALE_DEFAULTS.exchangeRateUsd).toLocaleString()}`;
   }

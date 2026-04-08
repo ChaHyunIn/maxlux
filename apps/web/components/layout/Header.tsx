@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeaderActions } from './HeaderActions';
 
 export default function Header() {
     return (
@@ -7,7 +8,7 @@ export default function Header() {
                 <Link href="/" className="text-xl font-bold text-blue-600">
                     MaxLux
                 </Link>
-                <div></div>
+                <HeaderActions />
             </div>
         </header>
     );

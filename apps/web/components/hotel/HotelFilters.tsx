@@ -14,7 +14,7 @@ export function HotelFilters({ brands }: { brands: string[] }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 bg-white"
             />
-            <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+            <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "all")}>
                 <SelectTrigger className="w-full sm:w-48 bg-white">
                     <SelectValue placeholder="브랜드 선택" />
                 </SelectTrigger>
@@ -25,7 +25,7 @@ export function HotelFilters({ brands }: { brands: string[] }) {
                     ))}
                 </SelectContent>
             </Select>
-            <Select value={sortBy} onValueChange={(val: 'price' | 'name') => setSortBy(val)}>
+            <Select value={sortBy} onValueChange={(val) => setSortBy((val as 'price' | 'name') || 'price')}>
                 <SelectTrigger className="w-full sm:w-48 bg-white">
                     <SelectValue placeholder="정렬 방식" />
                 </SelectTrigger>

@@ -5,11 +5,12 @@ import { MonthGrid } from './MonthGrid';
 import { SniperFilters } from './SniperFilters';
 import { CalendarLegend } from './CalendarLegend';
 import { getYear, getMonth } from 'date-fns';
+import { FALLBACK_PERCENTILES } from '@/lib/constants';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const { p25, p75 } = useMemo(() => {
         const prices = rates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
-        if (prices.length === 0) return { p25: Infinity, p75: 0 };
+        if (prices.length === 0) return FALLBACK_PERCENTILES;
         return {
             p25: prices[Math.floor(prices.length * 0.25)],
             p75: prices[Math.floor(prices.length * 0.75)]

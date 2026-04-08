@@ -1,3 +1,5 @@
+'use client'
+import { useMemo } from 'react';
 import type { DailyRate } from '@/lib/types';
 import { DayCell } from './DayCell';
 import { getDaysInMonth, startOfMonth, getDay } from 'date-fns';
@@ -16,6 +18,12 @@ export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, mont
         cells.push(new Date(year, month - 1, i));
     }
 
+    const rateMap = useMemo(() => {
+        const map = new Map<string, DailyRate>();
+        rates.forEach(r => map.set(r.stay_date, r));
+        return map;
+    }, [rates]);
+
     return (
         <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
             <h3 className="text-lg font-bold mb-4 ml-1">{header}</h3>
@@ -31,7 +39,7 @@ export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, mont
                     if (!d) return <div key={`empty-${idx}`} className="min-h-[60px]" />;
 
                     const dateStr = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
-                    const rate = rates.find(r => r.stay_date === dateStr) || null;
+                    const rate = rateMap.get(dateStr) || null;
 
                     return <DayCell key={dateStr} date={d} rate={rate} p25={p25} p75={p75} />;
                 })}

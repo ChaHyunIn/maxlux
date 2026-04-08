@@ -1,3 +1,4 @@
+'use client'
 import { getPriceLevel, cn } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import { PRICE_COLORS } from '@/lib/constants';
@@ -17,13 +18,13 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
         );
     }
 
-    const { price_krw, is_sold_out, tags } = rate;
-    const isHoliday = tags && tags.includes('HOL');
-    const isFriEve = tags && tags.includes('FRI_EVE');
+    const { price_krw, is_sold_out, tag } = rate;
+    const isHoliday = tag === 'HOL';
+    const isFriEve = tag === 'FRI_EVE';
     const isSat = dayOfWeek === 6;
 
     let level: 'low' | 'mid' | 'high' = 'mid';
-    let style = PRICE_COLORS.mid;
+    let style: { bg: string, text: string, icon: string } = PRICE_COLORS.mid;
 
     if (is_sold_out) {
         style = PRICE_COLORS.soldOut;

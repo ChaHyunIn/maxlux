@@ -1,3 +1,4 @@
+'use client'
 import { PRICE_COLORS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
