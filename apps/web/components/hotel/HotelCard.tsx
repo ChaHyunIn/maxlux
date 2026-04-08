@@ -10,6 +10,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { Building2, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) {
     const t = useTranslations('hotel');
@@ -54,9 +55,9 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                             <Building2 className="w-12 h-12 mb-2 opacity-50" />
                         </div>
                     )}
-                    {hotel.min_price && hotel.min_price <= 350000 && (
+                    {hotel.min_price && hotel.min_price <= HOT_DEAL_THRESHOLD && (
                         <Badge className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white border-0 z-10 shadow-lg">
-                            🔥 특가
+                            {t('hotDeal')}
                         </Badge>
                     )}
                     <button
@@ -85,7 +86,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                         {hotel.min_price ? (
                             <div className="flex flex-col items-end gap-1">
                                 <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
-                                <p className="text-xs text-red-500 font-medium">📉 최근 가격 변동 있음</p>
+                                <p className="text-xs text-red-500 font-medium">{t('priceChanged')}</p>
                             </div>
                         ) : (
                             <div className="flex flex-col items-end gap-1">
@@ -99,7 +100,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                                 // TODO: Connect to explicit notification hook (Spec 5)
                             }}
                         >
-                            🔔 가격 알림 받기
+                            {t('priceAlert')}
                         </button>
                     </div>
                 </CardContent>

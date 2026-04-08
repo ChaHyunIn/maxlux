@@ -34,7 +34,7 @@ export function HotelFilters({ brands }: { brands: string[] }) {
                 <SelectContent>
                     <SelectItem value="price">{t('sortByPrice')}</SelectItem>
                     <SelectItem value="name">{t('sortByName')}</SelectItem>
-                    <SelectItem value="discount">🔥 특가순</SelectItem>
+                    <SelectItem value="discount">{t('sortByDiscount')}</SelectItem>
                 </SelectContent>
             </Select>
         </div>

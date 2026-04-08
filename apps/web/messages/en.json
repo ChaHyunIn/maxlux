@@ -4,11 +4,15 @@
         "allBrands": "All Brands",
         "sortByPrice": "Lowest Price",
         "sortByName": "Name",
+        "sortByDiscount": "🔥 Hot Deals",
         "priceCollecting": "Collecting prices",
         "priceTBD": "Price TBD",
         "benefitsTitle": "HotelLux Partner Benefits",
         "defaultCity": "Seoul",
-        "imageUnavailable": "Image Unavailable"
+        "imageUnavailable": "Image Unavailable",
+        "hotDeal": "🔥 Hot Deal",
+        "priceChanged": "📉 Recent price change",
+        "priceAlert": "🔔 Get Price Alerts"
     },
     "calendar": {
         "title": "Rate Calendar",
@@ -21,7 +25,7 @@
         "cheapestSat": "Cheapest Saturdays",
         "holidayLow": "Holiday Deals",
         "noData": "No pricing data available yet.",
-        "priceUnit": "만",
+        "priceUnit": "k",
         "weekdays": [
             "Sun",
             "Mon",
@@ -36,6 +40,7 @@
     "common": {
         "dataLoading": "Collecting data...",
         "noResults": "No hotels match your criteria.",
+        "noResultsDetail": "No hotel data available for this area.",
         "errorOccurred": "An error occurred",
         "retry": "Try Again",
         "refresh": "Refresh",
@@ -55,6 +60,8 @@
     "seo": {
         "monthlyTitle": "{name} {month} Prices | MaxLux",
         "monthlyDescription": "Check the monthly prices for {name} in {month}.",
-        "monthlyLandingTodo": "TODO: Monthly SEO Landing Page"
+        "monthlyLandingTodo": "TODO: Monthly SEO Landing Page",
+        "metaTitle": "MaxLux - Luxury Hotel Best Price Sniper",
+        "metaDescription": "Track 12-month luxury hotel prices with a heatmap calendar on HotelLux."
     }
 }

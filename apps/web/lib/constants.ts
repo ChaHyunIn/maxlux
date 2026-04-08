@@ -17,3 +17,7 @@ export const FALLBACK_PERCENTILES = {
     p25: 300000,
     p75: 600000,
 } as const;
+
+/** Price threshold (KRW) below which a hotel is considered a "hot deal" */
+export const HOT_DEAL_THRESHOLD = 350000;
+

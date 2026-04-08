@@ -27,7 +27,7 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                         )}
                         <Badge variant="secondary" className="bg-black/40 hover:bg-black/50 text-white border-none backdrop-blur-md">
                             <MapPin className="w-3 h-3 mr-1" />
-                            <span className="capitalize">{getCityDisplayName(hotel.city)}</span>
+                            <span className="capitalize">{getCityDisplayName(hotel.city, locale)}</span>
                         </Badge>
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md">
@@ -51,7 +51,7 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                     <div className="flex flex-wrap gap-2 md:gap-3">
                         {hotel.benefits.map((benefit, i) => (
                             <Badge key={i} variant="outline" className="bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-muted">
-                                {mapBenefitText(benefit)}
+                                {mapBenefitText(benefit, locale)}
                             </Badge>
                         ))}
                     </div>

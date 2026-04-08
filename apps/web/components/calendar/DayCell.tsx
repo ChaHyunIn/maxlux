@@ -54,7 +54,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
 
     return (
         <div
-            onClick={() => console.log(rate)}
+            onClick={() => { if (process.env.NODE_ENV === 'development') console.log(rate); }}
             className={cn(
                 "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/10",
                 style.bg, style.text, opacityClass

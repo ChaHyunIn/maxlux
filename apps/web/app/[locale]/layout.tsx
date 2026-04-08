@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import '../../styles/globals.css';
@@ -9,13 +9,16 @@ import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 
-export const metadata: Metadata = {
-    title: 'MaxLux - 럭셔리 호텔 최저가 스나이퍼',
-    description: 'HotelLux 럭셔리 호텔의 12개월 가격을 히트맵 캘린더로 확인하세요.',
-};
-
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+    const t = await getTranslations({ locale: params.locale, namespace: 'seo' });
+    return {
+        title: t('metaTitle'),
+        description: t('metaDescription'),
+    };
 }
 
 export default async function LocaleLayout({

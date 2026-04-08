@@ -1,5 +1,5 @@
 /**
- * Maps raw HotelLux benefit objects/strings to user-friendly Korean text.
+ * Maps raw HotelLux benefit objects/strings to user-friendly text with locale support.
  */
 
 interface RawBenefit {
@@ -8,19 +8,20 @@ interface RawBenefit {
     [key: string]: unknown;
 }
 
-const BENEFIT_NAME_MAP: Record<string, string> = {
-    '会员礼遇': 'HotelLux VIP 특별 혜택',
-    'FHR': '아멕스 FHR 혜택 (해당 시)',
+const BENEFIT_NAME_MAP: Record<string, { ko: string; en: string }> = {
+    '会员礼遇': { ko: 'HotelLux VIP 특별 혜택', en: 'HotelLux VIP Exclusive Benefit' },
+    'FHR': { ko: '아멕스 FHR 혜택 (해당 시)', en: 'Amex FHR Benefit (where applicable)' },
 };
 
-export function mapBenefitText(benefit: string | RawBenefit): string {
+export function mapBenefitText(benefit: string | RawBenefit, locale: string = 'ko'): string {
     if (typeof benefit === 'string') {
         return benefit;
     }
     if (benefit?.name) {
-        if (BENEFIT_NAME_MAP[benefit.name]) return BENEFIT_NAME_MAP[benefit.name];
-        if (benefit?.type === 'luxury') return 'HotelLux VIP 특별 혜택';
+        const mapped = BENEFIT_NAME_MAP[benefit.name];
+        if (mapped) return locale === 'en' ? mapped.en : mapped.ko;
+        if (benefit?.type === 'luxury') return locale === 'en' ? 'HotelLux VIP Exclusive Benefit' : 'HotelLux VIP 특별 혜택';
         return benefit.name;
     }
-    return '독점 제휴 혜택';
+    return locale === 'en' ? 'Exclusive Partner Benefit' : '독점 제휴 혜택';
 }
