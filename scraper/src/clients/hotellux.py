@@ -8,6 +8,7 @@ from src.config import (
     REQUEST_DELAY_SEC,
     MAX_RETRIES,
     RETRY_WAIT_SEC,
+    HOTELLUX_SESSION_COOKIE,
 )
 from src.utils.logger import get_logger
 
@@ -27,9 +28,9 @@ def should_retry(e):
 class HotelLuxClient:
     def __init__(self):
         self.base_url = HOTELLUX_BASE_URL
-        self.headers = {
-            **DEFAULT_HEADERS,
-        }
+        self.headers = {**DEFAULT_HEADERS}
+        if HOTELLUX_SESSION_COOKIE:
+            self.headers["cookie"] = f"connect.sid={HOTELLUX_SESSION_COOKIE}"
         self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:

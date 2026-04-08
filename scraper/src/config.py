@@ -9,7 +9,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 HOTELLUX_BASE_URL = "https://hotel.hotelux.com/services/booking/hotel"
 HOTELLUX_SESSION_COOKIE = os.getenv("HOTELLUX_SESSION_COOKIE")
 
-CITIES = ["seoul"]
+CITIES = os.getenv("SCRAPE_CITIES", "seoul,busan,jeju").split(",")
 SCRAPE_DAYS_AHEAD = 90
 REQUEST_DELAY_SEC = 2.0
 PAGING_LIMIT = 50

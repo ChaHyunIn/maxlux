@@ -15,21 +15,28 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
     parsed_rates = []
     for h in hotels_data:
         hotellux_id = h.get("_id")
-        price_detail = h.get("minBasePriceDetail", {})
+        price_detail = h.get("minBasePriceDetail", {}) or {}
         price_krw = price_detail.get("amount")
-        
-        if hotellux_id and price_krw is not None:
-            if not isinstance(price_krw, (int, float)):
-                continue
-                
-            parsed_rates.append({
-                "hotellux_id": hotellux_id,
-                "price_krw": price_krw,
-                "stay_date": check_in,
-                "room_type": "standard",
-                "tag": tag,
-                "is_sold_out": False
-            })
+        is_sold_out = False
+
+        if not hotellux_id:
+            continue
+
+        # Treat None or 0 as sold out rather than skipping
+        if price_krw is None or price_krw == 0:
+            is_sold_out = True
+            price_krw = 0
+        elif not isinstance(price_krw, (int, float)):
+            continue
+
+        parsed_rates.append({
+            "hotellux_id": hotellux_id,
+            "price_krw": int(price_krw),
+            "stay_date": check_in,
+            "room_type": "standard",
+            "tag": tag,
+            "is_sold_out": is_sold_out
+        })
 
     if not parsed_rates:
         return {"inserted": 0, "updated": 0, "skipped": 0}

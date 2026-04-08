@@ -57,9 +57,19 @@ BRAND_MAPPING = {
 
 # City name mapping (raw API value → normalized)
 CITY_MAPPING = {
+    # Seoul
     "首尔": "seoul",
     "Seoul": "seoul",
     "seoul": "seoul",
+    # Busan
+    "釜山": "busan",
+    "Busan": "busan",
+    "busan": "busan",
+    # Jeju
+    "济州": "jeju",
+    "제주": "jeju",
+    "Jeju": "jeju",
+    "jeju": "jeju",
 }
 
 def get_city(raw_city: str) -> str:

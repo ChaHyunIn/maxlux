@@ -62,6 +62,12 @@ def sync_hotels(hotels_data: list[dict]) -> int:
             "benefits": benefits_list,
             "benefit_value_krw": estimate_benefit_value(benefits_list),
             "description": h.get("description"),
+            "booking_url": (
+                h.get("bookingUrl")
+                or h.get("deeplink")
+                or h.get("url")
+                or f"https://hotel.hotelux.com/hotel/{hotel_id}"
+            ),
             "is_active": True,
         }
         client.table("hotels").upsert(row, on_conflict="hotellux_id").execute()
