@@ -8,6 +8,16 @@ def slugify(name: str) -> str:
     return (name.lower().replace(",", "").replace(".", "").replace("'", "")
             .replace("&", "and").replace("  ", " ").replace(" ", "-").strip("-"))
 
+def estimate_benefit_value(benefits: list[dict]) -> int:
+    value = 0
+    for b in benefits:
+        desc = str(b.get("description", "")) + " " + " ".join(b.get("tags", []))
+        if "100USD" in desc or "100美元" in desc:
+            value += 135000
+        if "赠送早餐" in desc or "双早" in desc:
+            value += 120000
+    return value
+
 def sync_hotels(hotels_data: list[dict]) -> int:
     client = get_client()
     upserted = 0
@@ -25,7 +35,17 @@ def sync_hotels(hotels_data: list[dict]) -> int:
         city_val = get_city(raw_city)
 
         raw_brand = brand_obj.get("name")
-        brand_val = BRAND_MAPPING.get(raw_brand, raw_brand)
+        brand_val = BRAND_MAPPING.get(raw_brand)
+        if not brand_val and raw_brand:
+            # Fallback text matching
+            for kor_brand in BRAND_MAPPING.values():
+                if kor_brand in name_ko:
+                    brand_val = kor_brand
+                    break
+        if not brand_val:
+            brand_val = raw_brand
+
+        benefits_list = h.get("benefits", [])
 
         row = {
             "hotellux_id": hotel_id,
@@ -39,7 +59,8 @@ def sync_hotels(hotels_data: list[dict]) -> int:
             "address": h.get("address"),
             "latitude": location.get("latitude"),
             "longitude": location.get("longitude"),
-            "benefits": h.get("benefits", []),
+            "benefits": benefits_list,
+            "benefit_value_krw": estimate_benefit_value(benefits_list),
             "description": h.get("description"),
             "is_active": True,
         }

@@ -49,7 +49,7 @@ async def run():
                     hotels_with_prices = await hotellux.search_all_hotels(
                         city, check_in.isoformat(), check_out.isoformat())
                     result = save_rates_from_search(
-                        hotels_with_prices, check_in.isoformat())
+                        hotels_with_prices, check_in.isoformat(), holidays)
                     total_inserted += result["inserted"]
                     total_updated += result["updated"]
                 except Exception as e:

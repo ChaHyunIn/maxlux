@@ -9,23 +9,14 @@ const supabase = createClient(
 
 export async function getHotels(): Promise<(Hotel & { min_price?: number })[]> {
     const { data, error } = await supabase
-        .from('hotels')
-        .select(`
-            *,
-            daily_rates ( price_krw )
-        `)
+        .from('hotels_with_min_price')
+        .select('*')
         .eq('is_active', true)
-        .eq('daily_rates.is_sold_out', false)
         .order('name_en');
 
     if (error) throw error;
 
-    return data.map((hotel: any) => {
-        const prices = hotel.daily_rates.map((r: any) => r.price_krw);
-        const min_price = prices.length > 0 ? Math.min(...prices) : undefined;
-        delete hotel.daily_rates;
-        return { ...hotel, min_price };
-    });
+    return data as (Hotel & { min_price?: number })[];
 }
 
 export async function getHotelBySlug(slug: string): Promise<Hotel | null> {

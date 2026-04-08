@@ -1,4 +1,6 @@
 # Hotel name Korean mapping (English → Korean)
+# TODO: For multi-city expansion, migrate this mapping to a `hotel_translations` DB table.
+# API currently requires hardcoded names for some instances.
 HOTEL_KO_MAPPING = {
     "Andaz Seoul Gangnam": "안다즈 서울 강남",
     "Grand Hyatt Seoul": "그랜드 하얏트 서울",

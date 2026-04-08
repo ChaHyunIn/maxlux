@@ -16,6 +16,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="ko">
+            <head>
+                <link rel="stylesheet" as="style" crossOrigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+            </head>
             <body className="font-sans antialiased min-h-screen flex flex-col">
                 <Header />
                 <main className="flex-1">

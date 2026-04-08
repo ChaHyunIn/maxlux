@@ -11,6 +11,12 @@ from src.utils.logger import get_logger
 log = get_logger("hotellux")
 
 
+class SessionExpiredError(Exception):
+    pass
+
+def should_retry(e):
+    return type(e) in (httpx.HTTPStatusError, httpx.ConnectTimeout) and not getattr(e.response, "status_code", 200) in (401, 403)
+
 class HotelLuxClient:
     def __init__(self):
         self.base_url = HOTELLUX_BASE_URL
@@ -35,6 +41,7 @@ class HotelLuxClient:
         stop=stop_after_attempt(MAX_RETRIES),
         wait=wait_fixed(RETRY_WAIT_SEC),
         retry=retry_if_exception_type((httpx.HTTPStatusError, httpx.ConnectTimeout)),
+        reraise=True
     )
     async def search_hotels(self, city: str, check_in: str, check_out: str, skip: int = 0) -> dict:
         url = f"{self.base_url}/search?mode=async"
@@ -49,6 +56,9 @@ class HotelLuxClient:
 
         client = await self._get_client()
         resp = await client.post(url, json=payload)
+        if resp.status_code in (401, 403):
+            log.error("session_expired", message="connect.sid cookie is expired or invalid")
+            raise SessionExpiredError("Session cookie expired")
         resp.raise_for_status()
         data = resp.json()
 
