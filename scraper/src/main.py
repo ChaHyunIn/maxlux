@@ -12,103 +12,181 @@ from src.utils.logger import get_logger
 
 log = get_logger("main")
 
+
 async def run():
     run_id = str(uuid.uuid4())[:8]
     started_at = datetime.utcnow().isoformat()
     client = get_client()
     hotellux = HotelLuxClient()
 
-    log.info("run_started", run_id=run_id, cities=CITIES, days=SCRAPE_DAYS_AHEAD)
-
-    client.table("scrape_logs").insert({
-        "run_id": run_id, "started_at": started_at, "status": "running",
-    }).execute()
-
-    # Seed holidays & load into memory once
-    seed_holidays(client)
-    holidays = load_holidays(client)
-
-    total_inserted, total_updated = 0, 0
-    total_hotels_count = 0
-    errors = []
-
     try:
-        semaphore = asyncio.Semaphore(5)
+        log.info("run_started", run_id=run_id, cities=CITIES, days=SCRAPE_DAYS_AHEAD)
+
+        client.table("scrape_logs").insert({
+            "run_id": run_id,
+            "started_at": started_at,
+            "status": "running",
+        }).execute()
+
+        # Seed holidays & load into memory once
+        seed_holidays(client)
+        holidays = load_holidays(client)
+
+        total_inserted = 0
+        total_updated = 0
+        total_hotels_count = 0
+        total_processed_tasks = 0
+        errors = []
 
         for city in CITIES:
             log.info("city_started", city=city)
+
+            # city별 semaphore (병목 방지)
+            semaphore = asyncio.Semaphore(5)
+
             today = date.today()
             tomorrow = today + timedelta(days=1)
+
+            # 호텔 리스트 sync (thread 처리)
             hotels_data = await hotellux.search_all_hotels(
-                city, today.isoformat(), tomorrow.isoformat())
-            sync_hotels(hotels_data)
+                city, today.isoformat(), tomorrow.isoformat()
+            )
+            await asyncio.to_thread(sync_hotels, hotels_data)
             total_hotels_count += len(hotels_data)
 
-            async def process_day(day_offset):
-                check_in = today + timedelta(days=day_offset)
+            async def process_day(city_arg, today_arg, day_offset):
+                check_in = today_arg + timedelta(days=day_offset)
                 check_out = check_in + timedelta(days=1)
-                
-                # Setup retries locally against DB locks and external glitches
+
                 for i in range(3):
-                    async with semaphore:
-                        try:
+                    try:
+                        # network 호출만 semaphore로 제한
+                        async with semaphore:
                             hotels_with_prices = await hotellux.search_all_hotels(
-                                city, check_in.isoformat(), check_out.isoformat())
-                            result = save_rates_from_search(
-                                hotels_with_prices, check_in.isoformat(), holidays)
-                            return result, None
-                        except Exception as e:
-                            if i == 2:
-                                log.error("date_failed", exc_info=True, city=city, date=check_in)
-                                return None, {
-                                    "type": type(e).__name__,
-                                    "message": str(e),
-                                    "context": f"{city}/{check_in}"
-                                }
-                            await asyncio.sleep(2 ** i)
+                                city_arg,
+                                check_in.isoformat(),
+                                check_out.isoformat(),
+                            )
 
-            tasks = [process_day(i) for i in range(SCRAPE_DAYS_AHEAD)]
-            results = await asyncio.gather(*tasks)
+                        # DB 작업은 thread로 분리
+                        result = await asyncio.to_thread(
+                            save_rates_from_search,
+                            hotels_with_prices,
+                            check_in.isoformat(),
+                            holidays,
+                        )
 
-            for res, err in results:
+                        return result, None
+
+                    except asyncio.TimeoutError:
+                        if i == 2:
+                            return None, {
+                                "type": "Timeout",
+                                "message": "request timeout",
+                                "context": f"{city_arg}/{check_in}",
+                            }
+
+                    except Exception as e:
+                        if i == 2:
+                            log.error(
+                                "date_failed",
+                                exc_info=True,
+                                city=city_arg,
+                                date=check_in,
+                            )
+                            return None, {
+                                "type": type(e).__name__,
+                                "message": str(e),
+                                "context": f"{city_arg}/{check_in}",
+                            }
+
+                    await asyncio.sleep(2 ** i)
+
+            tasks = [
+                asyncio.wait_for(
+                    process_day(city, today, i),
+                    timeout=120,  # 안정성 증가
+                )
+                for i in range(SCRAPE_DAYS_AHEAD)
+            ]
+
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            total_processed_tasks += len(results)
+
+            for res_obj in results:
+                if isinstance(res_obj, Exception):
+                    if len(errors) < 1000:
+                        errors.append({
+                            "type": type(res_obj).__name__,
+                            "message": str(res_obj),
+                            "context": f"{city}/fatal",
+                        })
+                    continue
+
+                res, err = res_obj
+
                 if err:
-                    errors.append(err)
+                    if len(errors) < 1000:
+                        errors.append(err)
+
                 if res:
-                    total_inserted += res["inserted"]
-                    total_updated += res["updated"]
+                    total_inserted += res.get("inserted", 0)
+                    total_updated += res.get("updated", 0)
 
             log.info("city_completed", city=city)
-    except Exception as e:
-        log.error("run_failed", exc_info=True, error=str(e))
-        errors.append({"type": type(e).__name__, "message": str(e), "context": "global"})
 
-    total_tasks = len(CITIES) * SCRAPE_DAYS_AHEAD
-    success_rate = 1.0 - (len(errors) / total_tasks) if total_tasks else 1.0
+        # --- 결과 계산 ---
+        total_tasks = total_processed_tasks if total_processed_tasks else 1
+        success_rate = 1.0 - (len(errors) / total_tasks)
 
-    if success_rate < 0.7 or total_inserted == 0:
-        status = "failed"
-    elif errors:
-        status = "partial"
-    else:
-        status = "success"
+        if success_rate < 0.7 or total_inserted == 0:
+            status = "failed"
+        elif errors:
+            status = "partial"
+        else:
+            status = "success"
 
-    if success_rate < 0.8:
-        log.warning("alert", reason="Low success rate", rate=success_rate, errors=len(errors))
-    if total_inserted == 0:
-        log.warning("alert", reason="Zero insertions")
+        # --- ALERT ---
+        if status == "failed":
+            log.error("ALERT: pipeline failed", run_id=run_id)
 
-    client.table("scrape_logs").update({
-        "finished_at": datetime.utcnow().isoformat(),
-        "hotels_count": total_hotels_count,
-        "rates_inserted": total_inserted,
-        "rates_updated": total_updated,
-        "errors": errors, "status": status,
-    }).eq("run_id", run_id).execute()
+        if success_rate < 0.8:
+            log.warning(
+                "alert",
+                reason="Low success rate",
+                rate=success_rate,
+                errors=len(errors),
+            )
 
-    log.info("run_completed", run_id=run_id, status=status, success_rate=success_rate,
-             inserted=total_inserted, updated=total_updated, errors=len(errors))
+        if total_inserted == 0:
+            log.warning("alert", reason="Zero insertions")
 
-    await hotellux.close()
+        # --- DB 기록 ---
+        try:
+            client.table("scrape_logs").update({
+                "finished_at": datetime.utcnow().isoformat(),
+                "hotels_count": total_hotels_count,
+                "rates_inserted": total_inserted,
+                "rates_updated": total_updated,
+                "errors": errors[:100],
+                "status": status,
+            }).eq("run_id", run_id).execute()
+        except Exception as db_e:
+            log.error("scrape_log_update_failed", exc_info=True, error=str(db_e))
+
+        log.info(
+            "run_completed",
+            run_id=run_id,
+            status=status,
+            success_rate=success_rate,
+            inserted=total_inserted,
+            updated=total_updated,
+            errors=len(errors),
+        )
+
+    finally:
+        await hotellux.close()
+
 
 if __name__ == "__main__":
     asyncio.run(run())

@@ -33,6 +33,15 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
             if (sortBy === 'price') {
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
+            if (sortBy === 'discount') {
+                // Approximate discount metric for sorting priorities (e.g., lower price compared to market or history)
+                // Assuming hot deals are cheaper, we push them top. Or just mock it if there's no explicitly real field yet.
+                // Here we sort them placing items with min_price <= 350000 prioritizing the hottest deals
+                const aIsHot = a.min_price && a.min_price <= 350000 ? 1 : 0;
+                const bIsHot = b.min_price && b.min_price <= 350000 ? 1 : 0;
+                if (aIsHot !== bIsHot) return bIsHot - aIsHot; // Push hot deals to top
+                return (a.min_price ?? Infinity) - (b.min_price ?? Infinity); // then sort by price
+            }
             return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);
         });
         return result;

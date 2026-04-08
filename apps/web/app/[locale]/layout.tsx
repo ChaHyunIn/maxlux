@@ -7,6 +7,7 @@ import '../../styles/globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
     title: 'MaxLux - 럭셔리 호텔 최저가 스나이퍼',
@@ -51,6 +52,7 @@ export default async function LocaleLayout({
                         <ErrorBoundary>{children}</ErrorBoundary>
                     </main>
                     <Footer />
+                    <Analytics />
                 </NextIntlClientProvider>
             </body>
         </html>

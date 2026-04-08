@@ -14,6 +14,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.hotellux.com.cn',
       },
+      {
+        protocol: 'https',
+        hostname: '**.hotellux.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.hotellux.com.cn',
+      },
     ],
   },
 };

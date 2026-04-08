@@ -3,10 +3,10 @@ import { create } from 'zustand';
 interface FilterState {
     searchQuery: string;
     selectedBrand: string;
-    sortBy: 'price' | 'name';
+    sortBy: 'price' | 'name' | 'discount';
     setSearchQuery: (q: string) => void;
     setSelectedBrand: (b: string) => void;
-    setSortBy: (s: 'price' | 'name') => void;
+    setSortBy: (s: 'price' | 'name' | 'discount') => void;
 }
 
 export const useFilterStore = create<FilterState>((set) => ({

@@ -27,13 +27,14 @@ export function HotelFilters({ brands }: { brands: string[] }) {
                     ))}
                 </SelectContent>
             </Select>
-            <Select value={sortBy} onValueChange={(val) => setSortBy((val as 'price' | 'name') || 'price')}>
+            <Select value={sortBy} onValueChange={(val) => setSortBy((val as 'price' | 'name' | 'discount') || 'price')}>
                 <SelectTrigger className="w-full sm:w-48 bg-white">
                     <SelectValue placeholder={t('sortByPrice')} />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="price">{t('sortByPrice')}</SelectItem>
                     <SelectItem value="name">{t('sortByName')}</SelectItem>
+                    <SelectItem value="discount">🔥 특가순</SelectItem>
                 </SelectContent>
             </Select>
         </div>
