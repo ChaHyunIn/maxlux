@@ -1,0 +1,27 @@
+name: Scraper Morning (06:00 KST)
+on:
+  schedule:
+    - cron: '0 21 * * *'  # UTC 21:00 = KST 06:00
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          cd scraper
+          pip install -r requirements.txt
+      - name: Run scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          HOTELLUX_SESSION_COOKIE: ${{ secrets.HOTELLUX_SESSION_COOKIE }}
+        run: |
+          cd scraper
+          python -m src.main

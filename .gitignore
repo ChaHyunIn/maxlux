@@ -1,0 +1,55 @@
+# ===========================
+# MaxLux Project .gitignore
+# ===========================
+
+# ---- Dependencies ----
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ---- Build outputs ----
+.next/
+dist/
+out/
+build/
+*.egg-info/
+
+# ---- Environment / Secrets ----
+.env
+.env.local
+.env.*.local
+scraper/.env
+apps/web/.env.local
+
+# ---- IDE & OS ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Deployment ----
+.vercel/
+
+# ---- Logs ----
+*.log
+scraper/scrape_log.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Package manager locks (keep package-lock.json) ----
+# package-lock.json  ← Keep this tracked
+
+# ---- Test / Coverage ----
+coverage/
+.nyc_output/
+htmlcov/
+.pytest_cache/
+
+# ---- Misc ----
+*.tsbuildinfo
+next-env.d.ts
