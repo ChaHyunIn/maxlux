@@ -5,11 +5,12 @@ import { HotelCard } from './HotelCard';
 import { HotelFilters } from './HotelFilters';
 import { useFilterStore } from '@/stores/filterStore';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
     const { searchQuery, selectedBrand, sortBy } = useFilterStore();
     const t = useTranslations('common');
+    const locale = useLocale();
 
     const brands = useMemo(() => {
         const unique = new Set(hotels.map(h => h.brand).filter(Boolean) as string[]);
@@ -32,7 +33,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
             if (sortBy === 'price') {
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
-            return a.name_ko.localeCompare(b.name_ko);
+            return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);
         });
         return result;
     }, [hotels, searchQuery, selectedBrand, sortBy]);

@@ -6,10 +6,11 @@ import { SniperFilters } from './SniperFilters';
 import { CalendarLegend } from './CalendarLegend';
 import { getYear, getMonth } from 'date-fns';
 import { FALLBACK_PERCENTILES } from '@/lib/constants';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const t = useTranslations('calendar');
+    const locale = useLocale();
 
     const { p25, p75 } = useMemo(() => {
         const prices = rates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
@@ -45,7 +46,7 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-bold px-2">{t('title')}</h2>
+            <h2 className="text-xl font-bold px-2">{locale === 'en' ? hotel.name_en : hotel.name_ko} {t('title')}</h2>
             <div className="flex flex-col md:flex-row md:items-center gap-4 px-2">
                 <SniperFilters />
                 <div className="md:ml-auto">

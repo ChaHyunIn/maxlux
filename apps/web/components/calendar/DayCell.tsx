@@ -3,10 +3,13 @@ import { getPriceLevel, cn } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import { PRICE_COLORS } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
+import { useSettingStore } from '@/stores/settingStore';
+import { formatPrice } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
     const { sniperMode } = useCalendarStore();
+    const { currency } = useSettingStore();
     const t = useTranslations('calendar');
 
     const day = date.getDate();
@@ -43,7 +46,11 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
         if (sniperMode === 'cheapest_sat' && !isSat) opacityClass = 'opacity-20';
     }
 
-    const priceText = is_sold_out ? t('soldOut') : `${Math.round(price_krw / 10000)}${t('priceUnit')}`;
+    const priceText = is_sold_out ? t('soldOut') : (
+        currency === 'USD'
+            ? (formatPrice(price_krw, 'USD') ?? '')
+            : `${Math.round(price_krw / 10000)}${t('priceUnit')}`
+    );
 
     return (
         <div

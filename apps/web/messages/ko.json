@@ -51,5 +51,10 @@
     "settings": {
         "language": "언어",
         "currency": "통화"
+    },
+    "seo": {
+        "monthlyTitle": "{name} {month} 가격 | MaxLux",
+        "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요.",
+        "monthlyLandingTodo": "TODO: 월별 SEO 랜딩 페이지"
     }
 }

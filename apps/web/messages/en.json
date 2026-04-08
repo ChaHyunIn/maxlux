@@ -51,5 +51,10 @@
     "settings": {
         "language": "Language",
         "currency": "Currency"
+    },
+    "seo": {
+        "monthlyTitle": "{name} {month} Prices | MaxLux",
+        "monthlyDescription": "Check the monthly prices for {name} in {month}.",
+        "monthlyLandingTodo": "TODO: Monthly SEO Landing Page"
     }
 }

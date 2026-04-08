@@ -1,5 +1,5 @@
-import { redirect } from '@/i18n/navigation';
+import { redirect } from 'next/navigation';
 
-export default function HotelsPage({ params }: { params: { locale: string } }) {
-    redirect({ href: '/', locale: params.locale });
+export default function HotelsPage() {
+    redirect('/');
 }

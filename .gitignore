@@ -54,3 +54,4 @@ htmlcov/
 *.tsbuildinfo
 next-env.d.ts
 next_log.txt
+apps/web/next_log.txt

@@ -3,10 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import type { Hotel } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) {
     const t = useTranslations('hotel');
+    const locale = useLocale();
 
     return (
         <Link href={`/hotels/${hotel.slug}`}>
@@ -15,7 +16,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                     {hotel.image_url && (
                         <img
                             src={hotel.image_url}
-                            alt={hotel.name_ko}
+                            alt={locale === 'en' ? hotel.name_en : hotel.name_ko}
                             className="object-cover w-full h-full rounded-t-xl"
                         />
                     )}
@@ -23,7 +24,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number } }) 
                 <CardContent className="p-4 flex flex-col flex-1 justify-between">
                     <div>
                         <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-lg font-bold line-clamp-1">{hotel.name_ko}</h3>
+                            <h3 className="text-lg font-bold line-clamp-1">{locale === 'en' ? hotel.name_en : hotel.name_ko}</h3>
                         </div>
                         <div className="flex items-center gap-2 mb-4">
                             {hotel.brand && (

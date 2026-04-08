@@ -5,10 +5,13 @@ import { HotelHeroImage } from '@/components/hotel/HotelHeroImage';
 import { mapBenefitText } from '@/lib/benefitMapper';
 import { getCityDisplayName } from '@/lib/cityMapper';
 import type { Hotel } from '@/lib/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const t = useTranslations('hotel');
+    const locale = useLocale();
+    const primaryName = locale === 'en' ? hotel.name_en : hotel.name_ko;
+    const secondaryName = locale === 'en' ? hotel.name_ko : hotel.name_en;
 
     return (
         <div className="mb-12 rounded-3xl overflow-hidden border bg-card text-card-foreground shadow-sm relative group">
@@ -28,9 +31,9 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                         </Badge>
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md">
-                        {hotel.name_ko}
+                        {primaryName}
                     </h1>
-                    <p className="text-slate-200 text-lg md:text-xl font-medium drop-shadow-md">{hotel.name_en}</p>
+                    <p className="text-slate-200 text-lg md:text-xl font-medium drop-shadow-md">{secondaryName}</p>
                     {hotel.address && (
                         <div className="flex items-center text-slate-300 mt-5 text-sm md:text-base max-w-2xl">
                             <MapPin className="w-4 h-4 md:w-5 md:h-5 mr-2 flex-shrink-0" />
