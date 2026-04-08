@@ -14,8 +14,8 @@ export function formatPrice(price_krw: number | undefined, currency: 'KRW' | 'US
   return `₩${price_krw.toLocaleString()}`;
 }
 
-export function getPriceLevel(price: number, p25: number, p75: number): 'LOW' | 'MEDIUM' | 'HIGH' {
-  if (price <= p25) return 'LOW';
-  if (price >= p75) return 'HIGH';
-  return 'MEDIUM';
+export function getPriceLevel(price: number, p25: number, p75: number): 'low' | 'mid' | 'high' {
+  if (price <= p25) return 'low';
+  if (price >= p75) return 'high';
+  return 'mid';
 }
