@@ -1,4 +1,4 @@
-import { getHotels } from '@/lib/supabase/server';
+import { getHotels } from '@/lib/supabase/queries/hotels';
 import { HotelList } from '@/components/hotel/HotelList';
 import type { Hotel } from '@/lib/types';
 import { getTranslations, setRequestLocale } from 'next-intl/server';

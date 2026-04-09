@@ -1,4 +1,4 @@
-import { getRates } from '@/lib/supabase/server';
+import { getRates } from '@/lib/supabase/queries/rates';
 import { NextResponse } from 'next/server';
 
 interface Props {

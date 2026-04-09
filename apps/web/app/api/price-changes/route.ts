@@ -1,14 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getPriceChanges } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { getPriceChanges } from '@/lib/supabase/queries/rates';
+import { errorResponse, successResponse } from '@/lib/apiResponse';
 
 export async function GET(req: NextRequest) {
     const hotelId = req.nextUrl.searchParams.get('hotelId');
     const limit = parseInt(req.nextUrl.searchParams.get('limit') || '20', 10);
 
     if (!hotelId) {
-        return NextResponse.json({ error: 'Missing hotelId' }, { status: 400 });
+        return errorResponse('Missing hotelId', 400);
     }
 
-    const changes = await getPriceChanges(hotelId, limit);
-    return NextResponse.json(changes);
+    try {
+        const changes = await getPriceChanges(hotelId, limit);
+        return successResponse({ changes });
+    } catch {
+        return errorResponse('Failed to fetch price changes', 500);
+    }
 }

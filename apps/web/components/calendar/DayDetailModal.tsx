@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ExternalLink, TrendingDown, TrendingUp, Minus, Calendar, Tag } from 'lucide-react'
-import { formatPrice, getPriceLevel, getRelativeTime, formatAbsoluteTime } from '@/lib/utils'
+import { ExternalLink, Calendar } from 'lucide-react'
+import { getPriceLevel } from '@/lib/utils'
 import { PRICE_COLORS } from '@/lib/constants'
+import { OtaPriceList } from './OtaPriceList'
+import { RoomRateList } from './RoomRateList'
+import { PriceHeader } from './PriceHeader'
 import type { DailyRate, OtaPrice, RoomRate } from '@/lib/types'
 import { useSettingStore } from '@/stores/settingStore'
 import { useTranslations, useLocale } from 'next-intl'
@@ -24,14 +25,7 @@ interface DayDetailModalProps {
     p75: number
 }
 
-const OTA_DISPLAY: Record<string, { name: string; color: string }> = {
-    hotellux: { name: 'HotelLux', color: 'bg-violet-100 text-violet-800' },
-    agoda: { name: 'Agoda', color: 'bg-red-100 text-red-800' },
-    booking: { name: 'Booking.com', color: 'bg-blue-100 text-blue-800' },
-    hotels_com: { name: 'Hotels.com', color: 'bg-rose-100 text-rose-800' },
-    trip_com: { name: 'Trip.com', color: 'bg-sky-100 text-sky-800' },
-    expedia: { name: 'Expedia', color: 'bg-yellow-100 text-yellow-800' },
-}
+
 
 export function DayDetailModal({
     open,
@@ -125,181 +119,32 @@ export function DayDetailModal({
                 </DialogHeader>
 
                 {/* Price Display */}
-                <div className="space-y-2 mb-4">
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500">{t('nonRefundable')}</span>
-                        <div className="flex items-center gap-3">
-                            <div className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${style.bg} ${style.text}`}>
-                                {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency)}
-                            </div>
-                            <Badge variant="outline" className="gap-1">
-                                <Tag className="w-3 h-3" />
-                                {t(`tag${rate.tag}` as any) || rate.tag}
-                            </Badge>
-                            {!rate.is_sold_out && (
-                                <div className="flex items-center gap-1 text-xs text-slate-500">
-                                    {level === 'low' && <TrendingDown className="w-3.5 h-3.5 text-emerald-600" />}
-                                    {level === 'mid' && <Minus className="w-3.5 h-3.5 text-slate-400" />}
-                                    {level === 'high' && <TrendingUp className="w-3.5 h-3.5 text-red-600" />}
-                                    {level === 'low' ? t('levelLow') : level === 'high' ? t('levelHigh') : t('levelMid')}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    {refundableRate && !refundableRate.is_sold_out && (
-                        <div className="flex flex-wrap items-center justify-between">
-                            <span className="text-xs text-slate-500">{t('refundable')}</span>
-                            <div className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-50 text-blue-800">
-                                {formatPrice(refundableRate.price_krw, currency)}
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <PriceHeader
+                    rate={rate}
+                    refundableRate={refundableRate}
+                    t={t}
+                    currency={currency}
+                    style={style}
+                    level={level}
+                    locale={locale}
+                />
 
-                {rate.scraped_at && (
-                    <p className="text-[11px] text-slate-400 mb-4 -mt-2">
-                        {t('scrapedAt', {
-                            absoluteTime: formatAbsoluteTime(rate.scraped_at, locale),
-                            relativeTime: getRelativeTime(rate.scraped_at, locale)
-                        })}
-                    </p>
-                )}
+                <OtaPriceList
+                    loading={loading}
+                    allPrices={allPrices}
+                    lowestPrice={lowestPrice}
+                    currency={currency}
+                    t={t}
+                />
 
-                {/* OTA Price Comparison */}
-                <div className="border rounded-xl overflow-hidden">
-                    <div className="bg-slate-50 px-4 py-2.5 border-b">
-                        <h3 className="text-sm font-semibold text-slate-700">{t('priceComparison')}</h3>
-                    </div>
-                    <div className="divide-y">
-                        {loading ? (
-                            <div className="p-4 space-y-3">
-                                <Skeleton className="h-10 w-full" />
-                                <Skeleton className="h-10 w-full" />
-                            </div>
-                        ) : (
-                            allPrices.map((p, idx) => {
-                                const display = OTA_DISPLAY[p.source] || { name: p.source, color: 'bg-slate-100 text-slate-700' }
-                                const isLowest = !p.is_sold_out && p.price_krw === lowestPrice && p.price_krw > 0
-                                return (
-                                    <div key={`${p.source}-${idx}`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors">
-                                        <div className="flex items-center gap-2">
-                                            <Badge className={`text-xs ${display.color} border-none`}>
-                                                {display.name}
-                                            </Badge>
-                                            {isLowest && (
-                                                <Badge className="bg-emerald-500 text-white text-[10px] border-none px-1.5">
-                                                    {t('lowestBadge')}
-                                                </Badge>
-                                            )}
-                                            {p.refund_policy && p.refund_policy !== 'unknown' && (
-                                                <Badge variant="outline" className={`text-[10px] ${p.refund_policy === 'refundable'
-                                                    ? 'bg-green-50 text-green-600 border-green-200'
-                                                    : 'bg-red-50 text-red-600 border-red-200'
-                                                    }`}>
-                                                    {p.refund_policy === 'refundable' ? t('refundable') : t('nonRefundable')}
-                                                </Badge>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className={`font-bold ${isLowest ? 'text-emerald-700' : 'text-slate-800'}`}>
-                                                {p.is_sold_out ? t('soldOut') : formatPrice(p.price_krw, currency)}
-                                            </span>
-                                            {p.url && !p.is_sold_out && (
-                                                <a
-                                                    href={p.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-slate-400 hover:text-blue-600 transition-colors"
-                                                >
-                                                    <ExternalLink className="w-3.5 h-3.5" />
-                                                </a>
-                                            )}
-                                        </div>
-                                    </div>
-                                )
-                            })
-                        )}
-
-                        {!loading && allPrices.length === 1 && (
-                            <div className="px-4 py-3 text-sm text-slate-400 text-center">
-                                {t('noOtaData')}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Room Rates Details */}
-                <div className="border rounded-xl overflow-hidden mt-4">
-                    <div className="bg-slate-50 px-4 py-2.5 border-b flex justify-between items-center">
-                        <h3 className="text-sm font-semibold text-slate-700">{t('roomRates')}</h3>
-                    </div>
-                    <div className="divide-y relative pb-2 bg-white max-h-[300px] overflow-y-auto">
-                        {roomRatesLoading ? (
-                            <div className="p-4 space-y-3">
-                                <Skeleton className="h-6 w-1/2 mb-2" />
-                                <Skeleton className="h-10 w-full" />
-                                <Skeleton className="h-10 w-full" />
-                            </div>
-                        ) : roomRates.length === 0 ? (
-                            <div className="px-4 py-8 text-sm text-slate-400 text-center">
-                                {t('noRoomData')}
-                            </div>
-                        ) : (
-                            Array.from(new Set(roomRates.map(r => getLocalizedText(r.room_name_en, r.room_name, tTerm, isEn)))).map(roomName => {
-                                const ratesForRoom = roomRates.filter(r => getLocalizedText(r.room_name_en, r.room_name, tTerm, isEn) === roomName);
-                                return (
-                                    <div key={roomName} className="pb-3 border-b border-slate-100 last:border-b-0">
-                                        <div className="bg-slate-50 px-3 py-2 border-b border-slate-100 sticky top-0 z-10">
-                                            <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                                <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
-                                                {roomName}
-                                            </h4>
-                                        </div>
-                                        <div className="divide-y divide-slate-50">
-                                            {ratesForRoom.map((rate, idx) => {
-                                                const tagStrings = rate.benefit_tags || [];
-                                                return (
-                                                    <div key={`rate-${rate.id || idx}`} className="px-4 py-2.5 hover:bg-slate-50/50 transition-colors flex justify-between items-start gap-3">
-                                                        <div className="flex-1 min-w-0 flex flex-col gap-1.5 pt-0.5">
-                                                            <div className="text-[13px] font-medium text-slate-700 leading-tight">
-                                                                {getLocalizedText(rate.rate_name_en, rate.rate_name, tTerm, isEn)}
-                                                            </div>
-                                                            <div className="flex flex-wrap gap-1 mt-0.5">
-                                                                <Badge variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${rate.is_refundable ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-500'}`}>
-                                                                    {rate.is_refundable ? t('cancelable') : t('nonCancelable')}
-                                                                </Badge>
-                                                                <Badge variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${rate.has_breakfast ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500'}`}>
-                                                                    {rate.has_breakfast ? t('breakfastIncluded') : t('breakfastNotIncluded')}
-                                                                </Badge>
-                                                                {tagStrings.some(tag => tag.includes('100USD') || tag.includes('100美元')) && (
-                                                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-purple-50 text-purple-600">{t('benefitCredit')}</Badge>
-                                                                )}
-                                                                {tagStrings.some(tag => tag.includes('upgrade') || tag.includes('升级') || tag.includes('升等')) && (
-                                                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-sky-50 text-sky-600">{t('benefitUpgrade')}</Badge>
-                                                                )}
-                                                                {tagStrings.some(tag => tag.includes('early') || tag.includes('提前入住') || tag.includes('提早')) && (
-                                                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitEarlyCheckin')}</Badge>
-                                                                )}
-                                                                {tagStrings.some(tag => tag.includes('late') || tag.includes('延迟退房') || tag.includes('延退')) && (
-                                                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitLateCheckout')}</Badge>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-right whitespace-nowrap pt-0.5">
-                                                            <div className="font-bold text-slate-800 text-[14px]">
-                                                                {formatPrice(rate.price_krw, currency)}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        )}
-                    </div>
-                </div>
+                <RoomRateList
+                    roomRatesLoading={roomRatesLoading}
+                    roomRates={roomRates}
+                    t={t}
+                    tTerm={tTerm}
+                    isEn={isEn}
+                    currency={currency}
+                />
 
                 {/* Booking Button */}
                 {bookingUrl && !rate.is_sold_out && (

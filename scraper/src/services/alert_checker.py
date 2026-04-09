@@ -21,6 +21,15 @@ RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "alerts@maxlux.app")
 SITE_URL = os.getenv("SITE_URL", "https://maxlux.app")
 
 
+def _mask_email(email: str) -> str:
+    """PII 마스킹: abc@example.com -> a**@example.com"""
+    try:
+        local, domain = email.split("@", 1)
+        return f"{local[0]}{'*' * min(len(local) - 1, 5)}@{domain}"
+    except Exception:
+        return "***@***"
+
+
 def _fetch_active_alerts() -> list[dict]:
     """동기: DB에서 active 알림 목록 조회."""
     client = get_client()
@@ -215,12 +224,12 @@ async def send_alert_email(
             )
 
             if resp.status_code == 200:
-                log.info("email_sent", to=to_email, hotel=hotel_name)
+                log.info("email_sent", to=_mask_email(to_email), hotel=hotel_name)
                 return True
             else:
                 log.error("email_failed", status=resp.status_code, body=resp.text[:200])
                 return False
 
     except Exception as e:
-        log.error("email_error", to=to_email, error=str(e))
+        log.error("email_error", to=_mask_email(to_email), error=str(e))
         return False

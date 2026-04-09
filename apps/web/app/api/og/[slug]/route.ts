@@ -1,4 +1,4 @@
-import { getHotelBySlug } from '@/lib/supabase/server';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { NextResponse } from 'next/server';
 
 interface Props {

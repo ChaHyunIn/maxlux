@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getHotelBySlug, getRates } from '@/lib/supabase/server';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
+import { getRates } from '@/lib/supabase/queries/rates';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';

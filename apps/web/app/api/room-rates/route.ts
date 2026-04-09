@@ -1,18 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getRoomRates } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { getRoomRates } from '@/lib/supabase/queries/rates';
+import { errorResponse, successResponse } from '@/lib/apiResponse';
 
 export async function GET(req: NextRequest) {
     const hotelId = req.nextUrl.searchParams.get('hotelId');
     const stayDate = req.nextUrl.searchParams.get('stayDate');
 
     if (!hotelId || !stayDate) {
-        return NextResponse.json({ error: 'hotelId and stayDate are required' }, { status: 400 });
+        return errorResponse('hotelId and stayDate are required', 400);
     }
 
     try {
         const data = await getRoomRates(hotelId, stayDate);
-        return NextResponse.json(data);
+        return successResponse({ data });
     } catch {
-        return NextResponse.json({ error: 'Failed to fetch room rates' }, { status: 500 });
+        return errorResponse('Failed to fetch room rates', 500);
     }
 }

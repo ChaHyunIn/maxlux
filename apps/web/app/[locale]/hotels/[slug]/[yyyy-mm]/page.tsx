@@ -1,4 +1,4 @@
-import { getHotelBySlug } from '@/lib/supabase/server';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';

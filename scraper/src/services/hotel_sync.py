@@ -20,7 +20,7 @@ def estimate_benefit_value(benefits: list[dict]) -> int:
 
 def sync_hotels(hotels_data: list[dict]) -> int:
     client = get_client()
-    upserted = 0
+    rows = []
     for h in hotels_data:
         hotel_id = h.get("_id")
         if not hotel_id:
@@ -47,7 +47,7 @@ def sync_hotels(hotels_data: list[dict]) -> int:
 
         benefits_list = h.get("benefits", [])
 
-        row = {
+        rows.append({
             "hotellux_id": hotel_id,
             "hotellux_code": h.get("code"),
             "name_ko": name_ko,
@@ -69,8 +69,17 @@ def sync_hotels(hotels_data: list[dict]) -> int:
                 or f"https://hotel.hotelux.com/hotel/{hotel_id}"
             ),
             "is_active": True,
-        }
-        client.table("hotels").upsert(row, on_conflict="hotellux_id").execute()
-        upserted += 1
+        })
+
+    # Batch upsert in chunks of 50 to stay within Supabase request limits
+    BATCH_SIZE = 50
+    upserted = 0
+    for i in range(0, len(rows), BATCH_SIZE):
+        batch = rows[i:i + BATCH_SIZE]
+        client.table("hotels").upsert(batch, on_conflict="hotellux_id").execute()
+        upserted += len(batch)
+        log.info("hotel_batch_upserted", batch_start=i, count=len(batch))
+
     log.info("hotels_synced", count=upserted)
     return upserted
+
