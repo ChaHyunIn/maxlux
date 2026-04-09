@@ -72,7 +72,12 @@
     },
     "settings": {
         "language": "Language",
-        "currency": "Currency"
+        "currency": "Currency",
+        "ko": "Korean",
+        "en": "English",
+        "zh": "Chinese",
+        "krw": "KRW (₩)",
+        "usd": "USD ($)"
     },
     "priceAlert": {
         "button": "Price Alert",
@@ -191,5 +196,50 @@
         "flexible": "Flexible",
         "non": "Non",
         "prepaid": "Prepaid"
+    },
+    "brand": {
+        "four_seasons": "Four Seasons",
+        "lhw": "LHW (The Leading Hotels of the World)",
+        "fairmont": "Fairmont",
+        "peninsula": "Peninsula",
+        "rosewood": "Rosewood",
+        "marriott": "Marriott",
+        "jw_marriott": "JW Marriott",
+        "mondrian": "Mondrian",
+        "park_hyatt": "Park Hyatt",
+        "josun_palace": "Josun Palace",
+        "intercontinental": "InterContinental",
+        "shilla": "The Shilla",
+        "grand_hyatt": "Grand Hyatt",
+        "conrad": "Conrad",
+        "sofitel": "Sofitel",
+        "andaz": "Andaz",
+        "novotel": "Novotel",
+        "voco": "voco",
+        "mgallery": "MGallery",
+        "westin": "Westin",
+        "luxury_collection": "The Luxury Collection",
+        "slh": "SLH",
+        "others": "Others"
+    },
+    "city": {
+        "seoul": "Seoul",
+        "busan": "Busan",
+        "tokyo": "Tokyo",
+        "jeju": "Jeju"
+    },
+    "benefits": {
+        "exclusive": "VIP Exclusive Benefit",
+        "free": "Free Benefit",
+        "amex_fhr": "Amex FHR Benefit",
+        "fs_benefit": "Four Seasons Benefits"
+    },
+    "time": {
+        "unknown": "Unknown",
+        "justNow": "Just now",
+        "minutesAgo": "{count}m ago",
+        "hoursAgo": "{count}h ago",
+        "daysAgo": "{count}d ago",
+        "monthDayFormat": "{month} {day}"
     }
 }

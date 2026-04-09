@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getRoomRates } from '@/lib/supabase/queries/rates';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 

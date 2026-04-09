@@ -1,27 +1,35 @@
+import type { BenefitKey } from './i18nTypes'
+
 /**
- * Maps raw HotelLux benefit objects/strings to user-friendly text with locale support.
+ * Maps database benefit strings to translation keys.
  */
-
-interface RawBenefit {
-    name?: string;
-    type?: string;
-    [key: string]: unknown;
-}
-
-const BENEFIT_NAME_MAP: Record<string, { ko: string; en: string }> = {
-    '会员礼遇': { ko: 'HotelLux VIP 특별 혜택', en: 'HotelLux VIP Exclusive Benefit' },
-    'FHR': { ko: '아멕스 FHR 혜택 (해당 시)', en: 'Amex FHR Benefit (where applicable)' },
+export const BENEFIT_MAP: Record<string, BenefitKey> = {
+    'VIP': 'exclusive',
+    'EXCLUSIVE': 'exclusive',
+    '럭셔리': 'exclusive',
+    'AMEX FHR': 'amex_fhr',
+    'FHR': 'amex_fhr',
+    '포시즌베네핏': 'fs_benefit',
+    'FS': 'fs_benefit',
+    '무료': 'free',
 };
 
-export function mapBenefitText(benefit: string | RawBenefit, locale: string = 'ko'): string {
-    if (typeof benefit === 'string') {
-        return benefit;
+/**
+ * Returns the translation key for a benefit.
+ * Usage: t(`benefits.${getBenefitKey(benefit)}`)
+ */
+export function getBenefitKey(benefit: string | null | undefined): BenefitKey | null {
+    if (!benefit) return null;
+    
+    // Check direct mapping
+    if (benefit in BENEFIT_MAP) return BENEFIT_MAP[benefit];
+    
+    // Fallback search
+    for (const [key, value] of Object.entries(BENEFIT_MAP)) {
+        if (benefit.toUpperCase().includes(key)) {
+            return value as BenefitKey;
+        }
     }
-    if (benefit?.name) {
-        const mapped = BENEFIT_NAME_MAP[benefit.name];
-        if (mapped) return locale === 'en' ? mapped.en : mapped.ko;
-        if (benefit?.type === 'luxury') return locale === 'en' ? 'HotelLux VIP Exclusive Benefit' : 'HotelLux VIP 특별 혜택';
-        return benefit.name;
-    }
-    return locale === 'en' ? 'Exclusive Partner Benefit' : '독점 제휴 혜택';
+    
+    return 'free';
 }

@@ -72,7 +72,12 @@
     },
     "settings": {
         "language": "언어",
-        "currency": "통화"
+        "currency": "통화",
+        "ko": "한국어",
+        "en": "English",
+        "zh": "中文",
+        "krw": "KRW (₩)",
+        "usd": "USD ($)"
     },
     "priceAlert": {
         "button": "가격 알림",
@@ -191,5 +196,50 @@
         "flexible": "유연",
         "non": "불가",
         "prepaid": "선결제"
+    },
+    "brand": {
+        "four_seasons": "포시즌스",
+        "lhw": "LHW (리딩 호텔)",
+        "fairmont": "페어몬트",
+        "peninsula": "페닌슐라",
+        "rosewood": "로즈우드",
+        "marriott": "메리어트",
+        "jw_marriott": "JW 메리어트",
+        "mondrian": "몬드리안",
+        "park_hyatt": "파크 하얏트",
+        "josun_palace": "조선 팰리스",
+        "intercontinental": "인터컨티넨탈",
+        "shilla": "신라호텔",
+        "grand_hyatt": "그랜드 하얏트",
+        "conrad": "콘래드",
+        "sofitel": "소피텔",
+        "andaz": "안다즈",
+        "novotel": "노보텔",
+        "voco": "보코",
+        "mgallery": "엠갤러리",
+        "westin": "웨스틴",
+        "luxury_collection": "럭셔리 컬렉션",
+        "slh": "SLH",
+        "others": "기타"
+    },
+    "city": {
+        "seoul": "서울",
+        "busan": "부산",
+        "tokyo": "도쿄",
+        "jeju": "제주"
+    },
+    "benefits": {
+        "exclusive": "VIP 특별 혜택",
+        "free": "무료 혜택",
+        "amex_fhr": "아멕스 FHR 혜택",
+        "fs_benefit": "포시즌스 베네핏"
+    },
+    "time": {
+        "unknown": "알 수 없음",
+        "justNow": "방금 전",
+        "minutesAgo": "{count}분 전",
+        "hoursAgo": "{count}시간 전",
+        "daysAgo": "{count}일 전",
+        "monthDayFormat": "{month}월 {day}일"
     }
 }

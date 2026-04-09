@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getOtaPrices } from '@/lib/supabase/queries/ota';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 

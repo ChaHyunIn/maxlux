@@ -3,13 +3,17 @@ import { MapPin, Building, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { HotelHeroImage } from '@/components/hotel/HotelHeroImage';
 import { PriceAlertButton } from '@/components/hotel/PriceAlertButton';
-import { mapBenefitText } from '@/lib/benefitMapper';
-import { getCityDisplayName } from '@/lib/cityMapper';
+import { getBrandKey } from '@/lib/brandMapper';
+import { getCityKey } from '@/lib/cityMapper';
+import { getBenefitKey } from '@/lib/benefitMapper';
 import type { Hotel } from '@/lib/types';
 import { useLocale, useTranslations } from 'next-intl';
 
 export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const t = useTranslations('hotel');
+    const tBrand = useTranslations('brand');
+    const tCity = useTranslations('city');
+    const tBenefitsList = useTranslations('benefits');
     const locale = useLocale();
     const primaryName = locale === 'en' ? hotel.name_en : hotel.name_ko;
     const secondaryName = locale === 'en' ? hotel.name_ko : hotel.name_en;
@@ -20,16 +24,24 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                 <HotelHeroImage url={hotel.image_url || ''} alt={hotel.name_ko} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6 md:p-12 text-white">
                     <div className="flex flex-wrap gap-2 mb-4">
-                        {hotel.brand && (
-                            <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md">
-                                <Building className="w-3 h-3 mr-1" />
-                                {hotel.brand}
-                            </Badge>
-                        )}
-                        <Badge variant="secondary" className="bg-black/40 hover:bg-black/50 text-white border-none backdrop-blur-md">
-                            <MapPin className="w-3 h-3 mr-1" />
-                            <span className="capitalize">{getCityDisplayName(hotel.city, locale)}</span>
-                        </Badge>
+                        {(() => {
+                            const bKey = hotel.brand ? getBrandKey(hotel.brand) : null;
+                            return bKey && (
+                                <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md">
+                                    <Building className="w-3 h-3 mr-1" />
+                                    {tBrand(bKey)}
+                                </Badge>
+                            );
+                        })()}
+                        {(() => {
+                            const cKey = getCityKey(hotel.city);
+                            return cKey && (
+                                <Badge variant="secondary" className="bg-black/40 hover:bg-black/50 text-white border-none backdrop-blur-md">
+                                    <MapPin className="w-3 h-3 mr-1" />
+                                    <span className="capitalize">{tCity(cKey)}</span>
+                                </Badge>
+                            );
+                        })()}
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md">
                         {primaryName}
@@ -57,11 +69,15 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                         {t('benefitsTitle')}
                     </h3>
                     <div className="flex flex-wrap gap-2 md:gap-3">
-                        {hotel.benefits.map((benefit, i) => (
-                            <Badge key={i} variant="outline" className="bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-muted">
-                                {mapBenefitText(benefit, locale)}
-                            </Badge>
-                        ))}
+                        {hotel.benefits.map((benefit, i) => {
+                            const benefitStr = typeof benefit === 'string' ? benefit : benefit.name;
+                            const bKey = getBenefitKey(benefitStr);
+                            return (
+                                <Badge key={i} variant="outline" className="bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-muted">
+                                    {bKey ? tBenefitsList(bKey) : benefitStr}
+                                </Badge>
+                            );
+                        })}
                     </div>
                 </div>
             )}

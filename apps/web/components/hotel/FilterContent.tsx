@@ -4,9 +4,11 @@ import { useFilterStore } from "@/stores/filterStore"
 import { Search, X, Heart } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Hotel } from '@/lib/types';
-import { getCityDisplayName } from '@/lib/cityMapper';
+import { getCityKey } from '@/lib/cityMapper';
+import { getBrandKey } from '@/lib/brandMapper';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import { useTranslations } from 'next-intl';
+import type { SortByKey } from '@/lib/i18nTypes';
 
 import { SUPPORTED_CITIES } from '@/lib/constants';
 
@@ -23,6 +25,9 @@ export function FilterContent({
     locale: string;
     onClose?: () => void;
 }) {
+    const tBrand = useTranslations('brand');
+    const tCity = useTranslations('city');
+    
     const {
         searchQuery, setSearchQuery,
         selectedBrand, setSelectedBrand,
@@ -115,34 +120,50 @@ export function FilterContent({
                 >
                     {t('allCities')}
                 </button>
-                {SUPPORTED_CITIES.map(city => (
-                    <button
-                        key={city}
-                        className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === city ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
-                        onClick={() => { setSelectedCity(city); onClose?.(); }}
-                    >
-                        {getCityDisplayName(city, locale)}
-                    </button>
-                ))}
+                {SUPPORTED_CITIES.map(city => {
+                    const cityKey = getCityKey(city);
+                    return (
+                        <button
+                            key={city}
+                            className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === city ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
+                            onClick={() => { setSelectedCity(city); onClose?.(); }}
+                        >
+                            {cityKey ? tCity(cityKey) : city}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Row 2: Brand + Price + Sort + Favorites */}
             <div className="flex flex-wrap gap-3">
                 <Select value={selectedBrand} onValueChange={(val) => { setSelectedBrand(val || 'all'); onClose?.(); }}>
-                    <SelectTrigger className="w-[140px] bg-white">
-                        <SelectValue placeholder={t('allBrands')} />
+                    <SelectTrigger className="w-[140px] bg-white text-slate-900">
+                        <SelectValue placeholder={t('allBrands')}>
+                            {(() => {
+                                if (selectedBrand === 'all') return t('allBrands');
+                                const bKey = getBrandKey(selectedBrand);
+                                return bKey ? tBrand(bKey) : selectedBrand;
+                            })()}
+                        </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{t('allBrands')}</SelectItem>
-                        {brands.map(brand => (
-                            <SelectItem key={brand} value={brand}>{brand}</SelectItem>
-                        ))}
+                        {brands.map(brand => {
+                            const bKey = getBrandKey(brand);
+                            return (
+                                <SelectItem key={brand} value={brand}>
+                                    {bKey ? tBrand(bKey) : brand}
+                                </SelectItem>
+                            );
+                        })}
                     </SelectContent>
                 </Select>
 
                 <Select value={priceKey} onValueChange={(val) => { if (val) handlePriceChange(val); onClose?.(); }}>
-                    <SelectTrigger className="w-[140px] bg-white">
-                        <SelectValue placeholder={t('priceAll')} />
+                    <SelectTrigger className="w-[140px] bg-white text-slate-900">
+                        <SelectValue placeholder={t('priceAll')}>
+                            {PRICE_OPTIONS.find(opt => opt.value === priceKey)?.label}
+                        </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         {PRICE_OPTIONS.map(opt => (
@@ -151,9 +172,14 @@ export function FilterContent({
                     </SelectContent>
                 </Select>
 
-                <Select value={sortBy} onValueChange={(val) => { setSortBy(val as any); onClose?.(); }}>
-                    <SelectTrigger className="w-[140px] bg-white">
-                        <SelectValue placeholder={t('sortByPrice')} />
+                <Select value={sortBy} onValueChange={(val) => { setSortBy(val as SortByKey); onClose?.(); }}>
+                    <SelectTrigger className="w-[140px] bg-white text-slate-900">
+                        <SelectValue placeholder={t('sortByPrice')}>
+                            {sortBy === 'price' ? t('sortByPrice') :
+                                sortBy === 'name' ? t('sortByName') :
+                                    sortBy === 'discount' ? t('sortByDiscount') :
+                                        sortBy === 'benefit' ? t('sortByBenefit') : undefined}
+                        </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="price">{t('sortByPrice')}</SelectItem>

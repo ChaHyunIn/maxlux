@@ -7,37 +7,31 @@ import type { Hotel } from '@/lib/types';
 import { formatPrice, getRelativeTime } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+import { getCityKey } from '@/lib/cityMapper';
+import { getBrandKey } from '@/lib/brandMapper';
+import { useFavorites } from '@/hooks/useFavorites';
 
 import { Building2, Heart, TrendingDown } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
+import { useSettingStore } from '@/stores/settingStore';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; recent_drops?: number } }) {
     const t = useTranslations('hotel');
+    const tBrand = useTranslations('brand');
+    const tCity = useTranslations('city');
+    const tTime = useTranslations('time');
     const locale = useLocale();
     const [imageError, setImageError] = useState(false);
-    const [isFavorite, setIsFavorite] = useState(false);
+    const { isFavorite, toggleFavorite } = useFavorites();
+    const { currency } = useSettingStore();
 
-    useEffect(() => {
-        const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
-        setIsFavorite(favs.includes(hotel.id));
-    }, [hotel.id]);
-
-    const toggleFavorite = (e: React.MouseEvent) => {
+    const handleToggleFavorite = (e: React.MouseEvent) => {
         e.preventDefault();
-        const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
-        if (favs.includes(hotel.id)) {
-            const newFavs = favs.filter((id: string) => id !== hotel.id);
-            localStorage.setItem('maxlux_favorites', JSON.stringify(newFavs));
-            setIsFavorite(false);
-        } else {
-            favs.push(hotel.id);
-            localStorage.setItem('maxlux_favorites', JSON.stringify(favs));
-            setIsFavorite(true);
-        }
+        toggleFavorite(hotel.id);
     };
 
-    const hasRecentDrop = (hotel as any).recent_drops > 0;
+    const hasRecentDrop = hotel.recent_drops !== undefined && hotel.recent_drops > 0;
 
     return (
         <Link href={`/hotels/${hotel.slug}`}>
@@ -63,11 +57,11 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                         </Badge>
                     )}
                     <button
-                        onClick={toggleFavorite}
+                        onClick={handleToggleFavorite}
                         className="absolute top-3 left-3 z-10 p-2 rounded-full bg-white/70 backdrop-blur-md shadow-sm hover:bg-white transition-colors"
                         aria-label="Toggle favorite"
                     >
-                        <Heart className={`w-5 h-5 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} />
+                        <Heart className={`w-5 h-5 transition-colors ${isFavorite(hotel.id) ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} />
                     </button>
                 </div>
                 <CardContent className="p-4 flex flex-col flex-1 justify-between">
@@ -76,12 +70,18 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                             <h3 className="text-lg font-bold line-clamp-1">{locale === 'en' ? hotel.name_en : hotel.name_ko}</h3>
                         </div>
                         <div className="flex items-center gap-2 mb-4">
-                            {hotel.brand && (
-                                <Badge variant="secondary" className="rounded-full bg-slate-100 text-slate-700">
-                                    {hotel.brand}
-                                </Badge>
-                            )}
-                            <span className="text-sm text-gray-500">{hotel.city || t('defaultCity')}</span>
+                            {(() => {
+                                const bKey = hotel.brand ? getBrandKey(hotel.brand) : null;
+                                return bKey && (
+                                    <Badge variant="secondary" className="rounded-full bg-slate-100 text-slate-700">
+                                        {tBrand(bKey)}
+                                    </Badge>
+                                );
+                            })()}
+                            {(() => {
+                                const cKey = getCityKey(hotel.city);
+                                return cKey && <span className="text-sm text-gray-500">{tCity(cKey)}</span>;
+                            })()}
                         </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col gap-2">
@@ -89,17 +89,17 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                             <div className="flex flex-col items-end gap-1">
                                 <div className="flex items-center gap-1.5">
                                     <span className="text-[10px] text-red-500 font-medium">{t('nonRefundableShort')}</span>
-                                    <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
+                                    <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price, currency)}~</p>
                                 </div>
                                 {hotel.min_price_refundable && (
                                     <div className="flex items-center gap-1.5">
                                         <span className="text-[10px] text-green-600 font-medium">{t('refundableShort')}</span>
-                                        <p className="text-gray-500 font-semibold text-sm">{formatPrice(hotel.min_price_refundable)}~</p>
+                                        <p className="text-gray-500 font-semibold text-sm">{formatPrice(hotel.min_price_refundable, currency)}~</p>
                                     </div>
                                 )}
                                 {hotel.latest_scraped_at && (
                                     <span className="text-[10px] text-gray-400">
-                                        {getRelativeTime(hotel.latest_scraped_at, locale)}
+                                        {getRelativeTime(hotel.latest_scraped_at, tTime)}
                                     </span>
                                 )}
                                 {hasRecentDrop && (

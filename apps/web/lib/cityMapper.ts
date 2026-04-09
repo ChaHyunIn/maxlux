@@ -1,28 +1,28 @@
- /**
-  * Centralized city name display mapping with locale support.
-  * Used in HotelHeroHeader.
-  * NOTE: Must be kept in sync with SUPPORTED_CITIES in @/lib/constants.
-  */
- 
- import { SUPPORTED_CITIES } from './constants';
- 
- export const CITY_DISPLAY_MAP: Record<string, { ko: string; en: string }> = {
-    seoul: { ko: '서울', en: 'Seoul' },
-    busan: { ko: '부산', en: 'Busan' },
-    jeju: { ko: '제주', en: 'Jeju' },
+/**
+ * City mappings from DB strings to translation keys.
+ */
+export const CITY_MAP: Record<string, CityKey> = {
+    '首尔': 'seoul',
+    'SEOUL': 'seoul',
+    'seoul': 'seoul',
+    '釜산': 'busan',
+    'BUSAN': 'busan',
+    'busan': 'busan',
+    '도쿄': 'tokyo',
+    'TOKYO': 'tokyo',
+    'tokyo': 'tokyo',
+    '제주': 'jeju',
+    'JEJU': 'jeju',
+    'jeju': 'jeju',
 };
 
-// Dev-time check for missing mappings
-if (process.env.NODE_ENV === 'development') {
-    SUPPORTED_CITIES.forEach(city => {
-        if (!CITY_DISPLAY_MAP[city]) {
-            console.warn(`[cityMapper] Missing display mapping for supported city: ${city}`);
-        }
-    });
-}
+/**
+ * Returns the translation key for a given city string.
+ * Usage: t(`city.${getCityKey(city)}`)
+ */
+import type { CityKey } from './i18nTypes'
 
-export function getCityDisplayName(citySlug: string, locale: string = 'ko'): string {
-    const entry = CITY_DISPLAY_MAP[citySlug.toLowerCase()];
-    if (!entry) return citySlug;
-    return locale === 'en' ? entry.en : entry.ko;
+export function getCityKey(city: string | null | undefined): CityKey | null {
+    if (!city) return null;
+    return (CITY_MAP[city] || city.toLowerCase()) as CityKey;
 }

@@ -2,7 +2,9 @@ import { Search, MapPin } from 'lucide-react';
 import { useMemo } from 'react';
 import type { Hotel } from '@/lib/types';
 import { Link } from '@/i18n/navigation';
-import { getCityDisplayName } from '@/lib/cityMapper';
+import { getCityKey } from '@/lib/cityMapper';
+import { getBrandKey } from '@/lib/brandMapper';
+import { useTranslations } from 'next-intl';
 
 interface AutocompleteItem {
     id: string;
@@ -27,6 +29,9 @@ export function SearchAutocomplete({
     visible: boolean;
     onClose: () => void;
 }) {
+    const tBrand = useTranslations('brand');
+    const tCity = useTranslations('city');
+
     const suggestions = useMemo<AutocompleteItem[]>(() => {
         if (!query.trim() || query.trim().length < 1) return [];
         const lowerQ = query.toLowerCase();
@@ -65,13 +70,21 @@ export function SearchAutocomplete({
                             {item.name}
                         </div>
                         <div className="flex items-center gap-2 mt-0.5">
-                            <span className="flex items-center text-xs text-slate-400">
-                                <MapPin className="w-3 h-3 mr-0.5" />
-                                {getCityDisplayName(item.city, locale)}
-                            </span>
-                            {item.brand && (
-                                <span className="text-xs text-slate-400">{item.brand}</span>
-                            )}
+                            {(() => {
+                                const cityKey = getCityKey(item.city);
+                                return cityKey && (
+                                    <span className="flex items-center text-xs text-slate-400">
+                                        <MapPin className="w-3 h-3 mr-0.5" />
+                                        {tCity(cityKey)}
+                                    </span>
+                                );
+                            })()}
+                            {(() => {
+                                const brandKey = item.brand ? getBrandKey(item.brand) : null;
+                                return brandKey && (
+                                    <span className="text-xs text-slate-400">{tBrand(brandKey)}</span>
+                                );
+                            })()}
                         </div>
                     </div>
                     <Search className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />

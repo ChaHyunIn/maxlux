@@ -12,6 +12,7 @@ import { useCalendarData } from '@/hooks/useCalendarData';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const t = useTranslations('calendar');
+    const tTime = useTranslations('time');
     const locale = useLocale();
     const { selectedRate, modalOpen, closeDayDetail } = useCalendarStore();
     const { refundableRateMap, p25, p75, lastScraped, groupedByMonth } = useCalendarData(rates);
@@ -34,8 +35,8 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <Clock className="w-3.5 h-3.5" />
                         <span>{t('lastUpdated', {
-                            absoluteTime: formatAbsoluteTime(lastScraped, locale),
-                            relativeTime: getRelativeTime(lastScraped, locale)
+                            absoluteTime: formatAbsoluteTime(lastScraped, locale, tTime),
+                            relativeTime: getRelativeTime(lastScraped, tTime)
                         })}</span>
                     </div>
                 )}

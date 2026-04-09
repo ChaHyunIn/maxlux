@@ -1,15 +1,13 @@
 'use client'
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useFilterStore, DEFAULT_FILTER_PRICE_RANGE } from "@/stores/filterStore"
 import { useTranslations } from 'next-intl';
-import { Search, X, SlidersHorizontal, Heart, MapPin } from 'lucide-react';
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Search, X, SlidersHorizontal } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Hotel } from '@/lib/types';
-import { Link } from '@/i18n/navigation';
 import { FilterContent } from './FilterContent';
 import { SearchAutocomplete } from './SearchAutocomplete';
 

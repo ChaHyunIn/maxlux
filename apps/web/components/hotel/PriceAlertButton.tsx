@@ -15,7 +15,10 @@ interface PriceAlertButtonProps {
     currentMinPrice?: number
 }
 
-const PRICE_SUGGESTIONS_KRW = [200000, 250000, 300000, 350000, 400000, 500000]
+const PRICE_SUGGESTIONS = {
+    KRW: [200000, 250000, 300000, 350000, 400000, 500000],
+    USD: [150, 200, 250, 300, 350, 400]
+} as const
 
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
@@ -23,7 +26,14 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const { currency } = useSettingStore()
     const [open, setOpen] = useState(false)
     const [email, setEmail] = useState('')
-    const [targetPrice, setTargetPrice] = useState(currentMinPrice ? Math.round(currentMinPrice * 0.9) : 300000)
+    
+    // Default target price: 90% of current or a sensible default
+    const getDefaultTarget = () => {
+        if (currentMinPrice) return Math.round(currentMinPrice * 0.9)
+        return currency === 'USD' ? 250 : 300000
+    }
+    
+    const [targetPrice, setTargetPrice] = useState(getDefaultTarget())
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
@@ -75,9 +85,9 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     return (
         <>
             <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
-                className="gap-1.5"
+                className="gap-1.5 text-slate-900"
                 onClick={() => setOpen(true)}
             >
                 <Bell className="w-4 h-4" />
@@ -111,7 +121,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                     {t('targetPriceLabel')}
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-3">
-                                    {PRICE_SUGGESTIONS_KRW.map(price => (
+                                    {(PRICE_SUGGESTIONS[currency as keyof typeof PRICE_SUGGESTIONS] || PRICE_SUGGESTIONS.KRW).map(price => (
                                         <button
                                             key={price}
                                             onClick={() => setTargetPrice(price)}
@@ -130,10 +140,10 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                         value={targetPrice}
                                         onChange={(e) => setTargetPrice(parseInt(e.target.value) || 0)}
                                         className="flex-1"
-                                        min={10000}
-                                        step={10000}
+                                        min={currency === 'USD' ? 10 : 10000}
+                                        step={currency === 'USD' ? 10 : 10000}
                                     />
-                                    <Badge variant="outline" className="whitespace-nowrap">KRW</Badge>
+                                    <Badge variant="outline" className="whitespace-nowrap">{currency}</Badge>
                                 </div>
                                 {currentMinPrice && (
                                     <p className="text-xs text-slate-400 mt-1.5">

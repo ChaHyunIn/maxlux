@@ -2,18 +2,21 @@ import { Badge } from '@/components/ui/badge';
 import { TrendingDown, TrendingUp, Minus, Tag } from 'lucide-react';
 import { formatPrice, formatAbsoluteTime, getRelativeTime } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
+import type { useTranslations } from 'next-intl';
+import type { DayDetailKey } from '@/lib/i18nTypes';
 
 interface PriceHeaderProps {
     rate: DailyRate;
     refundableRate?: DailyRate | null;
-    t: any;
+    t: ReturnType<typeof useTranslations>;
     currency: 'KRW' | 'USD';
     style: { bg: string; text: string };
     level: string;
     locale: string;
+    tTime: ReturnType<typeof useTranslations>;
 }
 
-export function PriceHeader({ rate, refundableRate, t, currency, style, level, locale }: PriceHeaderProps) {
+export function PriceHeader({ rate, refundableRate, t, currency, style, level, locale, tTime }: PriceHeaderProps) {
     return (
         <>
             <div className="space-y-2 mb-4 w-full">
@@ -25,7 +28,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                         </div>
                         <Badge variant="outline" className="gap-1 truncate max-w-[100px] sm:max-w-none">
                             <Tag className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{t(`tag${rate.tag}` as any) || rate.tag}</span>
+                            <span className="truncate">{t(`tag${rate.tag}` as DayDetailKey) || rate.tag}</span>
                         </Badge>
                         {!rate.is_sold_out && (
                             <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap">
@@ -58,8 +61,8 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
             {rate.scraped_at && (
                 <p className="text-[11px] text-slate-400 mb-4 -mt-2">
                     {t('scrapedAt', {
-                        absoluteTime: formatAbsoluteTime(rate.scraped_at, locale),
-                        relativeTime: getRelativeTime(rate.scraped_at, locale)
+                        absoluteTime: formatAbsoluteTime(rate.scraped_at, locale, tTime),
+                        relativeTime: getRelativeTime(rate.scraped_at, tTime)
                     })}
                 </p>
             )}

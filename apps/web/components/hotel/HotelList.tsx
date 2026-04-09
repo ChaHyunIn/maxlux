@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import type { Hotel } from '@/lib/types';
 import { HotelCard } from './HotelCard';
 import { HotelFilters } from './HotelFilters';
@@ -7,17 +7,12 @@ import { useFilterStore } from '@/stores/filterStore';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useLocale } from 'next-intl';
 import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
+import { useFavorites } from '@/hooks/useFavorites';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
     const { searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly } = useFilterStore();
     const locale = useLocale();
-    const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-
-    // Load favorites from localStorage on mount or when showFavoritesOnly changes
-    useEffect(() => {
-        const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
-        setFavoriteIds(favs);
-    }, [showFavoritesOnly]);
+    const { favorites: favoriteIds } = useFavorites();
 
     const brands = useMemo(() => {
         const unique = new Set(hotels.map(h => h.brand).filter(Boolean) as string[]);
@@ -72,8 +67,8 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'benefit') {
-                const aVal = (a as any).benefit_value_krw ?? 0;
-                const bVal = (b as any).benefit_value_krw ?? 0;
+                const aVal = a.benefit_value_krw ?? 0;
+                const bVal = b.benefit_value_krw ?? 0;
                 return bVal - aVal;
             }
             return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);

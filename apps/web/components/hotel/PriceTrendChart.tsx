@@ -100,7 +100,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const xLabelStep = Math.max(1, Math.floor(chartData.length / 5))
     const xLabels = chartData
         .filter((_, i) => i % xLabelStep === 0 || i === chartData.length - 1)
-        .map((d, _, arr) => ({
+        .map((d, _, _arr) => ({
             date: d.date,
             x: xScale(chartData.indexOf(d)),
         }))

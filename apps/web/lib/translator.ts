@@ -1,4 +1,6 @@
-export const CHINESE_TO_KEY: Record<string, string> = {
+import type { ApiTermKey } from './i18nTypes';
+
+export const CHINESE_TO_KEY: Record<string, ApiTermKey> = {
     '大床': 'kingBed',
     '双床': 'twinBed',
     '单人': 'singleBed',
@@ -49,10 +51,12 @@ export const CHINESE_TO_KEY: Record<string, string> = {
 export function getLocalizedText(
     en: string | null,
     local: string | null,
-    t: (key: any) => string,
-    isEnglishLocale: boolean
+    t: (key: ApiTermKey) => string,
+    locale: string
 ): string {
     const hasChinese = (str: string | null) => str ? /[\u4e00-\u9fa5]/.test(str) : false;
+    const isChineseLocale = locale === 'zh';
+    const isEnglishLocale = locale === 'en';
 
     // Valid English name available and no Chinese characters
     if (en && !hasChinese(en)) {
@@ -71,7 +75,6 @@ export function getLocalizedText(
         if (result.includes(cnText)) {
             let replacement = '';
             try {
-                // @ts-ignore
                 replacement = t(key);
                 if (isEnglishLocale) replacement += ' ';
             } catch {
@@ -84,8 +87,8 @@ export function getLocalizedText(
         }
     });
 
-    // Clean up any remaining Chinese characters for English locale
-    if (isEnglishLocale) {
+    // Clean up any remaining Chinese characters for non-Chinese locales
+    if (!isChineseLocale) {
         result = result.replace(/[\u4e00-\u9fa5]+/g, '').trim();
     }
 

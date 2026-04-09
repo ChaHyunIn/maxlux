@@ -5,7 +5,7 @@ import { Globe, DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
+import type { GlobalKey, Locale } from '@/lib/i18nTypes';
 
 export function HeaderActions() {
     const { currency, setCurrency } = useSettingStore();
@@ -20,7 +20,7 @@ export function HeaderActions() {
 
     const handleLocaleChange = (newLocale: string | null) => {
         if (newLocale) {
-            router.replace(pathname, { locale: newLocale as any });
+            router.replace(pathname, { locale: newLocale as Locale });
             // Auto-sync currency with locale
             if (newLocale === 'en') setCurrency('USD');
             if (newLocale === 'ko') setCurrency('KRW');
@@ -33,12 +33,14 @@ export function HeaderActions() {
                 <SelectTrigger className="w-[110px] h-9 bg-muted/50 border-none shadow-sm focus:ring-1 transition-all">
                     <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-primary" />
-                        <SelectValue />
+                        <SelectValue>
+                            {mounted && t(locale as GlobalKey)}
+                        </SelectValue>
                     </div>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="ko">한국어</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="ko">{t('ko')}</SelectItem>
+                    <SelectItem value="en">{t('en')}</SelectItem>
                 </SelectContent>
             </Select>
 
@@ -46,12 +48,14 @@ export function HeaderActions() {
                 <SelectTrigger className="w-[100px] h-9 bg-muted/50 border-none shadow-sm focus:ring-1 transition-all">
                     <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-primary" />
-                        <SelectValue />
+                        <SelectValue>
+                            {mounted && t(currency.toLowerCase() as GlobalKey)}
+                        </SelectValue>
                     </div>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="KRW">KRW (₩)</SelectItem>
-                    <SelectItem value="USD">USD ($)</SelectItem>
+                    <SelectItem value="KRW">{t('krw')}</SelectItem>
+                    <SelectItem value="USD">{t('usd')}</SelectItem>
                 </SelectContent>
             </Select>
         </div>

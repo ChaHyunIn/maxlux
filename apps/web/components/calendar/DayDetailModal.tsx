@@ -11,7 +11,6 @@ import { PriceHeader } from './PriceHeader'
 import type { DailyRate, OtaPrice, RoomRate } from '@/lib/types'
 import { useSettingStore } from '@/stores/settingStore'
 import { useTranslations, useLocale } from 'next-intl'
-import { getLocalizedText } from '@/lib/translator'
 
 interface DayDetailModalProps {
     open: boolean
@@ -41,8 +40,8 @@ export function DayDetailModal({
     const currency = useSettingStore(state => state.currency)
     const t = useTranslations('dayDetail')
     const tTerm = useTranslations('apiTerms')
+    const tTime = useTranslations('time')
     const locale = useLocale()
-    const isEn = locale === 'en'
 
     const [otaPrices, setOtaPrices] = useState<OtaPrice[]>([])
     const [loading, setLoading] = useState(false)
@@ -84,9 +83,7 @@ export function DayDetailModal({
     const level = rate.is_sold_out ? 'soldOut' : getPriceLevel(rate.price_krw, p25, p75)
     const style = PRICE_COLORS[level === 'soldOut' ? 'soldOut' : level]
     const dateObj = new Date(rate.stay_date)
-    const formattedDate = locale === 'en'
-        ? dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-        : dateObj.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    const formattedDate = new Intl.DateTimeFormat(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(dateObj);
 
     const allPrices = [
         {
@@ -127,6 +124,7 @@ export function DayDetailModal({
                     style={style}
                     level={level}
                     locale={locale}
+                    tTime={tTime}
                 />
 
                 <OtaPriceList
@@ -142,7 +140,6 @@ export function DayDetailModal({
                     roomRates={roomRates}
                     t={t}
                     tTerm={tTerm}
-                    isEn={isEn}
                     currency={currency}
                 />
 

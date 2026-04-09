@@ -3,13 +3,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { OTA_DISPLAY } from '@/lib/ota';
+import type { useTranslations } from 'next-intl';
+
+interface PriceEntry {
+    source: string;
+    price_krw: number;
+    url: string | null;
+    is_sold_out: boolean;
+    refund_policy: string;
+}
 
 interface OtaPriceListProps {
     loading: boolean;
-    allPrices: any[];
+    allPrices: PriceEntry[];
     lowestPrice: number;
     currency: 'KRW' | 'USD';
-    t: any;
+    t: ReturnType<typeof useTranslations>;
 }
 
 export function OtaPriceList({ loading, allPrices, lowestPrice, currency, t }: OtaPriceListProps) {
