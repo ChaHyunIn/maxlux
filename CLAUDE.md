@@ -1,29 +1,26 @@
-# CLAUDE.md – AI 에이전트 컨텍스트
+# MaxLux 코드 규칙
 
-## 프로젝트
-MaxLux – 럭셔리 호텔 가격 비교 히트맵 캘린더 서비스
+## 절대 금지
+- `as TypeName` 타입 캐스팅 사용 (`as const`는 허용)
+- `any` 타입 사용
+- `!` non-null assertion 사용
+- `console.log` 커밋 (디버깅 후 반드시 제거)
+- `venv/`, `node_modules/`, `.env*` 파일 커밋
+- 빈 문자열을 이용한 `includes('')` 체크
+- JSX 내부에서 IIFE `(() => { ... })()` 사용
+- 유저에게 보이는 문자열 하드코딩 (반드시 i18n 키 사용)
+- 매퍼/맵 함수에서 매칭 실패 시 임의 기본값 반환 (매칭 실패 시 `null` 반환)
 
-## 모노레포 구조
-- `apps/web/` – Next.js 14 프론트엔드 (TypeScript, Tailwind, shadcn/ui, next-intl)
-- `scraper/` – Python 3.11 스크래퍼 (httpx, asyncio, supabase-py)
+## 필수 규칙
+- 새로운 상수/매핑 추가 시 해당 타입 정의를 동시에 업데이트할 것
+- 새로운 UI 문자열 추가 시 `ko.json`, `en.json` 동시에 업데이트할 것
+- 2개 이상의 컴포넌트에서 사용되는 로직은 `hooks/` 또는 `lib/`로 추출할 것
+- 모든 커밋 전 `npx eslint . --max-warnings=0`, `npx tsc --noEmit`, `npm run build` 통과 확인
 
-## 핵심 규칙
-- 모든 UI 텍스트는 `messages/ko.json` + `messages/en.json`에 정의. 하드코딩 금지.
-- 컴포넌트에서 `useTranslations()` 사용. 서버 컴포넌트에서는 `getTranslations()`.
-- `next/link` 대신 `@/i18n/navigation`의 `Link` 사용.
-- `next/navigation`의 `redirect` 대신 `@/i18n/navigation`의 `redirect` 사용 (단, locale prefix 자동 처리되는 경우 next/navigation도 가능).
-- 클라이언트 컴포넌트에는 반드시 `'use client'` 선언.
-- 가격 포맷은 `lib/utils.ts`의 `formatPrice()` 사용. 직접 포맷 금지.
-- 매직넘버는 `lib/constants.ts`에 정의.
-- DB 접근은 `lib/supabase/server.ts`의 함수만 사용.
-- API 라우트는 `app/api/`에 위치 (i18n 영향 없음).
-
-## 빌드 & 실행
+## 빌드 검증 명령어
 ```bash
-# 프론트
-cd apps/web && npm install && npm run dev
-# http://localhost:3000 (ko), http://localhost:3000/en (en)
-
-# 스크래퍼
-cd scraper && pip install -r requirements.txt
-python -m src.main
+cd apps/web
+npx eslint . --max-warnings=0
+npx tsc --noEmit
+npm run build
+```

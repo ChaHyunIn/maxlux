@@ -5,7 +5,7 @@ import { Globe, DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
-import type { GlobalKey, Locale } from '@/lib/i18nTypes';
+import { isGlobalKey, isLocale } from '@/lib/i18nTypes';
 
 export function HeaderActions() {
     const { currency, setCurrency } = useSettingStore();
@@ -19,13 +19,17 @@ export function HeaderActions() {
     if (!mounted) return null;
 
     const handleLocaleChange = (newLocale: string | null) => {
-        if (newLocale) {
-            router.replace(pathname, { locale: newLocale as Locale });
+        if (isLocale(newLocale)) {
+            router.replace(pathname, { locale: newLocale });
             // Auto-sync currency with locale
             if (newLocale === 'en') setCurrency('USD');
             if (newLocale === 'ko') setCurrency('KRW');
         }
     };
+
+    const currentLocaleKey = isGlobalKey(locale) ? locale : null;
+    const currencyLower = currency.toLowerCase();
+    const currentCurrencyKey = isGlobalKey(currencyLower) ? currencyLower : null;
 
     return (
         <div className="flex items-center gap-3">
@@ -34,7 +38,7 @@ export function HeaderActions() {
                     <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-primary" />
                         <SelectValue>
-                            {mounted && t(locale as GlobalKey)}
+                            {mounted && currentLocaleKey && t(currentLocaleKey)}
                         </SelectValue>
                     </div>
                 </SelectTrigger>
@@ -44,12 +48,14 @@ export function HeaderActions() {
                 </SelectContent>
             </Select>
 
-            <Select value={currency} onValueChange={(v) => v && setCurrency(v as "KRW" | "USD")}>
+            <Select value={currency} onValueChange={(v) => {
+                if (v === 'KRW' || v === 'USD') setCurrency(v);
+            }}>
                 <SelectTrigger className="w-[100px] h-9 bg-muted/50 border-none shadow-sm focus:ring-1 transition-all">
                     <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-primary" />
                         <SelectValue>
-                            {mounted && t(currency.toLowerCase() as GlobalKey)}
+                            {mounted && currentCurrencyKey && t(currentCurrencyKey)}
                         </SelectValue>
                     </div>
                 </SelectTrigger>

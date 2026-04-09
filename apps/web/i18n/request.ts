@@ -1,11 +1,10 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
-import type { Locale } from '@/lib/i18nTypes';
 
 export default getRequestConfig(async ({ requestLocale }) => {
     let locale = await requestLocale;
 
-    if (!locale || !routing.locales.includes(locale as typeof routing.locales[number])) {
+    if (!locale || !routing.locales.find(l => l === locale)) {
         locale = routing.defaultLocale;
     }
 

@@ -49,7 +49,10 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
             </div>
             <div className="space-y-8">
                 {groupedByMonth.map(([key, monthRates]) => {
-                    const [year, month] = key.split('-').map(Number);
+                    const parts = key.split('-').map(Number);
+                    const year = parts[0];
+                    const month = parts[1];
+                    if (year === undefined || month === undefined) return null;
                     return <MonthGrid key={key} year={year} month={month} rates={monthRates} p25={p25} p75={p75} />;
                 })}
             </div>

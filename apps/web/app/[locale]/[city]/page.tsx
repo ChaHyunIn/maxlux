@@ -31,8 +31,7 @@ export default async function CityPage({ params }: { params: { locale: string; c
     try {
         hotels = await getHotelsByCity(params.city);
     } catch (e) {
-        // Log is fine for server side
-        console.error("Failed to load hotels for city:", params.city, e);
+        // Fallback to empty array on failure
     }
 
     return (

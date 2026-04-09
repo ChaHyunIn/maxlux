@@ -41,7 +41,7 @@ export function HotelFilters({
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (mobileContainerRef.current && !mobileContainerRef.current.contains(e.target as Node)) {
+            if (mobileContainerRef.current && (e.target instanceof Node) && !mobileContainerRef.current.contains(e.target)) {
                 setShowMobileAutocomplete(false);
             }
         };

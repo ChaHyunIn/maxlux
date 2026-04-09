@@ -30,8 +30,7 @@ export async function POST(req: NextRequest) {
         });
 
         return successResponse({ alert });
-    } catch (error) {
-        console.error('Price alert creation error:', error);
+    } catch {
         return errorResponse('CREATE_FAILED', 500);
     }
 }

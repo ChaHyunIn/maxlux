@@ -9,8 +9,7 @@ export async function GET(_req: Request, { params }: Props) {
     try {
         const rates = await getRates(params.hotelId);
         return successResponse({ rates });
-    } catch (error) {
-        console.error('API Error: Failed to fetch rates:', error);
+    } catch {
         return errorResponse('FETCH_FAILED', 500);
     }
 }

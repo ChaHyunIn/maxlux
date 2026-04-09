@@ -3,7 +3,7 @@ import { TrendingDown, TrendingUp, Minus, Tag } from 'lucide-react';
 import { formatPrice, formatAbsoluteTime, getRelativeTime } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import type { useTranslations } from 'next-intl';
-import type { DayDetailKey } from '@/lib/i18nTypes';
+import { isDayDetailKey } from '@/lib/i18nTypes';
 
 interface PriceHeaderProps {
     rate: DailyRate;
@@ -28,7 +28,13 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                         </div>
                         <Badge variant="outline" className="gap-1 truncate max-w-[100px] sm:max-w-none">
                             <Tag className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{t(`tag${rate.tag}` as DayDetailKey) || rate.tag}</span>
+                            <span className="truncate">
+                                {(() => {
+                                    const tagKey = `tag${rate.tag}`;
+                                    if (isDayDetailKey(tagKey)) return t(tagKey);
+                                    return rate.tag;
+                                })()}
+                            </span>
                         </Badge>
                         {!rate.is_sold_out && (
                             <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap">

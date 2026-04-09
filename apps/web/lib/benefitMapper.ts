@@ -37,12 +37,15 @@ export function getBenefitKey(benefit: string | null | undefined): BenefitKey | 
     if (!benefit) return null;
     
     // Check direct mapping
-    if (benefit in BENEFIT_MAP) return BENEFIT_MAP[benefit];
+    if (benefit in BENEFIT_MAP) {
+        const mapped = BENEFIT_MAP[benefit];
+        if (mapped) return mapped;
+    }
     
     // Fallback search
     for (const [key, value] of Object.entries(BENEFIT_MAP)) {
         if (benefit.toUpperCase().includes(key)) {
-            return value as BenefitKey;
+            return value;
         }
     }
     

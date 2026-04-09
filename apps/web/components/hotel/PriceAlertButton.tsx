@@ -124,7 +124,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                     {t('targetPriceLabel')} ({currency})
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-3">
-                                    {(PRICE_SUGGESTIONS[currency as keyof typeof PRICE_SUGGESTIONS] || PRICE_SUGGESTIONS.KRW).map(price => (
+                                    {(currency === 'USD' ? PRICE_SUGGESTIONS.USD : PRICE_SUGGESTIONS.KRW).map(price => (
                                         <button
                                             key={price}
                                             onClick={() => setTargetPrice(price)}

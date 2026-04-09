@@ -29,8 +29,8 @@ export default async function LocaleLayout({
     params: { locale: string };
 }) {
     const { locale } = params;
-
-    if (!routing.locales.includes(locale as typeof routing.locales[number])) {
+    const isSupported = routing.locales.some(l => l === locale);
+    if (!isSupported) {
         notFound();
     }
 

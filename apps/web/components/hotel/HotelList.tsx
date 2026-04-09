@@ -15,7 +15,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
     const { favorites: favoriteIds } = useFavorites();
 
     const brands = useMemo(() => {
-        const unique = new Set(hotels.map(h => h.brand).filter(Boolean) as string[]);
+        const unique = new Set(hotels.map(h => h.brand).filter((b): b is string => typeof b === 'string' && b.length > 0));
         return Array.from(unique).sort();
     }, [hotels]);
 

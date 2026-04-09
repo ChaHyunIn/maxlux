@@ -60,3 +60,25 @@ export type SortByKey = 'price' | 'name' | 'discount' | 'benefit'
 
 export type TimeKey =
     | 'unknown' | 'justNow' | 'minutesAgo' | 'hoursAgo' | 'daysAgo' | 'monthDayFormat'
+
+/**
+ * Type guards for i18n types
+ */
+export function isLocale(val: unknown): val is Locale {
+    return typeof val === 'string' && ['ko', 'en', 'zh'].includes(val);
+}
+
+export function isGlobalKey(val: unknown): val is GlobalKey {
+    return typeof val === 'string' && ['ko', 'en', 'zh', 'krw', 'usd'].includes(val);
+}
+
+export function isSortByKey(val: unknown): val is SortByKey {
+    return typeof val === 'string' && ['price', 'name', 'discount', 'benefit'].includes(val);
+}
+
+export function isDayDetailKey(val: unknown): val is DayDetailKey {
+    return typeof val === 'string' && [
+        'nonRefundable', 'soldOut', 'tagSAT', 'tagFRI_EVE', 'tagHOL', 'tagSUN', 'tagWEEKDAY', 
+        'levelLow', 'levelHigh', 'levelMid', 'refundable', 'scrapedAt'
+    ].includes(val);
+}

@@ -8,7 +8,6 @@ import { getCityKey } from '@/lib/cityMapper';
 import { getBrandKey } from '@/lib/brandMapper';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import { useTranslations } from 'next-intl';
-import type { SortByKey } from '@/lib/i18nTypes';
 
 import { SUPPORTED_CITIES } from '@/lib/constants';
 
@@ -50,7 +49,7 @@ export function FilterContent({
     // Close autocomplete on outside click
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+            if (containerRef.current && (e.target instanceof Node) && !containerRef.current.contains(e.target)) {
                 setShowAutocomplete(false);
             }
         };
@@ -73,8 +72,12 @@ export function FilterContent({
     ];
     const priceKey = `${priceRange[0]}-${priceRange[1]}`;
     const handlePriceChange = (val: string) => {
-        const [min, max] = val.split('-').map(Number);
-        setPriceRange([min, max]);
+        const parts = val.split('-').map(Number);
+        const min = parts[0];
+        const max = parts[1];
+        if (min !== undefined && max !== undefined) {
+            setPriceRange([min, max]);
+        }
     };
 
     return (
@@ -172,7 +175,12 @@ export function FilterContent({
                     </SelectContent>
                 </Select>
 
-                <Select value={sortBy} onValueChange={(val) => { setSortBy(val as SortByKey); onClose?.(); }}>
+                <Select value={sortBy} onValueChange={(val) => {
+                    if (val === 'price' || val === 'name' || val === 'discount' || val === 'benefit') {
+                        setSortBy(val);
+                        onClose?.();
+                    }
+                }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
                         <SelectValue placeholder={t('sortByPrice')}>
                             {sortBy === 'price' ? t('sortByPrice') :

@@ -8,8 +8,11 @@ export function useCalendarData(rates: DailyRate[]) {
     const { baseRates, refundableRateMap } = useMemo(() => {
         const byDate: Record<string, DailyRate[]> = {};
         rates.forEach(r => {
-            if (!byDate[r.stay_date]) byDate[r.stay_date] = [];
-            byDate[r.stay_date].push(r);
+            const dayList = byDate[r.stay_date] || [];
+            if (dayList.length === 0) {
+                byDate[r.stay_date] = dayList;
+            }
+            dayList.push(r);
         });
 
         const baseRatesArray: DailyRate[] = [];
@@ -36,19 +39,21 @@ export function useCalendarData(rates: DailyRate[]) {
     const { p25, p75 } = useMemo(() => {
         const prices = baseRates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
         if (prices.length === 0) return FALLBACK_PERCENTILES;
+        const p25Val = prices[Math.floor(prices.length * 0.25)];
+        const p75Val = prices[Math.floor(prices.length * 0.75)];
         return {
-            p25: prices[Math.floor(prices.length * 0.25)],
-            p75: prices[Math.floor(prices.length * 0.75)]
+            p25: p25Val ?? FALLBACK_PERCENTILES.p25,
+            p75: p75Val ?? FALLBACK_PERCENTILES.p75
         };
     }, [baseRates]);
 
     // rates에서 가장 최신 scraped_at 계산
     const lastScraped = useMemo(() => {
         if (rates.length === 0) return null;
-        return rates.reduce((latest, r) => {
+        return rates.reduce<string | null>((latest, r) => {
             if (!r.scraped_at) return latest;
             return !latest || r.scraped_at > latest ? r.scraped_at : latest;
-        }, null as string | null);
+        }, null);
     }, [rates]);
 
     const groupedByMonth = useMemo(() => {
@@ -60,8 +65,12 @@ export function useCalendarData(rates: DailyRate[]) {
             groups[key].push(rate);
         });
         return Object.entries(groups).sort((a, b) => {
-            const [yA, mA] = a[0].split('-').map(Number);
-            const [yB, mB] = b[0].split('-').map(Number);
+            const partsA = a[0].split('-').map(Number);
+            const partsB = b[0].split('-').map(Number);
+            const yA = partsA[0] ?? 0;
+            const mA = partsA[1] ?? 0;
+            const yB = partsB[0] ?? 0;
+            const mB = partsB[1] ?? 0;
             return yA !== yB ? yA - yB : mA - mB;
         });
     }, [baseRates]);

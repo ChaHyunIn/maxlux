@@ -9,7 +9,7 @@ export async function getHotels(): Promise<(Hotel & { min_price?: number })[]> {
         .order('name_en');
 
     if (error) throw error;
-    return data as (Hotel & { min_price?: number })[];
+    return data || [];
 }
 
 export async function getHotelsByCity(city: string): Promise<(Hotel & { min_price?: number })[]> {
@@ -21,7 +21,7 @@ export async function getHotelsByCity(city: string): Promise<(Hotel & { min_pric
         .order('name_en');
 
     if (error) throw error;
-    return data as (Hotel & { min_price?: number })[];
+    return data || [];
 }
 
 export async function getHotelBySlug(slug: string): Promise<Hotel | null> {
