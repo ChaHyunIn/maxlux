@@ -25,7 +25,8 @@
         "resetFilters": "필터 초기화",
         "resultCount": "{count}개 호텔",
         "filterButton": "필터",
-        "filterTitle": "필터 설정"
+        "filterTitle": "필터 설정",
+        "benefitsTitle": "호텔 제공 특전"
     },
     "calendar": {
         "title": "가격 캘린더",

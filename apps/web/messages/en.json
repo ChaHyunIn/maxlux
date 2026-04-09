@@ -25,7 +25,8 @@
         "resetFilters": "Reset Filters",
         "resultCount": "{count} hotels",
         "filterButton": "Filter",
-        "filterTitle": "Filter Options"
+        "filterTitle": "Filter Options",
+        "benefitsTitle": "HotelLux VIP Benefits"
     },
     "calendar": {
         "title": "Rates Calendar",
