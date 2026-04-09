@@ -95,6 +95,8 @@ async def check_and_send_alerts() -> dict:
         hotel_name = hotel_data.get("name_ko", "호텔")
         hotel_slug = hotel_data.get("slug", "")
 
+        alert_locale = alert.get("locale", "ko")
+
         success = await send_alert_email(
             to_email=email,
             hotel_name=hotel_name,
@@ -102,6 +104,7 @@ async def check_and_send_alerts() -> dict:
             target_price=target_price,
             cheapest_date=cheapest_date,
             hotel_slug=hotel_slug,
+            locale=alert_locale,
         )
 
         if success:
@@ -125,6 +128,7 @@ async def send_alert_email(
     target_price: int,
     cheapest_date: str,
     hotel_slug: str,
+    locale: str = "ko",
 ) -> bool:
     """Resend API를 사용하여 가격 알림 이메일을 발송합니다."""
     try:
@@ -132,24 +136,46 @@ async def send_alert_email(
         formatted_target = f"₩{target_price:,}"
         hotel_url = f"{SITE_URL}/hotels/{hotel_slug}"
 
-        html_body = f"""
-        <div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #10b981;">💰 가격 알림: {hotel_name}</h2>
-            <p>설정하신 목표 가격에 도달했습니다!</p>
-            <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin: 16px 0;">
-                <p style="margin: 4px 0;"><strong>현재 최저가:</strong> {formatted_price}</p>
-                <p style="margin: 4px 0;"><strong>목표 가격:</strong> {formatted_target}</p>
-                <p style="margin: 4px 0;"><strong>최저가 날짜:</strong> {cheapest_date}</p>
+        if locale == 'en':
+            subject = f"💰 Price Alert: {hotel_name} - {formatted_price}"
+            html_body = f"""
+            <div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #10b981;">💰 Price Alert: {hotel_name}</h2>
+                <p>Your target price has been reached!</p>
+                <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin: 16px 0;">
+                    <p style="margin: 4px 0;"><strong>Current Lowest:</strong> {formatted_price}</p>
+                    <p style="margin: 4px 0;"><strong>Target Price:</strong> {formatted_target}</p>
+                    <p style="margin: 4px 0;"><strong>Date:</strong> {cheapest_date}</p>
+                </div>
+                <a href="{hotel_url}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                    Check it now →
+                </a>
+                <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
+                <p style="font-size: 12px; color: #94a3b8;">
+                    MaxLux Price Alerts | This alert will not be resent within 24 hours.
+                </p>
             </div>
-            <a href="{hotel_url}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                지금 확인하기 →
-            </a>
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
-            <p style="font-size: 12px; color: #94a3b8;">
-                MaxLux 가격 알림 서비스 | 이 알림은 24시간 이내 재발송되지 않습니다.
-            </p>
-        </div>
-        """
+            """
+        else:
+            subject = f"💰 {hotel_name} 가격 알림 - {formatted_price}"
+            html_body = f"""
+            <div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #10b981;">💰 가격 알림: {hotel_name}</h2>
+                <p>설정하신 목표 가격에 도달했습니다!</p>
+                <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin: 16px 0;">
+                    <p style="margin: 4px 0;"><strong>현재 최저가:</strong> {formatted_price}</p>
+                    <p style="margin: 4px 0;"><strong>목표 가격:</strong> {formatted_target}</p>
+                    <p style="margin: 4px 0;"><strong>최저가 날짜:</strong> {cheapest_date}</p>
+                </div>
+                <a href="{hotel_url}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                    지금 확인하기 →
+                </a>
+                <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
+                <p style="font-size: 12px; color: #94a3b8;">
+                    MaxLux 가격 알림 서비스 | 이 알림은 24시간 이내 재발송되지 않습니다.
+                </p>
+            </div>
+            """
 
         async with httpx.AsyncClient(timeout=10) as http_client:
             resp = await http_client.post(
@@ -161,7 +187,7 @@ async def send_alert_email(
                 json={
                     "from": RESEND_FROM_EMAIL,
                     "to": [to_email],
-                    "subject": f"💰 {hotel_name} 가격 알림 - {formatted_price}",
+                    "subject": subject,
                     "html": html_body,
                 },
             )

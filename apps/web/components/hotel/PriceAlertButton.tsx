@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Bell, BellRing, Check, Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 
@@ -19,6 +19,7 @@ const PRICE_SUGGESTIONS_KRW = [200000, 250000, 300000, 350000, 400000, 500000]
 
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
+    const locale = useLocale()
     const { currency } = useSettingStore()
     const [open, setOpen] = useState(false)
     const [email, setEmail] = useState('')
@@ -50,6 +51,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                     hotel_id: hotelId,
                     email: email.trim(),
                     target_price: targetPrice,
+                    locale,
                 }),
             })
 
@@ -113,11 +115,10 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                         <button
                                             key={price}
                                             onClick={() => setTargetPrice(price)}
-                                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
-                                                targetPrice === price
+                                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${targetPrice === price
                                                     ? 'bg-indigo-600 text-white border-indigo-600'
                                                     : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
-                                            }`}
+                                                }`}
                                         >
                                             {formatPrice(price, currency)}
                                         </button>

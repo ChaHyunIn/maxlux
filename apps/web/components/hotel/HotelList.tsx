@@ -13,12 +13,10 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
     const locale = useLocale();
     const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
-    // Load favorites from localStorage on mount
+    // Load favorites from localStorage on mount or when showFavoritesOnly changes
     useEffect(() => {
-        if (showFavoritesOnly) {
-            const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
-            setFavoriteIds(favs);
-        }
+        const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
+        setFavoriteIds(favs);
     }, [showFavoritesOnly]);
 
     const brands = useMemo(() => {
@@ -58,7 +56,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
         }
 
         // Favorites filter
-        if (showFavoritesOnly && favoriteIds.length >= 0) {
+        if (showFavoritesOnly) {
             result = result.filter(h => favoriteIds.includes(h.id));
         }
 

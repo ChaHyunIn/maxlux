@@ -3,7 +3,7 @@
  * Used in HotelHeroHeader.
  */
 
-const CITY_DISPLAY_MAP: Record<string, { ko: string; en: string }> = {
+export const CITY_DISPLAY_MAP: Record<string, { ko: string; en: string }> = {
     seoul: { ko: '서울', en: 'Seoul' },
     busan: { ko: '부산', en: 'Busan' },
     jeju: { ko: '제주', en: 'Jeju' },

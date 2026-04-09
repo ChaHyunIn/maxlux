@@ -90,7 +90,8 @@
         "highest": "Highest",
         "trendDown": "{pct}% down",
         "trendUp": "{pct}% up",
-        "trendStable": "Stable"
+        "trendStable": "Stable",
+        "priceUnit": "k"
     },
     "dayDetail": {
         "soldOut": "Sold Out",
@@ -102,7 +103,12 @@
         "noOtaData": "No other OTA prices available yet",
         "bookNow": "Book Now",
         "roomType": "Room Type",
-        "standardRoom": "Standard"
+        "standardRoom": "Standard",
+        "tagSAT": "Saturday",
+        "tagFRI_EVE": "Friday Eve",
+        "tagHOL": "Holiday",
+        "tagSUN": "Sunday",
+        "tagWEEKDAY": "Weekday"
     },
     "seo": {
         "monthlyTitle": "{name} {month} Prices | MaxLux",

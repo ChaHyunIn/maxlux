@@ -31,22 +31,6 @@ const OTA_DISPLAY: Record<string, { name: string; color: string }> = {
     expedia: { name: 'Expedia', color: 'bg-yellow-100 text-yellow-800' },
 }
 
-const TAG_LABELS_KO: Record<string, string> = {
-    SAT: '토요일',
-    FRI_EVE: '금요일(전야)',
-    HOL: '공휴일',
-    SUN: '일요일',
-    WEEKDAY: '평일',
-}
-
-const TAG_LABELS_EN: Record<string, string> = {
-    SAT: 'Saturday',
-    FRI_EVE: 'Friday Eve',
-    HOL: 'Holiday',
-    SUN: 'Sunday',
-    WEEKDAY: 'Weekday',
-}
-
 export function DayDetailModal({
     open,
     onOpenChange,
@@ -62,8 +46,6 @@ export function DayDetailModal({
     const locale = useLocale()
     const [otaPrices, setOtaPrices] = useState<OtaPrice[]>([])
     const [loading, setLoading] = useState(false)
-
-    const tagLabels = locale === 'en' ? TAG_LABELS_EN : TAG_LABELS_KO
 
     const fetchOtaPrices = useCallback(async () => {
         if (!rate || !open) return
@@ -130,7 +112,7 @@ export function DayDetailModal({
                     </div>
                     <Badge variant="outline" className="gap-1">
                         <Tag className="w-3 h-3" />
-                        {tagLabels[rate.tag] || rate.tag}
+                        {t(`tag${rate.tag}` as any) || rate.tag}
                     </Badge>
                     {!rate.is_sold_out && (
                         <div className="flex items-center gap-1 text-xs text-slate-500">
@@ -154,11 +136,11 @@ export function DayDetailModal({
                                 <Skeleton className="h-10 w-full" />
                             </div>
                         ) : (
-                            allPrices.map((p) => {
+                            allPrices.map((p, idx) => {
                                 const display = OTA_DISPLAY[p.source] || { name: p.source, color: 'bg-slate-100 text-slate-700' }
                                 const isLowest = !p.is_sold_out && p.price_krw === lowestPrice && p.price_krw > 0
                                 return (
-                                    <div key={p.source} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors">
+                                    <div key={`${p.source}-${idx}`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors">
                                         <div className="flex items-center gap-2">
                                             <Badge className={`text-xs ${display.color} border-none`}>
                                                 {display.name}

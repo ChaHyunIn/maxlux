@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useSettingStore } from '@/stores/settingStore'
 import { formatPrice } from '@/lib/utils'
 import { useTranslations, useLocale } from 'next-intl'
@@ -20,16 +20,18 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
     const [chartWidth, setChartWidth] = useState(800)
 
-    const chartRef = useCallback((node: HTMLDivElement | null) => {
-        if (node) {
-            const resizeObserver = new ResizeObserver((entries) => {
-                for (const entry of entries) {
-                    setChartWidth(entry.contentRect.width)
-                }
-            })
-            resizeObserver.observe(node)
-            return () => resizeObserver.disconnect()
-        }
+    const chartRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const node = chartRef.current
+        if (!node) return
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                setChartWidth(entry.contentRect.width)
+            }
+        })
+        resizeObserver.observe(node)
+        return () => resizeObserver.disconnect()
     }, [])
 
     // Filter and prepare data
@@ -106,12 +108,12 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
         const d = new Date(dateStr)
         return locale === 'en'
             ? `${d.getMonth() + 1}/${d.getDate()}`
-            : `${d.getMonth() + 1}/${d.getDate()}`
+            : `${d.getMonth() + 1}.${d.getDate()}`
     }
 
     const formatPriceShort = (price: number) => {
         if (currency === 'USD') return formatPrice(price, 'USD') || ''
-        return `${Math.round(price / 10000)}${locale === 'en' ? 'k' : '만'}`
+        return `${Math.round(price / 10000)}${t('priceUnit')}`
     }
 
     const hovered = hoveredIndex !== null ? chartData[hoveredIndex] : null
@@ -165,7 +167,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
             </div>
 
             {/* Chart */}
-            <div ref={chartRef} className="w-full">
+            <div ref={chartRef} className="w-full relative">
                 <svg
                     width={chartWidth}
                     height={CHART_HEIGHT}

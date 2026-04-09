@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://maxlux.kr';
 const LOCALES = ['ko', 'en'];
-const CITIES = ['seoul'];
+const CITIES = ['seoul', 'busan', 'jeju'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = createClient(

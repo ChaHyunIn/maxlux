@@ -10,13 +10,9 @@ import { Search, X, SlidersHorizontal, Heart, MapPin } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import type { Hotel } from '@/lib/types';
 import { Link } from '@/i18n/navigation';
+import { CITY_DISPLAY_MAP, getCityDisplayName } from '@/lib/cityMapper';
 
 const CITY_KEYS = ['seoul', 'busan', 'jeju'] as const;
-const CITY_LABELS: Record<string, { ko: string; en: string }> = {
-    seoul: { ko: '서울', en: 'Seoul' },
-    busan: { ko: '부산', en: 'Busan' },
-    jeju: { ko: '제주', en: 'Jeju' },
-};
 
 interface AutocompleteItem {
     id: string;
@@ -81,7 +77,7 @@ function SearchAutocomplete({
                         <div className="flex items-center gap-2 mt-0.5">
                             <span className="flex items-center text-xs text-slate-400">
                                 <MapPin className="w-3 h-3 mr-0.5" />
-                                {CITY_LABELS[item.city]?.[locale as 'ko' | 'en'] || item.city}
+                                {getCityDisplayName(item.city, locale)}
                             </span>
                             {item.brand && (
                                 <span className="text-xs text-slate-400">{item.brand}</span>
@@ -206,7 +202,7 @@ function FilterContent({
                         className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === city ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
                         onClick={() => setSelectedCity(city)}
                     >
-                        {CITY_LABELS[city][locale as 'ko' | 'en']}
+                        {getCityDisplayName(city, locale)}
                     </button>
                 ))}
             </div>
@@ -357,16 +353,14 @@ export function HotelFilters({
                     />
                 </div>
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                    <SheetTrigger>
-                        <Button variant="outline" size="sm" className="relative shrink-0">
-                            <SlidersHorizontal className="w-4 h-4 mr-1" />
-                            {t('filterButton')}
-                            {activeCount > 0 && (
-                                <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-[10px] bg-red-500 border-0">
-                                    {activeCount}
-                                </Badge>
-                            )}
-                        </Button>
+                    <SheetTrigger render={<Button variant="outline" size="sm" className="relative shrink-0" />}>
+                        <SlidersHorizontal className="w-4 h-4 mr-1" />
+                        {t('filterButton')}
+                        {activeCount > 0 && (
+                            <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-[10px] bg-red-500 border-0">
+                                {activeCount}
+                            </Badge>
+                        )}
                     </SheetTrigger>
                     <SheetContent side="bottom" className="h-auto max-h-[85vh] overflow-y-auto rounded-t-2xl">
                         <SheetHeader className="mb-4">
