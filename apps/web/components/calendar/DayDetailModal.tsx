@@ -280,7 +280,7 @@ export function DayDetailModal({
                                                                 {tagStrings.some(tag => tag.includes('early') || tag.includes('提前入住') || tag.includes('提早')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitEarlyCheckin')}</Badge>
                                                                 )}
-                                                                {tagStrings.some(tag => tag.includes('late') || tag.includes('延迟退房') || tag.includes('延迟')) && (
+                                                                {tagStrings.some(tag => tag.includes('late') || tag.includes('延迟退房') || tag.includes('延退')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitLateCheckout')}</Badge>
                                                                 )}
                                                             </div>
