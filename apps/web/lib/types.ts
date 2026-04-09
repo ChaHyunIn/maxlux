@@ -73,3 +73,36 @@ export interface PriceAlert {
     triggered_at: string | null;
     created_at: string;
 }
+
+export interface RoomRate {
+    id: number;
+    hotel_id: string;
+    stay_date: string;
+    source: string;
+    room_id: string | null;
+    room_name: string;
+    room_name_en: string | null;
+    room_img: string | null;
+    bed_type: string | null;
+    room_size: number | null;
+    room_capacity: number | null;
+    room_view: string | null;
+    rate_code: string;
+    rate_name: string;
+    rate_name_en: string | null;
+    price_krw: number;
+    price_base_krw: number | null;
+    price_tax_krw: number | null;
+    price_usd: number | null;
+    price_cny: number | null;
+    price_jpy: number | null;
+    is_refundable: boolean;
+    cancel_deadline: string | null;
+    has_breakfast: boolean;
+    benefit_code: string | null;
+    benefit_type: string | null;
+    benefit_tags: string[];
+    benefit_desc: string | null;
+    is_sold_out: boolean;
+    scraped_at: string;
+}

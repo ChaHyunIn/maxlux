@@ -30,3 +30,6 @@ DEFAULT_HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/146.0.0.0 Safari/537.36",
 }
+
+HOTELLUX_RATES_URL = "https://hotel.hotelux.com/services/booking/hotel/rates?mode=asyncPagingMerged"
+DETAIL_SCRAPE_DAYS_AHEAD = 90

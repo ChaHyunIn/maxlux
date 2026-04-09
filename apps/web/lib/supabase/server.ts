@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Hotel, DailyRate, PricePercentiles, OtaPrice, PriceChange } from '../types';
+import type { Hotel, DailyRate, PricePercentiles, OtaPrice, PriceChange, RoomRate } from '../types';
 import { FALLBACK_PERCENTILES } from '../constants';
 
 const supabase = createClient(
@@ -146,4 +146,16 @@ export async function deactivateAlert(alertId: number) {
         .eq('id', alertId);
 
     if (error) throw error;
+}
+
+export async function getRoomRates(hotelId: string, stayDate: string): Promise<RoomRate[]> {
+    const { data, error } = await supabase
+        .from('room_rates')
+        .select('*')
+        .eq('hotel_id', hotelId)
+        .eq('stay_date', stayDate)
+        .eq('source', 'hotellux')
+        .order('price_krw');
+    if (error) return [];
+    return data;
 }

@@ -3,6 +3,7 @@ import asyncio
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception
 from src.config import (
     HOTELLUX_BASE_URL,
+    HOTELLUX_RATES_URL,
     DEFAULT_HEADERS,
     PAGING_LIMIT,
     REQUEST_DELAY_SEC,
@@ -135,3 +136,63 @@ class HotelLuxClient:
 
         log.info("search_all_complete", city=city, total=len(all_hotels))
         return all_hotels
+
+    async def get_hotel_rates(self, hotel_id: str, check_in: str, check_out: str) -> dict | None:
+        """
+        개별 호텔의 전체 객실/요금 플랜을 조회합니다.
+        
+        API: POST /hotel/rates?mode=asyncPagingMerged
+        Payload에 hotel._id를 지정하면 해당 호텔의 rooms[].rates[] 전체를 반환.
+        
+        Args:
+            hotel_id: HotelLux 내부 ID (예: "5b59645a8885d57e94df4ec2")
+            check_in: ISO date (예: "2026-06-01")
+            check_out: ISO date (예: "2026-06-02")
+        
+        Returns:
+            API 응답 dict (rooms 배열 포함) 또는 None (실패 시)
+        """
+        payload = {
+            "preferred": {"currency": "local", "language": "en", "version": "v1"},
+            "hotel": {"_id": hotel_id},
+            "stay": {
+                "date": {"checkIn": check_in, "checkOut": check_out},
+                "guest": {"numberOfRooms": 1, "numberOfAdults": 2, "numberOfChildren": 0}
+            }
+        }
+        
+        client = await self._get_client()
+        
+        for attempt in range(MAX_RETRIES):
+            try:
+                resp = await client.post(HOTELLUX_RATES_URL, json=payload)
+                
+                if resp.status_code == 429:
+                    log.warning("rate_limited", hotel_id=hotel_id, attempt=attempt + 1)
+                    await asyncio.sleep(RETRY_WAIT_SEC)
+                    continue
+                
+                if resp.status_code in (401, 403):
+                    log.error("auth_error_detail", hotel_id=hotel_id)
+                    raise SessionExpiredError("Authentication Error")
+                
+                resp.raise_for_status()
+                data = resp.json()
+                
+                rooms = data.get("rooms", [])
+                total_rates = sum(len(r.get("rates", [])) for r in rooms)
+                log.info("hotel_rates_fetched", hotel_id=hotel_id, date=check_in,
+                         rooms=len(rooms), rates=total_rates)
+                
+                return data
+            
+            except SessionExpiredError:
+                raise
+            except (httpx.HTTPError, asyncio.TimeoutError) as e:
+                log.warning("hotel_rates_error", hotel_id=hotel_id, 
+                            attempt=attempt + 1, error=str(e))
+                if attempt < MAX_RETRIES - 1:
+                    await asyncio.sleep(RETRY_WAIT_SEC)
+        
+        log.error("hotel_rates_failed", hotel_id=hotel_id, date=check_in)
+        return None
