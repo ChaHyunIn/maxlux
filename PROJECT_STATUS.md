@@ -97,7 +97,18 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 
 ---
 
-## Phase 5 – 배포 & 운영
+## Room-Level Rate Collection (Phase 5)
+- ✅ HotelLux detail rates API integration (`get_hotel_rates`)
+- ✅ Rate parser (`rate_parser.py`) – all room × rate plan extraction
+- ✅ `room_rates` table schema with full columns
+- ✅ 4-bucket daily_rates aggregation (nr_nobf, nr_bf, r_nobf, r_bf)
+- ✅ Pipeline Phase A (city sync) + Phase B (detail scraping)
+- ✅ Frontend: RoomRate interface, API route, DayDetailModal UI
+- ✅ i18n keys for room rates section
+
+---
+
+## Phase 6 – 배포 & 운영
 
 | 태스크 | 우선순위 | 예상 시간 | 상태 |
 |--------|----------|-----------|------|

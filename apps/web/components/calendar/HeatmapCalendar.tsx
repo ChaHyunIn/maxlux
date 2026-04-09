@@ -17,14 +17,43 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
     const locale = useLocale();
     const { selectedRate, modalOpen, closeDayDetail } = useCalendarStore();
 
+    // 4-bucket 폴백 순서에 따른 베이스 요금 결정 (nr_nobf -> nr_bf -> r_nobf -> r_bf)
+    const { baseRates, refundableRateMap } = useMemo(() => {
+        const byDate: Record<string, DailyRate[]> = {};
+        rates.forEach(r => {
+            if (!byDate[r.stay_date]) byDate[r.stay_date] = [];
+            byDate[r.stay_date].push(r);
+        });
+
+        const baseRatesArray: DailyRate[] = [];
+        const refMap: Record<string, DailyRate> = {};
+
+        Object.values(byDate).forEach(dayRates => {
+            const nr_nobf = dayRates.find(r => r.room_type === 'nr_nobf');
+            const nr_bf = dayRates.find(r => r.room_type === 'nr_bf');
+            const r_nobf = dayRates.find(r => r.room_type === 'r_nobf');
+            const r_bf = dayRates.find(r => r.room_type === 'r_bf');
+
+            // Base Rate
+            const base = nr_nobf || nr_bf || r_nobf || r_bf;
+            if (base) baseRatesArray.push(base);
+
+            // Refundable Rate
+            const ref = r_nobf || r_bf;
+            if (ref) refMap[ref.stay_date] = ref;
+        });
+
+        return { baseRates: baseRatesArray, refundableRateMap: refMap };
+    }, [rates]);
+
     const { p25, p75 } = useMemo(() => {
-        const prices = rates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
+        const prices = baseRates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
         if (prices.length === 0) return FALLBACK_PERCENTILES;
         return {
             p25: prices[Math.floor(prices.length * 0.25)],
             p75: prices[Math.floor(prices.length * 0.75)]
         };
-    }, [rates]);
+    }, [baseRates]);
 
     // rates에서 가장 최신 scraped_at 계산
     const lastScraped = useMemo(() => {
@@ -35,17 +64,9 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
         }, null as string | null);
     }, [rates]);
 
-    const refundableRateMap = useMemo(() => {
-        const map: Record<string, DailyRate> = {};
-        rates.filter(r => r.room_type === 'refundable').forEach(r => {
-            map[r.stay_date] = r;
-        });
-        return map;
-    }, [rates]);
-
     const groupedByMonth = useMemo(() => {
         const groups: Record<string, DailyRate[]> = {};
-        rates.forEach(rate => {
+        baseRates.forEach(rate => {
             const d = new Date(rate.stay_date);
             const key = `${getYear(d)}-${getMonth(d) + 1}`;
             if (!groups[key]) groups[key] = [];
@@ -56,7 +77,7 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
             const [yB, mB] = b[0].split('-').map(Number);
             return yA !== yB ? yA - yB : mA - mB;
         });
-    }, [rates]);
+    }, [baseRates]);
 
     const hotelName = locale === 'en' ? hotel.name_en : hotel.name_ko;
 

@@ -89,7 +89,7 @@ LEFT JOIN LATERAL (
       AND is_sold_out = false
       AND price_krw > 0
       AND stay_date >= CURRENT_DATE
-      AND room_type = 'non_refundable'
+      AND room_type IN ('nr_nobf', 'nr_bf')
 ) dr_min ON true
 LEFT JOIN LATERAL (
     SELECT MIN(price_krw) AS min_price_refundable
@@ -98,7 +98,7 @@ LEFT JOIN LATERAL (
       AND is_sold_out = false
       AND price_krw > 0
       AND stay_date >= CURRENT_DATE
-      AND room_type = 'refundable'
+      AND room_type IN ('r_nobf', 'r_bf')
 ) dr_ref ON true;
 ```
 

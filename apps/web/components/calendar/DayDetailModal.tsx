@@ -96,7 +96,7 @@ export function DayDetailModal({
             price_krw: rate.price_krw,
             url: bookingUrl,
             is_sold_out: rate.is_sold_out,
-            refund_policy: rate.room_type === 'refundable' ? 'refundable' : 'non_refundable',
+            refund_policy: ['r_nobf', 'r_bf'].includes(rate.room_type) ? 'refundable' : 'non_refundable',
         },
         ...otaPrices.map(op => ({
             source: op.source,
