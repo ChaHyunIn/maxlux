@@ -90,3 +90,60 @@ export async function getPriceChanges(hotelId: string, limit = 20): Promise<Pric
     if (error) return [];
     return data;
 }
+
+// ─── Price Alerts ───
+
+export async function createPriceAlert(data: {
+    hotel_id: string;
+    email: string;
+    target_price: number;
+    stay_date_from?: string | null;
+    stay_date_to?: string | null;
+    locale?: string;
+}) {
+    const { data: result, error } = await supabase
+        .from('price_alerts')
+        .upsert(
+            {
+                hotel_id: data.hotel_id,
+                email: data.email.toLowerCase().trim(),
+                target_price: data.target_price,
+                stay_date_from: data.stay_date_from || null,
+                stay_date_to: data.stay_date_to || null,
+                locale: data.locale || 'ko',
+                is_active: true,
+            },
+            { onConflict: 'hotel_id,email,target_price' }
+        )
+        .select()
+        .single();
+
+    if (error) throw error;
+    return result;
+}
+
+export async function getActiveAlerts(email: string, hotelId?: string) {
+    let query = supabase
+        .from('price_alerts')
+        .select('*')
+        .eq('email', email.toLowerCase().trim())
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+    if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
+}
+
+export async function deactivateAlert(alertId: number) {
+    const { error } = await supabase
+        .from('price_alerts')
+        .update({ is_active: false })
+        .eq('id', alertId);
+
+    if (error) throw error;
+}

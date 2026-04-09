@@ -1,5 +1,5 @@
 # MaxLux – 프로젝트 현황 및 로드맵
-> 마지막 업데이트: 2026-04-08
+> 마지막 업데이트: 2026-04-09
 
 ## 프로젝트 개요
 HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로 시각화하여
@@ -58,14 +58,14 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 
 | 태스크 | 우선순위 | 예상 시간 | 상태 |
 |--------|----------|-----------|------|
-| GitHub Actions cron (매일 KST 06:00) | 🔴 Critical | 1시간 | TODO |
-| sold_out 감지 (price null → is_sold_out: true) | 🔴 Critical | 30분 | TODO |
+| GitHub Actions cron (매일 KST 06:00) | 🔴 Critical | 1시간 | ✅ DONE |
+| sold_out 감지 (price null → is_sold_out: true) | 🔴 Critical | 30분 | ✅ DONE |
 | 세션 쿠키 headers 적용 (필요 시) | 🟡 Medium | 15분 | TODO |
-| 도시 확장 (busan, jeju) | 🟡 Medium | 1시간 | TODO |
-| 예약 링크(booking URL) 파싱 & 저장 | 🟡 Medium | 1시간 | TODO |
+| 도시 확장 (busan, jeju) | 🟡 Medium | 1시간 | ✅ DONE |
+| 예약 링크(booking URL) 파싱 & 저장 | 🟡 Medium | 1시간 | ✅ DONE |
 | HOTEL_KO_MAPPING → DB 마이그레이션 | 🟢 Low | 2시간 | TODO |
-| stats_aggregator (오래된 데이터 압축) | 🟢 Low | 2시간 | TODO |
-| 공휴일 API 자동화 (공공데이터포털) | 🟢 Low | 2시간 | TODO |
+| stats_aggregator (오래된 데이터 압축) | 🟢 Low | 2시간 | ✅ DONE |
+| 공휴일 API 자동화 (공공데이터포털) | 🟢 Low | 2시간 | ✅ DONE |
 
 ---
 
@@ -73,12 +73,12 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 
 | 태스크 | 우선순위 | 예상 시간 | 상태 |
 |--------|----------|-----------|------|
-| 아고다 가격 스크래핑 클라이언트 | 🔴 Critical | 4시간 | TODO |
-| 부킹닷컴 가격 스크래핑 클라이언트 | 🔴 Critical | 4시간 | TODO |
-| ota_prices 테이블 설계 & 마이그레이션 | 🟡 Medium | 1시간 | TODO |
-| OTA 가격 수집 → rate_collector 통합 | 🟡 Medium | 2시간 | TODO |
-| 프론트: DayCell 클릭 → OTA 비교 모달 | 🟡 Medium | 3시간 | TODO |
-| 프론트: 예약 링크 연결 (HotelLux + OTA) | 🟡 Medium | 2시간 | TODO |
+| 아고다 가격 스크래핑 클라이언트 | 🔴 Critical | 4시간 | ✅ DONE |
+| 부킹닷컴 가격 스크래핑 클라이언트 | 🔴 Critical | 4시간 | ✅ DONE |
+| ota_prices 테이블 설계 & 마이그레이션 | 🟡 Medium | 1시간 | ✅ DONE |
+| OTA 가격 수집 → rate_collector 통합 | 🟡 Medium | 2시간 | ✅ DONE |
+| 프론트: DayCell 클릭 → OTA 비교 모달 | 🟡 Medium | 3시간 | ✅ DONE |
+| 프론트: 예약 링크 연결 (HotelLux + OTA) | 🟡 Medium | 2시간 | ✅ DONE |
 
 ---
 
@@ -86,13 +86,13 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 
 | 태스크 | 우선순위 | 예상 시간 | 상태 |
 |--------|----------|-----------|------|
-| 필터 전면 개편 (도시/가격대/즐겨찾기/복합 필터) | 🔴 Critical | 4시간 | TODO |
-| 모바일 필터 Sheet | 🔴 Critical | 2시간 | TODO |
-| DayCell 클릭 상세 모달 (룸타입, OTA 비교, 예약링크) | 🔴 Critical | 3시간 | TODO |
-| 검색 자동완성 드롭다운 | 🟡 Medium | 2시간 | TODO |
-| 가격 추이 라인 차트 | 🟡 Medium | 3시간 | TODO |
-| 가격 알림 기능 (이메일 또는 Push) | 🟡 Medium | 4시간 | TODO |
-| 즐겨찾기만 보기 필터 | 🟢 Low | 30분 | TODO |
+| 필터 전면 개편 (도시/가격대/즐겨찾기/복합 필터) | 🔴 Critical | 4시간 | ✅ DONE |
+| 모바일 필터 Sheet | 🔴 Critical | 2시간 | ✅ DONE |
+| DayCell 클릭 상세 모달 (룸타입, OTA 비교, 예약링크) | 🔴 Critical | 3시간 | ✅ DONE |
+| 검색 자동완성 드롭다운 | 🟡 Medium | 2시간 | ✅ DONE |
+| 가격 추이 라인 차트 | 🟡 Medium | 3시간 | ✅ DONE |
+| 가격 알림 기능 (이메일 또는 Push) | 🟡 Medium | 4시간 | ✅ DONE |
+| 즐겨찾기만 보기 필터 | 🟢 Low | 30분 | ✅ DONE |
 | "최근 가격 변동" 실제 데이터 연동 (price_changes) | 🟢 Low | 2시간 | TODO |
 
 ---
