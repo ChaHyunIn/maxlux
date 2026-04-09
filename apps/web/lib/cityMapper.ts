@@ -12,6 +12,15 @@
     jeju: { ko: '제주', en: 'Jeju' },
 };
 
+// Dev-time check for missing mappings
+if (process.env.NODE_ENV === 'development') {
+    SUPPORTED_CITIES.forEach(city => {
+        if (!CITY_DISPLAY_MAP[city]) {
+            console.warn(`[cityMapper] Missing display mapping for supported city: ${city}`);
+        }
+    });
+}
+
 export function getCityDisplayName(citySlug: string, locale: string = 'ko'): string {
     const entry = CITY_DISPLAY_MAP[citySlug.toLowerCase()];
     if (!entry) return citySlug;

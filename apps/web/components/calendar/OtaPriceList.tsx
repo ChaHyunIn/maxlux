@@ -2,23 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { OTA_DISPLAY } from '@/lib/ota';
 
 interface OtaPriceListProps {
-    loading: boolean;
-    allPrices: any[];
-    lowestPrice: number;
-    currency: 'KRW' | 'USD';
-    t: any;
-}
-
-const OTA_DISPLAY: Record<string, { name: string; color: string }> = {
-    hotellux: { name: 'HotelLux', color: 'bg-violet-100 text-violet-800' },
-    agoda: { name: 'Agoda', color: 'bg-red-100 text-red-800' },
-    booking: { name: 'Booking.com', color: 'bg-blue-100 text-blue-800' },
-    hotels_com: { name: 'Hotels.com', color: 'bg-rose-100 text-rose-800' },
-    trip_com: { name: 'Trip.com', color: 'bg-sky-100 text-sky-800' },
-    expedia: { name: 'Expedia', color: 'bg-yellow-100 text-yellow-800' },
-};
 
 export function OtaPriceList({ loading, allPrices, lowestPrice, currency, t }: OtaPriceListProps) {
     return (

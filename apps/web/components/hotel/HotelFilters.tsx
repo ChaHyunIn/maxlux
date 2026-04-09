@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { useFilterStore } from "@/stores/filterStore"
+import { useFilterStore, DEFAULT_FILTER_PRICE_RANGE } from "@/stores/filterStore"
 import { useTranslations } from 'next-intl';
 import { Search, X, SlidersHorizontal, Heart, MapPin } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
@@ -58,13 +58,9 @@ export function HotelFilters({
         mobileDebouncRef.current = setTimeout(() => setSearchQuery(val), 300);
     }, [setSearchQuery]);
 
-    const DEFAULT_PRICE_RANGE = [0, 2000000];
-    const activeCount = [
-        searchQuery.trim() !== '',
-        selectedBrand !== 'all',
         selectedCity !== 'all',
         sortBy !== 'price',
-        priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1],
+        priceRange[0] !== DEFAULT_FILTER_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_FILTER_PRICE_RANGE[1],
         showFavoritesOnly,
     ].filter(Boolean).length;
 

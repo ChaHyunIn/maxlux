@@ -165,7 +165,10 @@ async def seed_holidays_auto(supabase_client, year: int | None = None):
 
 
 def seed_holidays(supabase_client):
-    """동기 호환 래퍼 — 기존 main.py 호출부 호환용"""
+    """
+    [DEPRECATED] 동기 호환 래퍼 — 기존 main.py 호출부 호환용.
+    대신 seed_holidays_auto(client)를 사용하세요.
+    """
     for date_str, name_ko, name_en, is_sub in HOLIDAYS_2026:
         supabase_client.table("holidays").upsert({
             "date": date_str,

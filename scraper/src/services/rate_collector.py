@@ -33,7 +33,7 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
             "hotellux_id": hotellux_id,
             "price_krw": int(price_krw),
             "stay_date": check_in,
-            "room_type": "non_refundable",
+            "room_type": "nr_nobf",
             "tag": tag,
             "is_sold_out": is_sold_out
         })

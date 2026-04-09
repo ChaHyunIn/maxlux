@@ -56,7 +56,7 @@ export function DayDetailModal({
             const res = await fetch(`/api/ota-prices?hotelId=${hotelId}&stayDate=${rate.stay_date}`)
             if (res.ok) {
                 const data = await res.json()
-                setOtaPrices(data)
+                setOtaPrices(data.prices || [])
             }
         } catch {
             setOtaPrices([])
@@ -74,7 +74,7 @@ export function DayDetailModal({
         setRoomRatesLoading(true);
         fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
             .then(res => res.json())
-            .then(data => setRoomRates(Array.isArray(data) ? data : []))
+            .then(json => setRoomRates(Array.isArray(json.data) ? json.data : []))
             .catch(() => setRoomRates([]))
             .finally(() => setRoomRatesLoading(false));
     }, [open, rate]);

@@ -60,10 +60,10 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, isEn, curr
                                                         {tagStrings.some(tag => tag.includes('100USD') || tag.includes('100美元')) && (
                                                             <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-purple-50 text-purple-600">{t('benefitCredit')}</Badge>
                                                         )}
-                                                        {tagStrings.some(tag => tag.includes('upgrade') || tag.includes('升级') || tag.includes('升等')) && (
+                                                        {tagStrings.some(tag => tag.includes('upgrade') || tag.includes('升级') || tag.includes('升級')) && (
                                                             <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-sky-50 text-sky-600">{t('benefitUpgrade')}</Badge>
                                                         )}
-                                                        {tagStrings.some(tag => tag.includes('early') || tag.includes('提前入住') || tag.includes('提早')) && (
+                                                        {tagStrings.some(tag => tag.includes('early') || tag.includes('提前入住') || tag.includes('早到')) && (
                                                             <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitEarlyCheckin')}</Badge>
                                                         )}
                                                         {tagStrings.some(tag => tag.includes('late') || tag.includes('延迟退房') || tag.includes('延退')) && (
