@@ -44,9 +44,12 @@ export function DayDetailModal({
     p25,
     p75,
 }: DayDetailModalProps) {
-    const { currency } = useSettingStore()
+    const currency = useSettingStore(state => state.currency)
     const t = useTranslations('dayDetail')
+    const tTerm = useTranslations('apiTerms')
     const locale = useLocale()
+    const isEn = locale === 'en'
+
     const [otaPrices, setOtaPrices] = useState<OtaPrice[]>([])
     const [loading, setLoading] = useState(false)
     const [roomRates, setRoomRates] = useState<RoomRate[]>([])
@@ -242,8 +245,8 @@ export function DayDetailModal({
                                 {t('noRoomData')}
                             </div>
                         ) : (
-                            Array.from(new Set(roomRates.map(r => getLocalizedText(r.room_name_en, r.room_name, locale)))).map(roomName => {
-                                const ratesForRoom = roomRates.filter(r => getLocalizedText(r.room_name_en, r.room_name, locale) === roomName);
+                            Array.from(new Set(roomRates.map(r => getLocalizedText(r.room_name_en, r.room_name, tTerm, isEn)))).map(roomName => {
+                                const ratesForRoom = roomRates.filter(r => getLocalizedText(r.room_name_en, r.room_name, tTerm, isEn) === roomName);
                                 return (
                                     <div key={roomName} className="pb-3 border-b border-slate-100 last:border-b-0">
                                         <div className="bg-slate-50 px-3 py-2 border-b border-slate-100 sticky top-0 z-10">
@@ -259,7 +262,7 @@ export function DayDetailModal({
                                                     <div key={`rate-${rate.id || idx}`} className="px-4 py-2.5 hover:bg-slate-50/50 transition-colors flex justify-between items-start gap-3">
                                                         <div className="flex-1 min-w-0 flex flex-col gap-1.5 pt-0.5">
                                                             <div className="text-[13px] font-medium text-slate-700 leading-tight">
-                                                                {getLocalizedText(rate.rate_name_en, rate.rate_name, locale)}
+                                                                {getLocalizedText(rate.rate_name_en, rate.rate_name, tTerm, isEn)}
                                                             </div>
                                                             <div className="flex flex-wrap gap-1 mt-0.5">
                                                                 <Badge variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${rate.is_refundable ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-500'}`}>
