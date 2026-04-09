@@ -38,15 +38,15 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                     </div>
                 </div>
                 {!rate.is_sold_out && (
-                    <div className="flex sm:hidden items-center justify-end gap-1 text-[11px] text-slate-500 w-full mt-1">
-                        {level === 'low' && <TrendingDown className="w-3. h-3 text-emerald-600" />}
+                    <div className="flex sm:hidden items-center justify-end gap-1 text-[11px] text-slate-500 w-full">
+                        {level === 'low' && <TrendingDown className="w-3 h-3 text-emerald-600" />}
                         {level === 'mid' && <Minus className="w-3 h-3 text-slate-400" />}
                         {level === 'high' && <TrendingUp className="w-3 h-3 text-red-600" />}
                         {level === 'low' ? t('levelLow') : level === 'high' ? t('levelHigh') : t('levelMid')}
                     </div>
                 )}
                 {refundableRate && !refundableRate.is_sold_out && (
-                    <div className="flex flex-wrap items-center justify-between w-full mt-2">
+                    <div className="flex flex-wrap items-center justify-between w-full mt-1">
                         <span className="text-xs text-slate-500">{t('refundable')}</span>
                         <div className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-50 text-blue-800">
                             {formatPrice(refundableRate.price_krw, currency)}

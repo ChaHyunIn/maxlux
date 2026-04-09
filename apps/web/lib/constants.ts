@@ -21,3 +21,5 @@ export const FALLBACK_PERCENTILES = {
 /** Price threshold (KRW) below which a hotel is considered a "hot deal" */
 export const HOT_DEAL_THRESHOLD = 350000;
 
+export const SUPPORTED_CITIES = ['seoul', 'busan', 'jeju'] as const;
+

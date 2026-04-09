@@ -8,7 +8,7 @@ import { getCityDisplayName } from '@/lib/cityMapper';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import { useTranslations } from 'next-intl';
 
-export const CITY_KEYS = ['seoul', 'busan', 'jeju'] as const;
+import { SUPPORTED_CITIES } from '@/lib/constants';
 
 export function FilterContent({
     brands,
@@ -115,7 +115,7 @@ export function FilterContent({
                 >
                     {t('allCities')}
                 </button>
-                {CITY_KEYS.map(city => (
+                {SUPPORTED_CITIES.map(city => (
                     <button
                         key={city}
                         className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === city ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}

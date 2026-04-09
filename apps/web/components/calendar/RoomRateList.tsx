@@ -57,7 +57,7 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, isEn, curr
                                                         <Badge variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${rate.has_breakfast ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500'}`}>
                                                             {rate.has_breakfast ? t('breakfastIncluded') : t('breakfastNotIncluded')}
                                                         </Badge>
-                                                        {tagStrings.some(tag => tag === '100USD' || tag === '100美元') && (
+                                                        {tagStrings.some(tag => tag.includes('100USD') || tag.includes('100美元')) && (
                                                             <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-purple-50 text-purple-600">{t('benefitCredit')}</Badge>
                                                         )}
                                                         {tagStrings.some(tag => tag.includes('upgrade') || tag.includes('升级') || tag.includes('升等')) && (
