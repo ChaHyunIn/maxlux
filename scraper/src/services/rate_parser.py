@@ -17,9 +17,13 @@ API 응답 구조:
          ├─ breakfast.include (bool)
          └─ benefit{code, type, description, tags[], name}
 """
+import re
 from src.utils.logger import get_logger
 
 log = get_logger("rate_parser")
+
+def has_chinese(text):
+    return bool(re.search(r'[\u4e00-\u9fa5]', text or ''))
 
 
 def parse_rooms_to_rows(api_response: dict, hotel_uuid: str, stay_date: str, source: str = "hotellux") -> list[dict]:
@@ -41,7 +45,8 @@ def parse_rooms_to_rows(api_response: dict, hotel_uuid: str, stay_date: str, sou
     for room in rooms:
         room_id = room.get("_id", "")
         room_name = room.get("name", "")
-        room_name_en = room.get("nameEn", "")
+        raw_room_name_en = room.get("nameEn") or room.get("name_en")
+        room_name_en = raw_room_name_en if raw_room_name_en and not has_chinese(raw_room_name_en) else None
         images = room.get("images", [])
         room_img = images[0] if images else None
         
@@ -95,13 +100,16 @@ def parse_rooms_to_rows(api_response: dict, hotel_uuid: str, stay_date: str, sou
             benefit_tags = benefit.get("tags", [])    # ["赠送早餐","100USD餐饮消费抵扣",...]
             benefit_desc = benefit.get("description")  # 전체 설명 텍스트
             
+            raw_rate_name_en = rate.get("nameEn") or rate.get("name_en")
+            rate_name_en = raw_rate_name_en if raw_rate_name_en and not has_chinese(raw_rate_name_en) else None
+
             row = {
                 "hotel_id": hotel_uuid,
                 "stay_date": stay_date,
                 "source": source,
                 "room_id": room_id,
                 "room_name": room_name,
-                "room_name_en": room_name_en or None,
+                "room_name_en": room_name_en,
                 "room_img": room_img,
                 "bed_type": bed_type,
                 "room_size": room_size,
@@ -109,7 +117,7 @@ def parse_rooms_to_rows(api_response: dict, hotel_uuid: str, stay_date: str, sou
                 "room_view": room_view,
                 "rate_code": rate.get("code", ""),
                 "rate_name": rate.get("name", ""),
-                "rate_name_en": rate.get("nameEn") or None,
+                "rate_name_en": rate_name_en,
                 "price_krw": price_krw,
                 "price_base_krw": price_base_krw,
                 "price_tax_krw": price_tax_krw,

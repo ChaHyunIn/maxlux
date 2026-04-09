@@ -54,18 +54,20 @@ export function getLocalizedText(
 ): string {
     const hasChinese = (str: string | null) => str ? /[\u4e00-\u9fa5]/.test(str) : false;
 
-    // Valid English name available
+    // Valid English name available and no Chinese characters
     if (en && !hasChinese(en)) {
         return en;
     }
 
-    // Only Chinese is left. Translate it using next-intl keys.
     const textToTranslate = local || en || '';
     if (!textToTranslate) return '';
 
     let result = textToTranslate;
-    Object.entries(CHINESE_TO_KEY).forEach(([cnText, key]) => {
-        // If the Chinese text exists in our string, replace it
+    
+    // Sort by length descending to match longer phrases first (e.g., "会员专属" before "会员")
+    const sortedEntries = Object.entries(CHINESE_TO_KEY).sort((a, b) => b[0].length - a[0].length);
+    
+    sortedEntries.forEach(([cnText, key]) => {
         if (result.includes(cnText)) {
             let replacement = '';
             try {
@@ -73,11 +75,19 @@ export function getLocalizedText(
                 replacement = t(key);
                 if (isEnglishLocale) replacement += ' ';
             } catch {
-                replacement = cnText; // fallback
+                // Fallback to English key name (better than Chinese)
+                replacement = key.replace(/([A-Z])/g, ' $1').trim();
+                replacement = replacement.charAt(0).toUpperCase() + replacement.slice(1);
+                if (isEnglishLocale) replacement += ' ';
             }
             result = result.split(cnText).join(replacement);
         }
     });
+
+    // Clean up any remaining Chinese characters for English locale
+    if (isEnglishLocale) {
+        result = result.replace(/[\u4e00-\u9fa5]+/g, '').trim();
+    }
 
     return result.replace(/\s+/g, ' ').trim();
 }

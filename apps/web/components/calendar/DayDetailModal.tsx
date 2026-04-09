@@ -271,16 +271,16 @@ export function DayDetailModal({
                                                                 <Badge variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${rate.has_breakfast ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500'}`}>
                                                                     {rate.has_breakfast ? t('breakfastIncluded') : t('breakfastNotIncluded')}
                                                                 </Badge>
-                                                                {tagStrings.some(t => t.includes('100USD')) && (
+                                                                {tagStrings.some(tag => tag.includes('100USD') || tag.includes('100美元')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-purple-50 text-purple-600">{t('benefitCredit')}</Badge>
                                                                 )}
-                                                                {tagStrings.some(t => t.includes('升房')) && (
+                                                                {tagStrings.some(tag => tag.includes('upgrade') || tag.includes('升级') || tag.includes('升等')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-sky-50 text-sky-600">{t('benefitUpgrade')}</Badge>
                                                                 )}
-                                                                {tagStrings.some(t => t.includes('提前入住')) && (
+                                                                {tagStrings.some(tag => tag.includes('early') || tag.includes('提前入住') || tag.includes('提早')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitEarlyCheckin')}</Badge>
                                                                 )}
-                                                                {tagStrings.some(t => t.includes('延迟退房')) && (
+                                                                {tagStrings.some(tag => tag.includes('late') || tag.includes('延迟退房') || tag.includes('延迟')) && (
                                                                     <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-gray-100 text-gray-600">{t('benefitLateCheckout')}</Badge>
                                                                 )}
                                                             </div>

@@ -153,7 +153,7 @@ class HotelLuxClient:
             API 응답 dict (rooms 배열 포함) 또는 None (실패 시)
         """
         payload = {
-            "preferred": {"currency": "local", "language": "en", "version": "v1"},
+            "preferred": {"currency": "local", "language": "ko", "version": "v1"},
             "hotel": {"_id": hotel_id},
             "stay": {
                 "date": {"checkIn": check_in, "checkOut": check_out},
