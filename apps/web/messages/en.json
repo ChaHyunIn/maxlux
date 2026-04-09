@@ -7,8 +7,10 @@
         "sortByDiscount": "🔥 Hot Deals",
         "priceCollecting": "Collecting prices",
         "priceTBD": "Price TBD",
-        "benefitsTitle": "HotelLux Partner Benefits",
+        "hotelNotSelected": "(Select a hotel)",
         "defaultCity": "Seoul",
+        "nonRefundableShort": "Non-refund",
+        "refundableShort": "Free cancel",
         "imageUnavailable": "Image Unavailable",
         "hotDeal": "🔥 Hot Deal",
         "priceChanged": "📉 Recent price change",
@@ -49,7 +51,7 @@
         "monthFormat": "{month} {year}",
         "filterWeekend": "Weekends",
         "filterHoliday": "Holidays",
-        "lastUpdated": "Last updated: {time}"
+        "lastUpdated": "As of {absoluteTime} ({relativeTime})"
     },
     "common": {
         "dataLoading": "Collecting data...",
@@ -112,7 +114,7 @@
         "tagHOL": "Holiday",
         "tagSUN": "Sunday",
         "tagWEEKDAY": "Weekday",
-        "scrapedAt": "Collected: {time}",
+        "scrapedAt": "Collected {absoluteTime} ({relativeTime})",
         "nonRefundable": "Non-refundable lowest",
         "refundable": "Refundable lowest"
     },

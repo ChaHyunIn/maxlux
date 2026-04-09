@@ -62,6 +62,8 @@
 - `booking_url` text NULL
 - `agoda_id` text NULL  
 - `booking_id` text NULL
+- `latest_scraped_at` timestamptz NULL
+- `min_price_refundable` integer NULL
 
 ## holidays 테이블 신규 컬럼 (있으면 확인)
 - `name_en` text

@@ -40,3 +40,15 @@ export function getRelativeTime(scraped_at: string | null | undefined, locale: s
   if (diffHour < 24) return `${diffHour}시간 전`;
   return `${diffDay}일 전`;
 }
+
+export function formatAbsoluteTime(dateString: string, locale: string): string {
+  const date = new Date(dateString);
+  if (locale === 'ko') {
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    return `${m}월 ${d}일 ${h}:${min}`;
+  }
+  return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}

@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ExternalLink, TrendingDown, TrendingUp, Minus, Calendar, Tag } from 'lucide-react'
-import { formatPrice, getPriceLevel, getRelativeTime } from '@/lib/utils'
+import { formatPrice, getPriceLevel, getRelativeTime, formatAbsoluteTime } from '@/lib/utils'
 import { PRICE_COLORS } from '@/lib/constants'
 import type { DailyRate, OtaPrice } from '@/lib/types'
 import { useSettingStore } from '@/stores/settingStore'
@@ -78,19 +78,20 @@ export function DayDetailModal({
         ? dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
         : dateObj.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
-    // Combine HotelLux price + OTA prices for comparison
     const allPrices = [
         {
             source: 'hotellux',
             price_krw: rate.price_krw,
             url: bookingUrl,
             is_sold_out: rate.is_sold_out,
+            refund_policy: rate.room_type === 'refundable' ? 'refundable' : 'non_refundable',
         },
         ...otaPrices.map(op => ({
             source: op.source,
             price_krw: op.price_krw,
             url: op.url,
             is_sold_out: false,
+            refund_policy: op.refund_policy || 'unknown',
         })),
     ].filter(p => !p.is_sold_out || p.source === 'hotellux')
 
@@ -141,7 +142,10 @@ export function DayDetailModal({
 
                 {rate.scraped_at && (
                     <p className="text-[11px] text-slate-400 mb-4 -mt-2">
-                        {t('scrapedAt', { time: getRelativeTime(rate.scraped_at, locale) })}
+                        {t('scrapedAt', {
+                            absoluteTime: formatAbsoluteTime(rate.scraped_at, locale),
+                            relativeTime: getRelativeTime(rate.scraped_at, locale)
+                        })}
                     </p>
                 )}
 
@@ -169,6 +173,14 @@ export function DayDetailModal({
                                             {isLowest && (
                                                 <Badge className="bg-emerald-500 text-white text-[10px] border-none px-1.5">
                                                     {t('lowestBadge')}
+                                                </Badge>
+                                            )}
+                                            {p.refund_policy && p.refund_policy !== 'unknown' && (
+                                                <Badge variant="outline" className={`text-[10px] ${p.refund_policy === 'refundable'
+                                                        ? 'bg-green-50 text-green-600 border-green-200'
+                                                        : 'bg-red-50 text-red-600 border-red-200'
+                                                    }`}>
+                                                    {p.refund_policy === 'refundable' ? t('refundable') : t('nonRefundable')}
                                                 </Badge>
                                             )}
                                         </div>

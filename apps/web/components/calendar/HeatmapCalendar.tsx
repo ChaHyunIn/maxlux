@@ -9,7 +9,7 @@ import { getYear, getMonth } from 'date-fns';
 import { FALLBACK_PERCENTILES } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useLocale, useTranslations } from 'next-intl';
-import { getRelativeTime } from '@/lib/utils';
+import { getRelativeTime, formatAbsoluteTime } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
@@ -75,7 +75,10 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
                 {lastScraped && (
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <Clock className="w-3.5 h-3.5" />
-                        <span>{t('lastUpdated', { time: getRelativeTime(lastScraped, locale) })}</span>
+                        <span>{t('lastUpdated', {
+                            absoluteTime: formatAbsoluteTime(lastScraped, locale),
+                            relativeTime: getRelativeTime(lastScraped, locale)
+                        })}</span>
                     </div>
                 )}
             </div>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Hotel } from '@/lib/types';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, getRelativeTime } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -87,7 +87,21 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                     <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col gap-2">
                         {hotel.min_price ? (
                             <div className="flex flex-col items-end gap-1">
-                                <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
+                                <div className="flex items-center gap-1.5">
+                                    <span className="text-[10px] text-red-500 font-medium">{t('nonRefundableShort')}</span>
+                                    <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price)}~</p>
+                                </div>
+                                {hotel.min_price_refundable && (
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[10px] text-green-600 font-medium">{t('refundableShort')}</span>
+                                        <p className="text-gray-500 font-semibold text-sm">{formatPrice(hotel.min_price_refundable)}~</p>
+                                    </div>
+                                )}
+                                {hotel.latest_scraped_at && (
+                                    <span className="text-[10px] text-gray-400">
+                                        {getRelativeTime(hotel.latest_scraped_at, locale)}
+                                    </span>
+                                )}
                                 {hasRecentDrop && (
                                     <p className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
                                         <TrendingDown className="w-3 h-3" />

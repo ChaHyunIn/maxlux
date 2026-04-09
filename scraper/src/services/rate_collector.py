@@ -100,6 +100,16 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
     if not isinstance(inserted, int): inserted = 0
     if not isinstance(updated, int): updated = 0
 
+    from datetime import datetime
+    hotel_ids_to_update = list(set(r['hotel_id'] for r in valid_rates))
+    if hotel_ids_to_update:
+        try:
+            client.table('hotels').update(
+                {'latest_scraped_at': datetime.utcnow().isoformat()}
+            ).in_('id', hotel_ids_to_update).execute()
+        except Exception as e:
+            log.warning("latest_scraped_at_update_failed", error=str(e))
+
     log.info("rates_saved", date=check_in, tag=tag,
              inserted=inserted, updated=updated, skipped=skipped)
     return {"inserted": inserted, "updated": updated, "skipped": skipped}

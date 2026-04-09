@@ -20,6 +20,8 @@ export interface Hotel {
     latitude: number | null;
     longitude: number | null;
     booking_url: string | null;
+    latest_scraped_at?: string;
+    min_price_refundable?: number;
 }
 
 export interface PriceChange {
@@ -52,6 +54,7 @@ export interface OtaPrice {
     price_krw: number;
     room_type: string;
     url: string | null;
+    refund_policy?: string;
 }
 
 export interface PricePercentiles {
