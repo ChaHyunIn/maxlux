@@ -5,6 +5,12 @@ import { formatPrice } from '@/lib/utils';
 import { OTA_DISPLAY } from '@/lib/ota';
 
 interface OtaPriceListProps {
+    loading: boolean;
+    allPrices: any[];
+    lowestPrice: number;
+    currency: 'KRW' | 'USD';
+    t: any;
+}
 
 export function OtaPriceList({ loading, allPrices, lowestPrice, currency, t }: OtaPriceListProps) {
     return (

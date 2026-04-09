@@ -58,6 +58,9 @@ export function HotelFilters({
         mobileDebouncRef.current = setTimeout(() => setSearchQuery(val), 300);
     }, [setSearchQuery]);
 
+    const activeCount = [
+        searchQuery.trim() !== '',
+        selectedBrand !== 'all',
         selectedCity !== 'all',
         sortBy !== 'price',
         priceRange[0] !== DEFAULT_FILTER_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_FILTER_PRICE_RANGE[1],
