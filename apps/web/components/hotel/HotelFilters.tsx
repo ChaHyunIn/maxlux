@@ -7,6 +7,7 @@ import { useFilterStore, DEFAULT_FILTER_PRICE_RANGE } from "@/stores/filterStore
 import { useTranslations } from 'next-intl';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import type { Hotel } from '@/lib/types';
 import { FilterContent } from './FilterContent';
 import { SearchAutocomplete } from './SearchAutocomplete';
@@ -39,15 +40,7 @@ export function HotelFilters({
         setMobileSearch(searchQuery);
     }, [searchQuery]);
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (mobileContainerRef.current && (e.target instanceof Node) && !mobileContainerRef.current.contains(e.target)) {
-                setShowMobileAutocomplete(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    useClickOutside(mobileContainerRef, () => setShowMobileAutocomplete(false));
 
     const handleMobileSearch = useCallback((val: string) => {
         setMobileSearch(val);

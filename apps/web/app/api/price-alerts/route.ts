@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supabase/mutations/alerts';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
+import { isValidEmail } from '@/lib/validation';
 
 export async function POST(req: NextRequest) {
     try {
@@ -11,8 +12,7 @@ export async function POST(req: NextRequest) {
             return errorResponse('MISSING_FIELDS', 400);
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             return errorResponse('INVALID_EMAIL', 400);
         }
 

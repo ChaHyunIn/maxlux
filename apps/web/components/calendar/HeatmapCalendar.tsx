@@ -9,6 +9,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { getRelativeTime, formatAbsoluteTime } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 import { useCalendarData } from '@/hooks/useCalendarData';
+import { getHotelName } from '@/lib/hotelUtils';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const t = useTranslations('calendar');
@@ -17,7 +18,7 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
     const { selectedRate, modalOpen, closeDayDetail } = useCalendarStore();
     const { refundableRateMap, p25, p75, lastScraped, groupedByMonth } = useCalendarData(rates);
 
-    const hotelName = locale === 'en' ? hotel.name_en : hotel.name_ko;
+    const hotelName = getHotelName(hotel, locale);
 
     if (rates.length === 0) {
         return (

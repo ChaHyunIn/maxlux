@@ -25,3 +25,14 @@ export const SUPPORTED_CITIES = ['seoul', 'busan', 'jeju'] as const;
 
 /** Room type codes that are considered standard refundable types */
 export const REFUNDABLE_ROOM_TYPES = ['r_nobf', 'r_bf'] as const;
+
+export const BENEFIT_COLORS: Record<string, string> = {
+    credit: 'bg-purple-50 text-purple-600',
+    upgrade: 'bg-sky-50 text-sky-600',
+    earlyCheckin: 'bg-gray-100 text-gray-600',
+    lateCheckout: 'bg-gray-100 text-gray-600',
+    exclusive: 'bg-amber-50 text-amber-700',
+    amex_fhr: 'bg-indigo-50 text-indigo-600',
+    fs_benefit: 'bg-emerald-50 text-emerald-600',
+    free: 'bg-purple-50 text-purple-600',
+} as const;

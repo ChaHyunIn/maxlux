@@ -8,6 +8,7 @@ import { Bell, BellRing, Check, Loader2 } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
+import { isValidEmail } from '@/lib/validation'
 
 interface PriceAlertButtonProps {
     hotelId: string
@@ -45,8 +46,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
             return
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
+        if (!isValidEmail(email)) {
             setError(t('emailInvalid'))
             return
         }

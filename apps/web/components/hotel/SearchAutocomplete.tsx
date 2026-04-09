@@ -4,6 +4,7 @@ import type { Hotel } from '@/lib/types';
 import { Link } from '@/i18n/navigation';
 import { getCityKey } from '@/lib/cityMapper';
 import { getBrandKey } from '@/lib/brandMapper';
+import { getHotelName } from '@/lib/hotelUtils';
 import { useTranslations } from 'next-intl';
 
 interface AutocompleteItem {
@@ -45,7 +46,7 @@ export function SearchAutocomplete({
             .map(h => ({
                 id: h.id,
                 slug: h.slug,
-                name: locale === 'en' ? h.name_en : h.name_ko,
+                name: getHotelName(h, locale),
                 city: h.city,
                 brand: h.brand,
             }));

@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Hotel } from '@/lib/types';
 import { formatPrice, getRelativeTime } from '@/lib/utils';
+import { getHotelName } from '@/lib/hotelUtils';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { getCityKey } from '@/lib/cityMapper';
@@ -43,7 +44,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                     {hotel.image_url && !imageError ? (
                         <Image
                             src={hotel.image_url}
-                            alt={locale === 'en' ? hotel.name_en : hotel.name_ko}
+                            alt={getHotelName(hotel, locale)}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover rounded-t-xl transition-transform hover:scale-105 duration-300"
@@ -70,7 +71,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                 <CardContent className="p-4 flex flex-col flex-1 justify-between">
                     <div>
                         <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-lg font-bold line-clamp-1">{locale === 'en' ? hotel.name_en : hotel.name_ko}</h3>
+                            <h3 className="text-lg font-bold line-clamp-1">{getHotelName(hotel, locale)}</h3>
                         </div>
                         <div className="flex items-center gap-2 mb-4">
                             {brandKey && (

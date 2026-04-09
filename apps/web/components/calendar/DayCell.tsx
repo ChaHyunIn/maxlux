@@ -1,7 +1,7 @@
 'use client'
 import { getPriceLevel, cn } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
-import { PRICE_COLORS } from '@/lib/constants';
+import { PRICE_COLORS, LOCALE_DEFAULTS } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useSettingStore } from '@/stores/settingStore';
 import { formatPrice } from '@/lib/utils';
@@ -49,7 +49,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
     const priceText = is_sold_out ? t('soldOut') : (
         currency === 'USD'
             ? (formatPrice(price_krw, 'USD') ?? '')
-            : `${Math.round(price_krw / 10000)}${t('priceUnit')}`
+            : `${Math.round(price_krw / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     );
 
     const handleClick = () => {

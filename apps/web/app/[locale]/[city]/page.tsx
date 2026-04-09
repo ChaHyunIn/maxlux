@@ -4,23 +4,19 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import type { Hotel } from '@/lib/types';
 import { getCityKey } from '@/lib/cityMapper';
+import { getHotelName } from '@/lib/hotelUtils';
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
-    const t = await getTranslations({ locale: params.locale, namespace: 'city' });
+    const tCity = await getTranslations({ locale: params.locale, namespace: 'city' });
+    const tSeo = await getTranslations({ locale: params.locale, namespace: 'seo' });
     const cityKey = getCityKey(params.city);
-    const cityName = cityKey ? t(cityKey) : params.city;
-
-    const title = params.locale === 'ko'
-        ? `${cityName} 호텔 가격 비교 | 최저가 스나이퍼`
-        : `${cityName} Hotel Deals | Best Price Sniper`;
+    const cityName = cityKey ? tCity(cityKey) : params.city;
 
     return {
-        title,
-        description: params.locale === 'ko'
-            ? `${cityName} 럭셔리 호텔의 최신 가격 정보 및 최저가 비교`
-            : `Compare the best luxury hotel prices in ${cityName}.`,
+        title: tSeo('cityTitle', { city: cityName }),
+        description: tSeo('cityDescription', { city: cityName }),
     };
 }
 

@@ -5,6 +5,7 @@ import { formatPrice } from '@/lib/utils'
 import { useTranslations, useLocale } from 'next-intl'
 import { TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
 import type { DailyRate } from '@/lib/types'
+import { LOCALE_DEFAULTS } from '@/lib/constants'
 
 interface PriceTrendChartProps {
     rates: DailyRate[]
@@ -115,7 +116,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
     const formatPriceShort = (price: number) => {
         if (currency === 'USD') return formatPrice(price, 'USD') || ''
-        return `${Math.round(price / 10000)}${t('priceUnit')}`
+        return `${Math.round(price / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     }
 
     const hovered = hoveredIndex !== null ? chartData[hoveredIndex] : null

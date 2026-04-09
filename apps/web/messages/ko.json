@@ -153,7 +153,9 @@
         "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요.",
         "monthlyLandingTodo": "TODO: 월별 SEO 랜딩 페이지",
         "metaTitle": "MaxLux - 럭셔리 호텔 최저가 스나이퍼",
-        "metaDescription": "HotelLux 럭셔리 호텔의 12개월 가격을 히트맵 캘린더로 확인하세요."
+        "metaDescription": "HotelLux 럭셔리 호텔의 12개월 가격을 히트맵 캘린더로 확인하세요.",
+        "cityTitle": "{city} 호텔 가격 비교 | 최저가 스나이퍼",
+        "cityDescription": "{city} 럭셔리 호텔의 최신 가격 정보 및 최저가 비교"
     },
     "apiTerms": {
         "kingBed": "킹 베드",

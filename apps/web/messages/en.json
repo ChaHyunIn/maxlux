@@ -153,7 +153,9 @@
         "monthlyDescription": "Check the monthly prices for {name} in {month}.",
         "monthlyLandingTodo": "TODO: Monthly SEO Landing Page",
         "metaTitle": "MaxLux - Luxury Hotel Best Price Sniper",
-        "metaDescription": "Track 12-month luxury hotel prices with a heatmap calendar on HotelLux."
+        "metaDescription": "Track 12-month luxury hotel prices with a heatmap calendar on HotelLux.",
+        "cityTitle": "{city} Hotel Deals | Best Price Sniper",
+        "cityDescription": "Compare the best luxury hotel prices in {city}."
     },
     "apiTerms": {
         "kingBed": "King Bed",

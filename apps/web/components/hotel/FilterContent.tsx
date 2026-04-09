@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFilterStore } from "@/stores/filterStore"
 import { Search, X, Heart } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import type { Hotel } from '@/lib/types';
 import { getCityKey } from '@/lib/cityMapper';
 import { getBrandKey } from '@/lib/brandMapper';
@@ -54,15 +55,7 @@ export function FilterContent({
     }, [searchQuery]);
 
     // Close autocomplete on outside click
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (containerRef.current && (e.target instanceof Node) && !containerRef.current.contains(e.target)) {
-                setShowAutocomplete(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    useClickOutside(containerRef, () => setShowAutocomplete(false));
 
     const handleSearchChange = useCallback((val: string) => {
         setLocalSearch(val);
@@ -86,12 +79,10 @@ export function FilterContent({
         }
     };
 
-    const brandLabel = selectedBrand === 'all' 
-        ? t('allBrands') 
-        : (() => {
-            const bKey = getBrandKey(selectedBrand);
-            return bKey ? tBrand(bKey) : selectedBrand;
-        })();
+    const brandBKey = selectedBrand !== 'all' ? getBrandKey(selectedBrand) : null;
+    const brandLabel = selectedBrand === 'all'
+        ? t('allBrands')
+        : (brandBKey ? tBrand(brandBKey) : selectedBrand);
 
     return (
         <div className="flex flex-col gap-4 w-full">

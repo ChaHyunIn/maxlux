@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from src.clients.supabase_client import get_client
 from src.services.tagger import tag_date
 from src.services.cdc import log_price_change
@@ -96,11 +96,9 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
         else:
             updated += 1
             
-    # Fallback to len matching if upsert res isn't directly usable
     if not isinstance(inserted, int): inserted = 0
     if not isinstance(updated, int): updated = 0
 
-    from datetime import datetime
     hotel_ids_to_update = list(set(r['hotel_id'] for r in valid_rates))
     if hotel_ids_to_update:
         try:
@@ -162,7 +160,6 @@ def save_room_rates(hotel_uuid: str, check_in: str, api_response: dict, holidays
             log.error("daily_aggregate_failed", hotel=hotel_uuid[:8], date=check_in, error=str(e))
     
     # 3. latest_scraped_at 업데이트
-    from datetime import datetime
     try:
         client.table("hotels").update(
             {"latest_scraped_at": datetime.utcnow().isoformat()}

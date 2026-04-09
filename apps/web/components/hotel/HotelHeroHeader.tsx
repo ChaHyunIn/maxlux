@@ -6,6 +6,7 @@ import { PriceAlertButton } from '@/components/hotel/PriceAlertButton';
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';
 import { getBenefitKey } from '@/lib/benefitMapper';
+import { getHotelName } from '@/lib/hotelUtils';
 import type { Hotel } from '@/lib/types';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -15,8 +16,8 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const tCity = useTranslations('city');
     const tBenefitsList = useTranslations('benefits');
     const locale = useLocale();
-    const primaryName = locale === 'en' ? hotel.name_en : hotel.name_ko;
-    const secondaryName = locale === 'en' ? hotel.name_ko : hotel.name_en;
+    const primaryName = getHotelName(hotel, locale);
+    const secondaryName = getHotelName(hotel, locale === 'en' ? 'ko' : 'en');
 
     const brandKey = hotel.brand ? getBrandKey(hotel.brand) : null;
     const cityKey = getCityKey(hotel.city);
