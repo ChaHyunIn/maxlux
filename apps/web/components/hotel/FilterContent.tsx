@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFilterStore } from "@/stores/filterStore"
 import { Search, X, Heart } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { Hotel } from '@/lib/types';
 import { getCityKey } from '@/lib/cityMapper';
 import { getBrandKey } from '@/lib/brandMapper';
@@ -10,6 +10,13 @@ import { SearchAutocomplete } from './SearchAutocomplete';
 import { useTranslations } from 'next-intl';
 
 import { SUPPORTED_CITIES } from '@/lib/constants';
+
+const PRICE_RANGE_VALUES = [
+    { value: '0-2000000', labelKey: 'priceAll' },
+    { value: '0-300000', labelKey: 'priceUnder300' },
+    { value: '300000-500000', labelKey: 'price300to500' },
+    { value: '500000-2000000', labelKey: 'priceOver500' },
+];
 
 export function FilterContent({
     brands,
@@ -64,12 +71,11 @@ export function FilterContent({
         debounceRef.current = setTimeout(() => setSearchQuery(val), 300);
     }, [setSearchQuery]);
 
-    const PRICE_OPTIONS = [
-        { value: '0-2000000', label: t('priceAll') },
-        { value: '0-300000', label: t('priceUnder300') },
-        { value: '300000-500000', label: t('price300to500') },
-        { value: '500000-2000000', label: t('priceOver500') },
-    ];
+    const PRICE_OPTIONS = useMemo(() => PRICE_RANGE_VALUES.map((opt: { value: string; labelKey: string }) => ({
+        value: opt.value,
+        label: t(opt.labelKey)
+    })), [t]);
+
     const priceKey = `${priceRange[0]}-${priceRange[1]}`;
     const handlePriceChange = (val: string) => {
         const parts = val.split('-').map(Number);
@@ -79,6 +85,13 @@ export function FilterContent({
             setPriceRange([min, max]);
         }
     };
+
+    const brandLabel = selectedBrand === 'all' 
+        ? t('allBrands') 
+        : (() => {
+            const bKey = getBrandKey(selectedBrand);
+            return bKey ? tBrand(bKey) : selectedBrand;
+        })();
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -142,11 +155,7 @@ export function FilterContent({
                 <Select value={selectedBrand} onValueChange={(val) => { setSelectedBrand(val || 'all'); onClose?.(); }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
                         <SelectValue placeholder={t('allBrands')}>
-                            {(() => {
-                                if (selectedBrand === 'all') return t('allBrands');
-                                const bKey = getBrandKey(selectedBrand);
-                                return bKey ? tBrand(bKey) : selectedBrand;
-                            })()}
+                            {brandLabel}
                         </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
@@ -165,11 +174,11 @@ export function FilterContent({
                 <Select value={priceKey} onValueChange={(val) => { if (val) handlePriceChange(val); onClose?.(); }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
                         <SelectValue placeholder={t('priceAll')}>
-                            {PRICE_OPTIONS.find(opt => opt.value === priceKey)?.label}
+                            {PRICE_OPTIONS.find((opt: { value: string; label: string }) => opt.value === priceKey)?.label}
                         </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                        {PRICE_OPTIONS.map(opt => (
+                        {PRICE_OPTIONS.map((opt: { value: string; label: string }) => (
                             <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                         ))}
                     </SelectContent>

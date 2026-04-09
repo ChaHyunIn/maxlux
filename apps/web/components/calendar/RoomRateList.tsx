@@ -15,20 +15,20 @@ interface RoomRateListProps {
     currency: 'KRW' | 'USD';
 }
 
+const BENEFIT_COLORS: Record<string, string> = {
+    credit: 'bg-purple-50 text-purple-600',
+    upgrade: 'bg-sky-50 text-sky-600',
+    earlyCheckin: 'bg-gray-100 text-gray-600',
+    lateCheckout: 'bg-gray-100 text-gray-600',
+    exclusive: 'bg-amber-50 text-amber-700',
+    amex_fhr: 'bg-indigo-50 text-indigo-600',
+    fs_benefit: 'bg-emerald-50 text-emerald-600',
+    free: 'bg-purple-50 text-purple-600',
+};
+
 export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency }: RoomRateListProps) {
     const tBenefits = useTranslations('benefits');
     const locale = useLocale();
-    
-    const BENEFIT_COLORS: Record<string, string> = {
-        credit: 'bg-purple-50 text-purple-600',
-        upgrade: 'bg-sky-50 text-sky-600',
-        earlyCheckin: 'bg-gray-100 text-gray-600',
-        lateCheckout: 'bg-gray-100 text-gray-600',
-        exclusive: 'bg-amber-50 text-amber-700',
-        amex_fhr: 'bg-indigo-50 text-indigo-600',
-        fs_benefit: 'bg-emerald-50 text-emerald-600',
-        free: 'bg-purple-50 text-purple-600',
-    };
     
     return (
         <div className="border rounded-xl overflow-hidden mt-4">

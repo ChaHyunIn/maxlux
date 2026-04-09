@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { ExternalLink, Calendar } from 'lucide-react'
 import { getPriceLevel } from '@/lib/utils'
-import { PRICE_COLORS } from '@/lib/constants'
+import { PRICE_COLORS, REFUNDABLE_ROOM_TYPES } from '@/lib/constants'
 import { OtaPriceList } from './OtaPriceList'
 import { RoomRateList } from './RoomRateList'
 import { PriceHeader } from './PriceHeader'
@@ -91,7 +91,7 @@ export function DayDetailModal({
             price_krw: rate.price_krw,
             url: bookingUrl,
             is_sold_out: rate.is_sold_out,
-            refund_policy: ['r_nobf', 'r_bf'].includes(rate.room_type) ? 'refundable' : 'non_refundable',
+            refund_policy: REFUNDABLE_ROOM_TYPES.some(t => t === rate.room_type) ? 'refundable' : 'non_refundable',
         },
         ...otaPrices.map(op => ({
             source: op.source,

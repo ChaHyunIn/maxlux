@@ -17,6 +17,9 @@ interface PriceHeaderProps {
 }
 
 export function PriceHeader({ rate, refundableRate, t, currency, style, level, locale, tTime }: PriceHeaderProps) {
+    const tagKey = `tag${rate.tag}`;
+    const tagLabel = isDayDetailKey(tagKey) ? t(tagKey) : rate.tag;
+
     return (
         <>
             <div className="space-y-2 mb-4 w-full">
@@ -28,13 +31,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                         </div>
                         <Badge variant="outline" className="gap-1 truncate max-w-[100px] sm:max-w-none">
                             <Tag className="w-3 h-3 shrink-0" />
-                            <span className="truncate">
-                                {(() => {
-                                    const tagKey = `tag${rate.tag}`;
-                                    if (isDayDetailKey(tagKey)) return t(tagKey);
-                                    return rate.tag;
-                                })()}
-                            </span>
+                            <span className="truncate">{tagLabel}</span>
                         </Badge>
                         {!rate.is_sold_out && (
                             <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap">

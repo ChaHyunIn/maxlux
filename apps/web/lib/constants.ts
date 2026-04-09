@@ -23,3 +23,5 @@ export const HOT_DEAL_THRESHOLD = 350000;
 
 export const SUPPORTED_CITIES = ['seoul', 'busan', 'jeju'] as const;
 
+/** Room type codes that are considered standard refundable types */
+export const REFUNDABLE_ROOM_TYPES = ['r_nobf', 'r_bf'] as const;
