@@ -9,6 +9,8 @@ import { getYear, getMonth } from 'date-fns';
 import { FALLBACK_PERCENTILES } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useLocale, useTranslations } from 'next-intl';
+import { getRelativeTime } from '@/lib/utils';
+import { Clock } from 'lucide-react';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const t = useTranslations('calendar');
@@ -22,6 +24,23 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
             p25: prices[Math.floor(prices.length * 0.25)],
             p75: prices[Math.floor(prices.length * 0.75)]
         };
+    }, [rates]);
+
+    // rates에서 가장 최신 scraped_at 계산
+    const lastScraped = useMemo(() => {
+        if (rates.length === 0) return null;
+        return rates.reduce((latest, r) => {
+            if (!r.scraped_at) return latest;
+            return !latest || r.scraped_at > latest ? r.scraped_at : latest;
+        }, null as string | null);
+    }, [rates]);
+
+    const refundableRateMap = useMemo(() => {
+        const map: Record<string, DailyRate> = {};
+        rates.filter(r => r.room_type === 'refundable').forEach(r => {
+            map[r.stay_date] = r;
+        });
+        return map;
     }, [rates]);
 
     const groupedByMonth = useMemo(() => {
@@ -51,7 +70,15 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-bold px-2">{hotelName} {t('title')}</h2>
+            <div className="flex items-center justify-between px-2">
+                <h2 className="text-xl font-bold">{hotelName} {t('title')}</h2>
+                {lastScraped && (
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{t('lastUpdated', { time: getRelativeTime(lastScraped, locale) })}</span>
+                    </div>
+                )}
+            </div>
             <div className="flex flex-col md:flex-row md:items-center gap-4 px-2">
                 <SniperFilters />
                 <div className="md:ml-auto">
@@ -65,11 +92,11 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
                 })}
             </div>
 
-            {/* DayDetail Modal */}
             <DayDetailModal
                 open={modalOpen}
                 onOpenChange={(open) => { if (!open) closeDayDetail(); }}
                 rate={selectedRate}
+                refundableRate={selectedRate ? refundableRateMap[selectedRate.stay_date] ?? null : null}
                 hotelId={hotel.id}
                 hotelName={hotelName}
                 bookingUrl={hotel.booking_url}

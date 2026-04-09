@@ -33,7 +33,7 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
             "hotellux_id": hotellux_id,
             "price_krw": int(price_krw),
             "stay_date": check_in,
-            "room_type": "standard",
+            "room_type": "non_refundable",
             "tag": tag,
             "is_sold_out": is_sold_out
         })
@@ -70,7 +70,7 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
     # Pre-load existing prices for CDC diffing
     hotel_ids = [r["hotel_id"] for r in valid_rates]
     existing_res = client.table("daily_rates").select("hotel_id, room_type, price_krw").eq("stay_date", check_in).in_("hotel_id", hotel_ids).execute()
-    existing_price_map = {f'{row["hotel_id"]}_{row.get("room_type", "standard")}': row["price_krw"] for row in existing_res.data} if existing_res.data else {}
+    existing_price_map = {f'{row["hotel_id"]}_{row.get("room_type", "non_refundable")}': row["price_krw"] for row in existing_res.data} if existing_res.data else {}
 
     inserted, updated, skipped = 0, 0, len(parsed_rates) - len(valid_rates)
     

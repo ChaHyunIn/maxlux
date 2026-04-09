@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ExternalLink, TrendingDown, TrendingUp, Minus, Calendar, Tag } from 'lucide-react'
-import { formatPrice, getPriceLevel } from '@/lib/utils'
+import { formatPrice, getPriceLevel, getRelativeTime } from '@/lib/utils'
 import { PRICE_COLORS } from '@/lib/constants'
 import type { DailyRate, OtaPrice } from '@/lib/types'
 import { useSettingStore } from '@/stores/settingStore'
@@ -15,6 +15,7 @@ interface DayDetailModalProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     rate: DailyRate | null
+    refundableRate?: DailyRate | null
     hotelId: string
     hotelName: string
     bookingUrl: string | null
@@ -35,6 +36,7 @@ export function DayDetailModal({
     open,
     onOpenChange,
     rate,
+    refundableRate,
     hotelId,
     hotelName,
     bookingUrl,
@@ -105,24 +107,43 @@ export function DayDetailModal({
                     </div>
                 </DialogHeader>
 
-                {/* Price Level Badge */}
-                <div className="flex items-center gap-3 mb-4">
-                    <div className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${style.bg} ${style.text}`}>
-                        {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency)}
+                {/* Price Display */}
+                <div className="space-y-2 mb-4">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-500">{t('nonRefundable')}</span>
+                        <div className="flex items-center gap-3">
+                            <div className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${style.bg} ${style.text}`}>
+                                {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency)}
+                            </div>
+                            <Badge variant="outline" className="gap-1">
+                                <Tag className="w-3 h-3" />
+                                {t(`tag${rate.tag}` as any) || rate.tag}
+                            </Badge>
+                            {!rate.is_sold_out && (
+                                <div className="flex items-center gap-1 text-xs text-slate-500">
+                                    {level === 'low' && <TrendingDown className="w-3.5 h-3.5 text-emerald-600" />}
+                                    {level === 'mid' && <Minus className="w-3.5 h-3.5 text-slate-400" />}
+                                    {level === 'high' && <TrendingUp className="w-3.5 h-3.5 text-red-600" />}
+                                    {level === 'low' ? t('levelLow') : level === 'high' ? t('levelHigh') : t('levelMid')}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <Badge variant="outline" className="gap-1">
-                        <Tag className="w-3 h-3" />
-                        {t(`tag${rate.tag}` as any) || rate.tag}
-                    </Badge>
-                    {!rate.is_sold_out && (
-                        <div className="flex items-center gap-1 text-xs text-slate-500">
-                            {level === 'low' && <TrendingDown className="w-3.5 h-3.5 text-emerald-600" />}
-                            {level === 'mid' && <Minus className="w-3.5 h-3.5 text-slate-400" />}
-                            {level === 'high' && <TrendingUp className="w-3.5 h-3.5 text-red-600" />}
-                            {level === 'low' ? t('levelLow') : level === 'high' ? t('levelHigh') : t('levelMid')}
+                    {refundableRate && !refundableRate.is_sold_out && (
+                        <div className="flex flex-wrap items-center justify-between">
+                            <span className="text-xs text-slate-500">{t('refundable')}</span>
+                            <div className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-50 text-blue-800">
+                                {formatPrice(refundableRate.price_krw, currency)}
+                            </div>
                         </div>
                     )}
                 </div>
+
+                {rate.scraped_at && (
+                    <p className="text-[11px] text-slate-400 mb-4 -mt-2">
+                        {t('scrapedAt', { time: getRelativeTime(rate.scraped_at, locale) })}
+                    </p>
+                )}
 
                 {/* OTA Price Comparison */}
                 <div className="border rounded-xl overflow-hidden">

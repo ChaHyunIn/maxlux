@@ -26,16 +26,16 @@
         "filterTitle": "Filter Options"
     },
     "calendar": {
-        "title": "Rate Calendar",
-        "legendLow": "Cheap (Bottom 25%)",
+        "title": "Rates Calendar",
+        "legendLow": "Lowest",
         "legendMid": "Average",
-        "legendHigh": "Expensive (Top 25%)",
+        "legendHigh": "Highest",
         "legendSoldOut": "Sold Out",
         "soldOut": "Sold Out",
         "friSatOnly": "Fri/Sat Only",
         "cheapestSat": "Cheapest Saturdays",
         "holidayLow": "Holiday Deals",
-        "noData": "No pricing data available yet.",
+        "noData": "No rate data collected yet.",
         "priceUnit": "k",
         "weekdays": [
             "Sun",
@@ -46,7 +46,10 @@
             "Fri",
             "Sat"
         ],
-        "monthFormat": "{month} {year}"
+        "monthFormat": "{month} {year}",
+        "filterWeekend": "Weekends",
+        "filterHoliday": "Holidays",
+        "lastUpdated": "Last updated: {time}"
     },
     "common": {
         "dataLoading": "Collecting data...",
@@ -100,15 +103,18 @@
         "levelHigh": "Expensive",
         "priceComparison": "Price Comparison",
         "lowestBadge": "Lowest",
-        "noOtaData": "No other OTA prices available yet",
+        "noOtaData": "No OTA pricing data collected.",
         "bookNow": "Book Now",
         "roomType": "Room Type",
-        "standardRoom": "Standard",
+        "standardRoom": "Standard Room",
         "tagSAT": "Saturday",
-        "tagFRI_EVE": "Friday Eve",
+        "tagFRI_EVE": "Friday(Eve)",
         "tagHOL": "Holiday",
         "tagSUN": "Sunday",
-        "tagWEEKDAY": "Weekday"
+        "tagWEEKDAY": "Weekday",
+        "scrapedAt": "Collected: {time}",
+        "nonRefundable": "Non-refundable lowest",
+        "refundable": "Refundable lowest"
     },
     "seo": {
         "monthlyTitle": "{name} {month} Prices | MaxLux",

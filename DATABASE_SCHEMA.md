@@ -51,6 +51,13 @@
 | sample_count | integer | |
 | UNIQUE | | (hotel_id, month, room_type) |
 
+## 기존 테이블 변경사항
+
+### daily_rates
+| Column | Type | Constraint |
+|--------|------|-----------|
+| room_type | text | 'non_refundable' 또는 'refundable' (기존 'standard'에서 변경) |
+
 ## hotels 테이블 신규 컬럼
 - `booking_url` text NULL
 - `agoda_id` text NULL  
