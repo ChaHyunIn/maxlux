@@ -165,11 +165,11 @@ async def send_alert_email(
                 <h2 style="color: #10b981;">💰 Price Alert: {hotel_name}</h2>
                 <p>Your target price has been reached!</p>
                 <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin: 16px 0;">
-                    <p style="margin: 4px 0;"><strong>Current Lowest:</strong> {{formatted_price}}</p>
-                    <p style="margin: 4px 0;"><strong>Target Price:</strong> {{formatted_target}}</p>
-                    <p style="margin: 4px 0;"><strong>Date:</strong> {{cheapest_date}}</p>
+                    <p style="margin: 4px 0;"><strong>Current Lowest:</strong> {formatted_price}</p>
+                    <p style="margin: 4px 0;"><strong>Target Price:</strong> {formatted_target}</p>
+                    <p style="margin: 4px 0;"><strong>Date:</strong> {cheapest_date}</p>
                 </div>
-                <a href="{{hotel_url}}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                <a href="{hotel_url}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                     Check it now →
                 </a>
                 <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
@@ -185,11 +185,11 @@ async def send_alert_email(
                 <h2 style="color: #10b981;">💰 가격 알림: {hotel_name}</h2>
                 <p>설정하신 목표 가격에 도달했습니다!</p>
                 <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin: 16px 0;">
-                    <p style="margin: 4px 0;"><strong>현재 최저가:</strong> {{formatted_price}}</p>
-                    <p style="margin: 4px 0;"><strong>목표 가격:</strong> {{formatted_target}}</p>
-                    <p style="margin: 4px 0;"><strong>최저가 날짜:</strong> {{cheapest_date}}</p>
+                    <p style="margin: 4px 0;"><strong>현재 최저가:</strong> {formatted_price}</p>
+                    <p style="margin: 4px 0;"><strong>목표 가격:</strong> {formatted_target}</p>
+                    <p style="margin: 4px 0;"><strong>최저가 날짜:</strong> {cheapest_date}</p>
                 </div>
-                <a href="{{hotel_url}}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                <a href="{hotel_url}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                     지금 확인하기 →
                 </a>
                 <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
