@@ -183,3 +183,17 @@ def seed_holidays(supabase_client):
             "is_substitute": is_sub,
             "year": 2027,
         }, on_conflict="date").execute()
+
+
+def load_holidays(supabase_client=None, year: int | None = None) -> set[date]:
+    """Load holidays from DB. Caller should cache the result if needed."""
+    if supabase_client is None:
+        from src.clients.supabase_client import get_client
+        supabase_client = get_client()
+    query = supabase_client.table("holidays").select("date")
+    if year:
+        query = query.eq("year", year)
+    result = query.execute()
+    holidays = {date.fromisoformat(row["date"]) for row in result.data}
+    log.info("holidays_loaded", count=len(holidays))
+    return holidays

@@ -1,15 +1,11 @@
 import type { MetadataRoute } from 'next';
-import { createClient } from '@supabase/supabase-js';
+import { SUPPORTED_CITIES } from '@/lib/constants';
+import { supabase } from '@/lib/supabase/anon';
 
 const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://maxlux.kr';
 const LOCALES = ['ko', 'en'];
-const CITIES = ['seoul', 'busan', 'jeju'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     // Fetch hotel slugs for detail pages
     const { data: hotels } = await supabase
@@ -28,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
 
         // City landing pages
-        for (const city of CITIES) {
+        for (const city of SUPPORTED_CITIES) {
             entries.push({
                 url: `${DOMAIN}/${locale}/${city}`,
                 changeFrequency: 'daily',

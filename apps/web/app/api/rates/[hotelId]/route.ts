@@ -1,5 +1,5 @@
 import { getRates } from '@/lib/supabase/queries/rates';
-import { NextResponse } from 'next/server';
+import { successResponse, errorResponse } from '@/lib/apiResponse';
 
 interface Props {
     params: { hotelId: string };
@@ -8,8 +8,9 @@ interface Props {
 export async function GET(_req: Request, { params }: Props) {
     try {
         const rates = await getRates(params.hotelId);
-        return NextResponse.json(rates);
+        return successResponse({ rates });
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch rates' }, { status: 500 });
+        console.error('API Error: Failed to fetch rates:', error);
+        return errorResponse('Failed to fetch rates', 500);
     }
 }

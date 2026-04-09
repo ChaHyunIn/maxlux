@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useId } from 'react'
 import { useSettingStore } from '@/stores/settingStore'
 import { formatPrice } from '@/lib/utils'
 import { useTranslations, useLocale } from 'next-intl'
@@ -14,6 +14,7 @@ const CHART_HEIGHT = 200
 const CHART_PADDING = { top: 20, right: 16, bottom: 40, left: 60 }
 
 export function PriceTrendChart({ rates }: PriceTrendChartProps) {
+    const gradientId = useId()
     const { currency } = useSettingStore()
     const t = useTranslations('priceTrend')
     const locale = useLocale()
@@ -197,7 +198,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     ))}
 
                     {/* Area fill */}
-                    <path d={areaPath} fill="url(#gradient)" opacity={0.3} />
+                    <path d={areaPath} fill={`url(#${gradientId})`} opacity={0.3} />
 
                     {/* Line */}
                     <path d={linePath} fill="none" stroke="#6366f1" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -270,7 +271,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
                     {/* Gradient definition */}
                     <defs>
-                        <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#6366f1" />
                             <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
                         </linearGradient>
