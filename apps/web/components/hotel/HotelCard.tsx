@@ -26,6 +26,9 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
     const { isFavorite, toggleFavorite } = useFavorites();
     const { currency } = useSettingStore();
 
+    const brandKey = hotel.brand ? getBrandKey(hotel.brand) : null;
+    const cityKey = getCityKey(hotel.city);
+
     const handleToggleFavorite = (e: React.MouseEvent) => {
         e.preventDefault();
         toggleFavorite(hotel.id);
@@ -59,7 +62,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                     <button
                         onClick={handleToggleFavorite}
                         className="absolute top-3 left-3 z-10 p-2 rounded-full bg-white/70 backdrop-blur-md shadow-sm hover:bg-white transition-colors"
-                        aria-label="Toggle favorite"
+                        aria-label={t('ariaToggleFavorite')}
                     >
                         <Heart className={`w-5 h-5 transition-colors ${isFavorite(hotel.id) ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} />
                     </button>
@@ -70,18 +73,12 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                             <h3 className="text-lg font-bold line-clamp-1">{locale === 'en' ? hotel.name_en : hotel.name_ko}</h3>
                         </div>
                         <div className="flex items-center gap-2 mb-4">
-                            {(() => {
-                                const bKey = hotel.brand ? getBrandKey(hotel.brand) : null;
-                                return bKey && (
-                                    <Badge variant="secondary" className="rounded-full bg-slate-100 text-slate-700">
-                                        {tBrand(bKey)}
-                                    </Badge>
-                                );
-                            })()}
-                            {(() => {
-                                const cKey = getCityKey(hotel.city);
-                                return cKey && <span className="text-sm text-gray-500">{tCity(cKey)}</span>;
-                            })()}
+                            {brandKey && (
+                                <Badge variant="secondary" className="rounded-full bg-slate-100 text-slate-700">
+                                    {tBrand(brandKey)}
+                                </Badge>
+                            )}
+                            {cityKey && <span className="text-sm text-gray-500">{tCity(cityKey)}</span>}
                         </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col gap-2">

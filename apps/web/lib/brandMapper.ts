@@ -88,5 +88,5 @@ export function getBrandKey(brand: string | null | undefined): BrandKey | null {
     }
     
     // Fallback
-    return normalized.toLowerCase().replace(/\s+/g, '_') as BrandKey;
+    return null;
 }

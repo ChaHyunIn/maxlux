@@ -6,6 +6,6 @@ export async function GET() {
         const hotels = await getHotels();
         return successResponse({ hotels });
     } catch {
-        return errorResponse('Failed to fetch hotels', 500);
+        return errorResponse('FETCH_FAILED', 500);
     }
 }

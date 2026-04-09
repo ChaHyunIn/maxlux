@@ -22,6 +22,7 @@ export interface Hotel {
     booking_url: string | null;
     latest_scraped_at?: string;
     min_price_refundable?: number;
+    recent_drops?: number;
 }
 
 export interface PriceChange {

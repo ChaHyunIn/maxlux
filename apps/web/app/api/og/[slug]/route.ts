@@ -5,12 +5,15 @@ interface Props {
     params: { slug: string };
 }
 
-export async function GET(_req: Request, { params }: Props) {
+export async function GET(req: Request, { params }: Props) {
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) {
-        return new NextResponse('Not Found', { status: 404 });
+        return new NextResponse('NOT_FOUND', { status: 404 });
     }
 
+    // Default to name_ko but try to find the best match (simplified for now)
+    const name = hotel.name_en || hotel.name_ko;
+
     // TODO: Generate OG image using @vercel/og or similar
-    return NextResponse.json({ hotel: hotel.name_ko });
+    return NextResponse.json({ hotel: name });
 }

@@ -34,6 +34,10 @@ export type BenefitKey =
     | 'free' 
     | 'amex_fhr' 
     | 'fs_benefit'
+    | 'credit'
+    | 'upgrade'
+    | 'earlyCheckin'
+    | 'lateCheckout'
 
 export type ApiTermKey =
     | 'kingBed' | 'twinBed' | 'singleBed' | 'suite' | 'standard' | 'superior' | 'deluxe' | 'executive' 

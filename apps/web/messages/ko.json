@@ -26,7 +26,8 @@
         "resultCount": "{count}개 호텔",
         "filterButton": "필터",
         "filterTitle": "필터 설정",
-        "benefitsTitle": "호텔 제공 특전"
+        "benefitsTitle": "호텔 제공 특전",
+        "ariaToggleFavorite": "좋아요 토글"
     },
     "calendar": {
         "title": "가격 캘린더",
@@ -66,6 +67,7 @@
         "notFoundCode": "404"
     },
     "layout": {
+        "brandName": "MaxLux",
         "copyright": "© 2026 MaxLux",
         "disclaimer": "가격 정보는 참고용이며 실제와 다를 수 있습니다",
         "dataSource": "데이터 출처: HotelLux"
@@ -83,7 +85,7 @@
         "button": "가격 알림",
         "title": "가격 알림 설정",
         "description": "{hotel}의 가격이 목표 금액 이하로 떨어지면 이메일로 알려드립니다.",
-        "targetPriceLabel": "목표 가격 (KRW)",
+        "targetPriceLabel": "목표 가격",
         "emailLabel": "이메일 주소",
         "emailPlaceholder": "you@example.com",
         "emailRequired": "이메일을 입력해주세요.",
@@ -116,7 +118,7 @@
         "roomType": "객실 타입",
         "standardRoom": "기본 객실",
         "tagSAT": "토요일",
-        "tagFRI_EVE": "금·휴대전",
+        "tagFRI_EVE": "금요일(전야)",
         "tagHOL": "공휴일",
         "tagSUN": "일요일",
         "tagWEEKDAY": "평일",
@@ -225,14 +227,17 @@
     "city": {
         "seoul": "서울",
         "busan": "부산",
-        "tokyo": "도쿄",
         "jeju": "제주"
     },
     "benefits": {
         "exclusive": "VIP 특별 혜택",
         "free": "무료 혜택",
         "amex_fhr": "아멕스 FHR 혜택",
-        "fs_benefit": "포시즌스 베네핏"
+        "fs_benefit": "포시즌스 베네핏",
+        "credit": "$100 크레딧",
+        "upgrade": "룸 업그레이드",
+        "earlyCheckin": "얼리 체크인",
+        "lateCheckout": "레이트 체크아웃"
     },
     "time": {
         "unknown": "알 수 없음",
@@ -241,5 +246,16 @@
         "hoursAgo": "{count}시간 전",
         "daysAgo": "{count}일 전",
         "monthDayFormat": "{month}월 {day}일"
+    },
+    "errors": {
+        "MISSING_FIELDS": "필수 정보를 모두 입력해 주세요.",
+        "INVALID_EMAIL": "올바른 이메일 형식이 아닙니다.",
+        "INVALID_PRICE": "목표 가격은 0보다 커야 합니다.",
+        "CREATE_FAILED": "알림 설정에 실패했습니다. 다시 시도해 주세요.",
+        "FETCH_FAILED": "데이터를 불러오는 데 실패했습니다.",
+        "DELETE_FAILED": "알림 해제에 실패했습니다.",
+        "MISSING_PARAMS": "필수 매개변수가 누락되었습니다.",
+        "MISSING_HOTEL_ID": "호텔 ID가 누락되었습니다.",
+        "NOT_FOUND": "데이터를 찾을 수 없습니다."
     }
 }

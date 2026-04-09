@@ -19,6 +19,17 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency }
     const tBenefits = useTranslations('benefits');
     const locale = useLocale();
     
+    const BENEFIT_COLORS: Record<string, string> = {
+        credit: 'bg-purple-50 text-purple-600',
+        upgrade: 'bg-sky-50 text-sky-600',
+        earlyCheckin: 'bg-gray-100 text-gray-600',
+        lateCheckout: 'bg-gray-100 text-gray-600',
+        exclusive: 'bg-amber-50 text-amber-700',
+        amex_fhr: 'bg-indigo-50 text-indigo-600',
+        fs_benefit: 'bg-emerald-50 text-emerald-600',
+        free: 'bg-purple-50 text-purple-600',
+    };
+    
     return (
         <div className="border rounded-xl overflow-hidden mt-4">
             <div className="bg-slate-50 px-4 py-2.5 border-b flex justify-between items-center">
@@ -66,7 +77,7 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency }
                                                             const bKey = getBenefitKey(tag);
                                                             if (!bKey) return null;
                                                             return (
-                                                                <Badge key={tIdx} variant="outline" className="text-[9px] px-1.5 py-0 border-none bg-purple-50 text-purple-600">
+                                                                <Badge key={tIdx} variant="outline" className={`text-[9px] px-1.5 py-0 border-none ${BENEFIT_COLORS[bKey] || 'bg-slate-50 text-slate-600'}`}>
                                                                     {tBenefits(bKey)}
                                                                 </Badge>
                                                             );

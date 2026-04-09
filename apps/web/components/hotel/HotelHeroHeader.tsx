@@ -18,30 +18,27 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const primaryName = locale === 'en' ? hotel.name_en : hotel.name_ko;
     const secondaryName = locale === 'en' ? hotel.name_ko : hotel.name_en;
 
+    const brandKey = hotel.brand ? getBrandKey(hotel.brand) : null;
+    const cityKey = getCityKey(hotel.city);
+
     return (
         <div className="mb-12 rounded-3xl overflow-hidden border bg-card text-card-foreground shadow-sm relative group">
             <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-muted overflow-hidden">
                 <HotelHeroImage url={hotel.image_url || ''} alt={hotel.name_ko} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6 md:p-12 text-white">
                     <div className="flex flex-wrap gap-2 mb-4">
-                        {(() => {
-                            const bKey = hotel.brand ? getBrandKey(hotel.brand) : null;
-                            return bKey && (
-                                <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md">
-                                    <Building className="w-3 h-3 mr-1" />
-                                    {tBrand(bKey)}
-                                </Badge>
-                            );
-                        })()}
-                        {(() => {
-                            const cKey = getCityKey(hotel.city);
-                            return cKey && (
-                                <Badge variant="secondary" className="bg-black/40 hover:bg-black/50 text-white border-none backdrop-blur-md">
-                                    <MapPin className="w-3 h-3 mr-1" />
-                                    <span className="capitalize">{tCity(cKey)}</span>
-                                </Badge>
-                            );
-                        })()}
+                        {brandKey && (
+                            <Badge variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md">
+                                <Building className="w-3 h-3 mr-1" />
+                                {tBrand(brandKey)}
+                            </Badge>
+                        )}
+                        {cityKey && (
+                            <Badge variant="secondary" className="bg-black/40 hover:bg-black/50 text-white border-none backdrop-blur-md">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                <span className="capitalize">{tCity(cityKey)}</span>
+                            </Badge>
+                        )}
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md">
                         {primaryName}

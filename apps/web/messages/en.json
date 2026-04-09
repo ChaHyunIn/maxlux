@@ -26,7 +26,8 @@
         "resultCount": "{count} hotels",
         "filterButton": "Filter",
         "filterTitle": "Filter Options",
-        "benefitsTitle": "HotelLux VIP Benefits"
+        "benefitsTitle": "HotelLux VIP Benefits",
+        "ariaToggleFavorite": "Toggle favorite"
     },
     "calendar": {
         "title": "Rates Calendar",
@@ -66,6 +67,7 @@
         "notFoundCode": "404"
     },
     "layout": {
+        "brandName": "MaxLux",
         "copyright": "© 2026 MaxLux",
         "disclaimer": "Prices are for reference only and may differ from actual rates",
         "dataSource": "Data source: HotelLux"
@@ -83,7 +85,7 @@
         "button": "Price Alert",
         "title": "Set Price Alert",
         "description": "Get notified when {hotel} drops below your target price.",
-        "targetPriceLabel": "Target Price (KRW)",
+        "targetPriceLabel": "Target Price",
         "emailLabel": "Email Address",
         "emailPlaceholder": "you@example.com",
         "emailRequired": "Please enter your email.",
@@ -225,14 +227,17 @@
     "city": {
         "seoul": "Seoul",
         "busan": "Busan",
-        "tokyo": "Tokyo",
         "jeju": "Jeju"
     },
     "benefits": {
-        "exclusive": "VIP Exclusive Benefit",
-        "free": "Free Benefit",
-        "amex_fhr": "Amex FHR Benefit",
-        "fs_benefit": "Four Seasons Benefits"
+        "exclusive": "VIP Exclusive Benefits",
+        "free": "Free Benefits",
+        "amex_fhr": "Amex FHR Benefits",
+        "fs_benefit": "Four Seasons Benefits",
+        "credit": "$100 Credit",
+        "upgrade": "Room Upgrade",
+        "earlyCheckin": "Early Check-in",
+        "lateCheckout": "Late Checkout"
     },
     "time": {
         "unknown": "Unknown",
@@ -241,5 +246,16 @@
         "hoursAgo": "{count}h ago",
         "daysAgo": "{count}d ago",
         "monthDayFormat": "{month} {day}"
+    },
+    "errors": {
+        "MISSING_FIELDS": "Please enter all required information.",
+        "INVALID_EMAIL": "Invalid email format.",
+        "INVALID_PRICE": "Target price must be positive.",
+        "CREATE_FAILED": "Failed to set alert. Please try again.",
+        "FETCH_FAILED": "Failed to fetch data.",
+        "DELETE_FAILED": "Failed to deactivate alert.",
+        "MISSING_PARAMS": "Required parameters are missing.",
+        "MISSING_HOTEL_ID": "Hotel ID is missing.",
+        "NOT_FOUND": "Data not found."
     }
 }

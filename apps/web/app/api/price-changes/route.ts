@@ -7,13 +7,13 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(req.nextUrl.searchParams.get('limit') || '20', 10);
 
     if (!hotelId) {
-        return errorResponse('Missing hotelId', 400);
+        return errorResponse('MISSING_HOTEL_ID', 400);
     }
 
     try {
         const changes = await getPriceChanges(hotelId, limit);
         return successResponse({ changes });
     } catch {
-        return errorResponse('Failed to fetch price changes', 500);
+        return errorResponse('FETCH_FAILED', 500);
     }
 }

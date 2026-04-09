@@ -8,9 +8,6 @@ export const CITY_MAP: Record<string, CityKey> = {
     '釜산': 'busan',
     'BUSAN': 'busan',
     'busan': 'busan',
-    '도쿄': 'tokyo',
-    'TOKYO': 'tokyo',
-    'tokyo': 'tokyo',
     '제주': 'jeju',
     'JEJU': 'jeju',
     'jeju': 'jeju',
@@ -24,5 +21,5 @@ import type { CityKey } from './i18nTypes'
 
 export function getCityKey(city: string | null | undefined): CityKey | null {
     if (!city) return null;
-    return (CITY_MAP[city] || city.toLowerCase()) as CityKey;
+    return CITY_MAP[city] || CITY_MAP[city.toLowerCase()] || null;
 }

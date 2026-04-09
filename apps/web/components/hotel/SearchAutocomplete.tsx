@@ -55,41 +55,40 @@ export function SearchAutocomplete({
 
     return (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
-            {suggestions.map((item) => (
-                <Link
-                    key={item.id}
-                    href={`/hotels/${item.slug}`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer border-b last:border-b-0 border-slate-100"
-                    onClick={() => {
-                        onSelect(item.name);
-                        onClose();
-                    }}
-                >
-                    <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-slate-800 truncate">
-                            {item.name}
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                            {(() => {
-                                const cityKey = getCityKey(item.city);
-                                return cityKey && (
+            {suggestions.map((item) => {
+                const cityKey = getCityKey(item.city);
+                const brandKey = item.brand ? getBrandKey(item.brand) : null;
+                
+                return (
+                    <Link
+                        key={item.id}
+                        href={`/hotels/${item.slug}`}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer border-b last:border-b-0 border-slate-100"
+                        onClick={() => {
+                            onSelect(item.name);
+                            onClose();
+                        }}
+                    >
+                        <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-slate-800 truncate">
+                                {item.name}
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                {cityKey && (
                                     <span className="flex items-center text-xs text-slate-400">
                                         <MapPin className="w-3 h-3 mr-0.5" />
                                         {tCity(cityKey)}
                                     </span>
-                                );
-                            })()}
-                            {(() => {
-                                const brandKey = item.brand ? getBrandKey(item.brand) : null;
-                                return brandKey && (
+                                )}
+                                {brandKey && (
                                     <span className="text-xs text-slate-400">{tBrand(brandKey)}</span>
-                                );
-                            })()}
+                                )}
+                            </div>
                         </div>
-                    </div>
-                    <Search className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
-                </Link>
-            ))}
+                        <Search className="w-3.5 h-3.5 text-slate-300 flex-shrink-0" />
+                    </Link>
+                );
+            })}
         </div>
     );
 }

@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
         const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale } = body;
 
         if (!hotel_id || !email || !target_price) {
-            return errorResponse('Missing required fields: hotel_id, email, target_price', 400);
+            return errorResponse('MISSING_FIELDS', 400);
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return errorResponse('Invalid email address', 400);
+            return errorResponse('INVALID_EMAIL', 400);
         }
 
         if (target_price <= 0) {
-            return errorResponse('Target price must be positive', 400);
+            return errorResponse('INVALID_PRICE', 400);
         }
 
         const alert = await createPriceAlert({
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         return successResponse({ alert });
     } catch (error) {
         console.error('Price alert creation error:', error);
-        return errorResponse('Failed to create alert', 500);
+        return errorResponse('CREATE_FAILED', 500);
     }
 }
 
@@ -41,14 +41,14 @@ export async function GET(req: NextRequest) {
     const hotelId = req.nextUrl.searchParams.get('hotelId');
 
     if (!email) {
-        return errorResponse('Missing email', 400);
+        return errorResponse('MISSING_FIELDS', 400);
     }
 
     try {
         const alerts = await getActiveAlerts(email, hotelId || undefined);
         return successResponse({ alerts });
     } catch {
-        return errorResponse('Failed to fetch alerts', 500);
+        return errorResponse('FETCH_FAILED', 500);
     }
 }
 
@@ -57,13 +57,13 @@ export async function DELETE(req: NextRequest) {
     const email = req.nextUrl.searchParams.get('email');
 
     if (!alertId || !email) {
-        return errorResponse('Missing alert id or email', 400);
+        return errorResponse('MISSING_FIELDS', 400);
     }
 
     try {
         await deactivateAlert(parseInt(alertId, 10), email);
         return successResponse();
     } catch {
-        return errorResponse('Failed to deactivate alert', 500);
+        return errorResponse('DELETE_FAILED', 500);
     }
 }

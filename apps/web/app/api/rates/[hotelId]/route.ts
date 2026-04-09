@@ -11,6 +11,6 @@ export async function GET(_req: Request, { params }: Props) {
         return successResponse({ rates });
     } catch (error) {
         console.error('API Error: Failed to fetch rates:', error);
-        return errorResponse('Failed to fetch rates', 500);
+        return errorResponse('FETCH_FAILED', 500);
     }
 }

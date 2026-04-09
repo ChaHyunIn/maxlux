@@ -22,6 +22,7 @@ const PRICE_SUGGESTIONS = {
 
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
+    const tErr = useTranslations('errors')
     const locale = useLocale()
     const { currency } = useSettingStore()
     const [open, setOpen] = useState(false)
@@ -65,6 +66,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                 }),
             })
 
+            const data = await res.json()
             if (res.ok) {
                 setSuccess(true)
                 setTimeout(() => {
@@ -72,8 +74,9 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                     setSuccess(false)
                 }, 2000)
             } else {
-                const data = await res.json()
-                setError(data.error || t('submitError'))
+                // translate using the new errors namespace
+                const errorKey = data.error
+                setError(tErr(errorKey) || t('submitError'))
             }
         } catch {
             setError(t('submitError'))
@@ -118,7 +121,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                             {/* Target price */}
                             <div>
                                 <label className="text-sm font-medium text-slate-700 mb-2 block">
-                                    {t('targetPriceLabel')}
+                                    {t('targetPriceLabel')} ({currency})
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {(PRICE_SUGGESTIONS[currency as keyof typeof PRICE_SUGGESTIONS] || PRICE_SUGGESTIONS.KRW).map(price => (

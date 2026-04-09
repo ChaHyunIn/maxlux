@@ -107,9 +107,10 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
     const formatDateShort = (dateStr: string) => {
         const d = new Date(dateStr)
-        return locale === 'en'
-            ? `${d.getMonth() + 1}/${d.getDate()}`
-            : `${d.getMonth() + 1}.${d.getDate()}`
+        return new Intl.DateTimeFormat(locale, {
+            month: 'numeric',
+            day: 'numeric',
+        }).format(d)
     }
 
     const formatPriceShort = (price: number) => {
