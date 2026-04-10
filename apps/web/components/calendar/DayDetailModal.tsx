@@ -123,10 +123,10 @@ export function DayDetailModal({
         if (!type) return '';
         if (type === 'standard') return t('standardRoom');
         const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        // Use a generic translation key type or just cast carefully to string
-        const key = camelKey as Parameters<typeof t>[0];
+
         try {
-            return t(key);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
+            return t(camelKey as any);
         } catch {
             return type;
         }
