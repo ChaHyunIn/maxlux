@@ -258,6 +258,7 @@
         "DELETE_FAILED": "알림 해제에 실패했습니다.",
         "MISSING_PARAMS": "필수 매개변수가 누락되었습니다.",
         "MISSING_HOTEL_ID": "호텔 ID가 누락되었습니다.",
+        "INVALID_PARAMS": "입력값 형식이 올바르지 않습니다.",
         "NOT_FOUND": "데이터를 찾을 수 없습니다."
     }
 }

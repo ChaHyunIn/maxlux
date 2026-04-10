@@ -59,6 +59,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
     return (
         <div
             onClick={handleClick}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
             className={cn(
                 "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/20 hover:scale-[1.02] active:scale-[0.98]",
                 style.bg, style.text, opacityClass

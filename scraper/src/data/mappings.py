@@ -1,4 +1,10 @@
 # Hotel name Korean mapping (English → Korean)
+# TODO: HOTEL_KO_MAPPING은 DB hotels.name_ko에서 기존값을 조회하여 fallback으로 사용하도록 변경 필요.
+# 현재는 신규 호텔 추가 시 이 딕셔너리를 수동 업데이트해야 함.
+
+# NOTE: BRAND_MAPPING은 apps/web/lib/brandMapper.ts의 BRAND_DISPLAY_MAP과 동기화 필요.
+# TODO: 장기적으로 DB에 brand_key 컬럼을 두고 프론트엔드는 DB 값을 그대로 사용하도록 개선.
+
 # TODO: migrate this mapping to a `hotel_translations` DB table for multi-city scalability.
 # API currently requires hardcoded names for some instances.
 HOTEL_KO_MAPPING = {

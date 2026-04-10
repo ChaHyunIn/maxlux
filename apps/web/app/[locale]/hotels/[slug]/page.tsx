@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates } from '@/lib/supabase/queries/rates';
@@ -34,9 +35,13 @@ export default async function HotelDetailPage(props: { params: Promise<{ locale:
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <HotelHeroHeader hotel={hotel} />
-            <PriceTrendChart rates={rates} />
+            <ErrorBoundary>
+                <PriceTrendChart rates={rates} />
+            </ErrorBoundary>
             <div className="mt-8">
-                <HeatmapCalendar rates={rates} hotel={hotel} />
+                <ErrorBoundary>
+                    <HeatmapCalendar rates={rates} hotel={hotel} />
+                </ErrorBoundary>
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch hotel slugs for detail pages
     const { data: hotels, error } = await supabase
         .from('hotels')
-        .select('slug, city')
+        .select('slug, city, latest_scraped_at')
         .eq('is_active', true);
 
     if (error) {
@@ -40,11 +40,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Hotel detail pages
         for (const hotel of hotels || []) {
-            entries.push({
+            const entry: MetadataRoute.Sitemap[number] = {
                 url: `${DOMAIN}/${locale}/hotels/${hotel.slug}`,
-                changeFrequency: 'weekly',
+                changeFrequency: 'weekly' as const,
                 priority: 0.8,
-            });
+            };
+            if (hotel.latest_scraped_at) {
+                entry.lastModified = new Date(hotel.latest_scraped_at);
+            }
+            entries.push(entry);
         }
     }
 

@@ -55,6 +55,7 @@ export const DEFAULT_FILTER_PRICE_RANGE: [number, number] = [0, 2000000];
 export const STORAGE_KEYS = {
     FAVORITES: 'maxlux_favorites',
     SETTINGS: 'maxlux_settings_v1',
+    LEGACY_SETTINGS: 'maxlux-settings',
 } as const;
 
 export const CHART_CONFIG = {

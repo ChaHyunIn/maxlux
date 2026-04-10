@@ -258,6 +258,7 @@
         "DELETE_FAILED": "Failed to deactivate alert.",
         "MISSING_PARAMS": "Required parameters are missing.",
         "MISSING_HOTEL_ID": "Hotel ID is missing.",
+        "INVALID_PARAMS": "Invalid parameter format.",
         "NOT_FOUND": "Data not found."
     }
 }

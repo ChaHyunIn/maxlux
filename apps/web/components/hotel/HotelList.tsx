@@ -58,6 +58,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
         // Sort
         result.sort((a, b) => {
             if (sortBy === 'price') {
+                // min_price가 없는(가격 미수집) 호텔은 Infinity로 처리하여 항상 마지막에 배치
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'discount') {
