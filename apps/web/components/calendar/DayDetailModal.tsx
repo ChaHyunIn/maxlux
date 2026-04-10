@@ -53,7 +53,8 @@ export function DayDetailModal({
             const res = await fetch(`/api/ota-prices?hotelId=${hotelId}&stayDate=${rate.stay_date}`)
             if (res.ok) {
                 const data = await res.json()
-                setOtaPrices(data.prices || [])
+                const prices: OtaPrice[] = data.prices && Array.isArray(data.prices) ? data.prices : [];
+                setOtaPrices(prices)
             }
         } catch {
             setOtaPrices([])
@@ -74,7 +75,8 @@ export function DayDetailModal({
             if (res.ok) {
                 const json = await res.json()
                 if (json && typeof json === 'object' && 'data' in json && Array.isArray(json.data)) {
-                    setRoomRates(json.data as RoomRate[])
+                    const data: RoomRate[] = json.data;
+                    setRoomRates(data);
                 } else {
                     setRoomRates([])
                 }
@@ -121,8 +123,13 @@ export function DayDetailModal({
         if (!type) return '';
         if (type === 'standard') return t('standardRoom');
         const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        // Safe check for translation key existence if possible, or just use as string
-        return t(camelKey as any);
+        // Use a generic translation key type or just cast carefully to string
+        const key = camelKey as Parameters<typeof t>[0];
+        try {
+            return t(key);
+        } catch {
+            return type;
+        }
     };
 
     return (
