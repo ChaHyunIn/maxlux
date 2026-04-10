@@ -98,14 +98,16 @@ export function HotelFilters({
                     />
                 </div>
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                    <SheetTrigger render={<Button variant="outline" size="sm" className="relative shrink-0" />}>
-                        <SlidersHorizontal className="w-4 h-4 mr-1" />
-                        {t('filterButton')}
-                        {activeCount > 0 && (
-                            <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-[10px] bg-red-500 border-0">
-                                {activeCount}
-                            </Badge>
-                        )}
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="sm" className="relative shrink-0">
+                            <SlidersHorizontal className="w-4 h-4 mr-1" />
+                            {t('filterButton')}
+                            {activeCount > 0 && (
+                                <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-[10px] bg-red-500 border-0">
+                                    {activeCount}
+                                </Badge>
+                            )}
+                        </Button>
                     </SheetTrigger>
                     <SheetContent side="bottom" className="h-auto max-h-[85vh] overflow-y-auto rounded-t-2xl">
                         <SheetHeader className="mb-4">

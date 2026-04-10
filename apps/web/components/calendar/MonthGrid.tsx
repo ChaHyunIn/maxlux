@@ -1,6 +1,6 @@
 'use client'
 import { useMemo } from 'react';
-import { getDaysInMonth, startOfMonth, getDay } from 'date-fns';
+import { getDaysInMonth, startOfMonth, getDay, format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { DayCell } from './DayCell';
 import type { DailyRate } from '@/lib/types';
@@ -43,7 +43,7 @@ export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, mont
             <div className="grid grid-cols-7 gap-1 sm:gap-2">
                 {cells.map((d, idx) => {
                     if (!d) return <div key={`empty-${idx}`} className="min-h-[60px]" />;
-                    const dateStr = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+                    const dateStr = format(d, 'yyyy-MM-dd');
                     const rate = rateMap.get(dateStr) || null;
                     return <DayCell key={dateStr} date={d} rate={rate} p25={p25} p75={p75} />;
                 })}

@@ -40,6 +40,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
 
     let opacityClass = '';
     if (sniperMode !== 'none') {
+        // Highlight Fri/Sat if either Fri-Eve/Sat-Eve (tag) or literal Saturday (dayOfWeek)
         if (sniperMode === 'fri_sat' && !isFriEve && !isSat && dayOfWeek !== 5) opacityClass = 'opacity-20';
         if (sniperMode === 'holiday_low' && !isHoliday && !isFriEve) opacityClass = 'opacity-20';
         if (sniperMode === 'cheapest_sat' && !isSat) opacityClass = 'opacity-20';
@@ -62,6 +63,9 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
                 "min-h-[60px] sm:min-h-[70px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/20 hover:scale-[1.02] active:scale-[0.98]",
                 style.bg, style.text, opacityClass
             )}
+            aria-label={`${day}: ${priceText}`}
+            role="button"
+            tabIndex={0}
         >
             <span className={cn("text-xs font-semibold self-start", dayOfWeek === 0 ? "text-red-700/80" : dayOfWeek === 6 ? "text-blue-700/80" : "")}>
                 {day}

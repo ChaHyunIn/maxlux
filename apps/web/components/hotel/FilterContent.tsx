@@ -119,9 +119,9 @@ export function FilterContent({
                     query={localSearch}
                     hotels={hotels}
                     locale={locale}
-                    onSelect={(name) => {
-                        setLocalSearch(name);
-                        setSearchQuery(name);
+                    onSelect={(_name) => {
+                        setLocalSearch('');
+                        setSearchQuery('');
                         onClose?.();
                     }}
                     visible={showAutocomplete}

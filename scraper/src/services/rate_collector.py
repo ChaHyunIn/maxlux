@@ -95,7 +95,7 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
     # Execute batch upsert
     upsert_res = client.table("daily_rates").upsert(valid_rates, on_conflict="hotel_id,stay_date,room_type").execute()
 
-    if upsert_res is None or hasattr(upsert_res, "error"):
+    if upsert_res is None:
         raise Exception("DB upsert failed")
 
     # Log CDC

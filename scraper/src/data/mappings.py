@@ -1,5 +1,5 @@
 # Hotel name Korean mapping (English → Korean)
-# TODO: For multi-city expansion, migrate this mapping to a `hotel_translations` DB table.
+# TODO: migrate this mapping to a `hotel_translations` DB table for multi-city scalability.
 # API currently requires hardcoded names for some instances.
 HOTEL_KO_MAPPING = {
     "Andaz Seoul Gangnam": "안다즈 서울 강남",
@@ -71,6 +71,7 @@ CITY_MAPPING = {
     "Jeju": "jeju",
     "jeju": "jeju",
 }
+
 
 def get_city(raw_city: str) -> str:
     return CITY_MAPPING.get(raw_city, raw_city.lower())

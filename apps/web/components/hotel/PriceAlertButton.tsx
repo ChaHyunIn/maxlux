@@ -56,13 +56,17 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
         setError('')
 
         try {
+            const priceToSend = currency === 'USD'
+                ? Math.round(targetPrice * LOCALE_DEFAULTS.exchangeRateUsd)
+                : targetPrice;
+
             const res = await fetch('/api/price-alerts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     hotel_id: hotelId,
                     email: email.trim(),
-                    target_price: targetPrice,
+                    target_price: priceToSend,
                     locale,
                 }),
             })

@@ -15,6 +15,13 @@ export const useSettingStore = create<SettingState>()(
         }),
         {
             name: STORAGE_KEYS.SETTINGS,
+            version: 1,
+            migrate: (persistedState: unknown, version: number) => {
+                if (version === 0) {
+                    return persistedState;
+                }
+                return persistedState;
+            },
         }
     )
 );

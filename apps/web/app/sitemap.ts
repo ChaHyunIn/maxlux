@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // Home page
         entries.push({
             url: `${DOMAIN}/${locale}`,
+            lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 1.0,
         });

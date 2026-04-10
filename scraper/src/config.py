@@ -36,3 +36,6 @@ DEFAULT_HEADERS = {
 
 HOTELLUX_RATES_URL = "https://hotel.hotelux.com/services/booking/hotel/rates?mode=asyncPagingMerged"
 DETAIL_SCRAPE_DAYS_AHEAD = 90
+# Benefit estimation (KRW)
+BENEFIT_VALUE_CREDIT_100USD = int(os.getenv("BENEFIT_VALUE_CREDIT_100USD", "135000"))
+BENEFIT_VALUE_BREAKFAST_FOR_2 = int(os.getenv("BENEFIT_VALUE_BREAKFAST_FOR_2", "120000"))

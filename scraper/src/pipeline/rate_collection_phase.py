@@ -57,7 +57,7 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
                 return result, None
 
             except Exception as e:
-                if attempt == 2:
+                if attempt == RATE_COLLECTION_MAX_RETRIES - 1:
                     log.error("hotel_day_failed", hotel=hotellux_id, date=str(check_in), error=str(e))
                     return None, {
                         "type": type(e).__name__,

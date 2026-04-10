@@ -18,3 +18,6 @@ def test_saturday():
 
 def test_weekday():
     assert tag_date(date(2026, 4, 13), set()) == "WEEKDAY"  # 월요일
+
+def test_sunday():
+    assert tag_date(date(2026, 4, 12), set()) == "SUN"

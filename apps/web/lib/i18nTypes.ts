@@ -26,7 +26,6 @@ export type BrandKey =
 export type CityKey =
     | 'seoul'
     | 'busan'
-    | 'tokyo'
     | 'jeju'
 
 export type BenefitKey =

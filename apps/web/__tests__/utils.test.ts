@@ -1,4 +1,4 @@
-import { formatPrice, getPriceLevel } from '@/lib/utils';
+import { formatPrice, getPriceLevel, getRelativeTime } from '@/lib/utils';
 import { isValidEmail } from '@/lib/validation';
 
 describe('formatPrice', () => {
@@ -20,4 +20,29 @@ describe('isValidEmail', () => {
     test('정상', () => expect(isValidEmail('test@example.com')).toBe(true));
     test('공백', () => expect(isValidEmail('te st@example.com')).toBe(false));
     test('빈값', () => expect(isValidEmail('')).toBe(false));
+});
+
+describe('getRelativeTime', () => {
+    const mockT = (key: string) => key;
+
+    test('방금 전', () => {
+        const now = new Date().toISOString();
+        // @ts-expect-error - mock function
+        expect(getRelativeTime(now, mockT)).toBe('justNow');
+    });
+    test('분 전', () => {
+        const d = new Date(Date.now() - 120000).toISOString();
+        // @ts-expect-error - mock function
+        expect(getRelativeTime(d, mockT)).toBe('minutesAgo');
+    });
+    test('시간 전', () => {
+        const d = new Date(Date.now() - 7200000).toISOString();
+        // @ts-expect-error - mock function
+        expect(getRelativeTime(d, mockT)).toBe('hoursAgo');
+    });
+    test('일 전', () => {
+        const d = new Date(Date.now() - 172800000).toISOString();
+        // @ts-expect-error - mock function
+        expect(getRelativeTime(d, mockT)).toBe('daysAgo');
+    });
 });

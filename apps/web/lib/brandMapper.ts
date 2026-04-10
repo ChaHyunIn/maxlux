@@ -1,21 +1,22 @@
 /**
  * Centralized brand name display mapping for localization.
  * Handles translation of raw database strings (e.g., Hanja/Chinese) to display names.
+ * NOTE: For large-scale multi-language support, consider migrating this to a translation hook/utility.
  */
 
 export const BRAND_DISPLAY_MAP: Record<string, BrandKey> = {
     // Four Seasons
     '四季': 'four_seasons',
     '四季酒店': 'four_seasons',
-    
+
     // LHW
     '立鼎世': 'lhw',
     '立鼎世酒店集团': 'lhw',
-    
+
     // Marriott
     '万豪': 'marriott',
     'JW万豪': 'jw_marriott',
-    
+
     // Other common ones
     '半岛': 'peninsula',
     '瑰丽': 'rosewood',
@@ -64,18 +65,18 @@ import type { BrandKey } from './i18nTypes'
 
 export function getBrandKey(brand: string | null | undefined): BrandKey | null {
     if (!brand) return null;
-    
+
     const normalized = brand.trim();
-    
+
     // 1. Direct match
     if (BRAND_DISPLAY_MAP[normalized]) return BRAND_DISPLAY_MAP[normalized];
-    
+
     // 2. Case-insensitive match
     const upper = normalized.toUpperCase();
     for (const [key, value] of Object.entries(BRAND_DISPLAY_MAP)) {
         if (key.toUpperCase() === upper) return value;
     }
-    
+
     // 3. Partial match for common prefixes
     if (upper.includes('SLH')) return 'slh';
     if (upper.includes('JW')) return 'jw_marriott';
@@ -86,7 +87,7 @@ export function getBrandKey(brand: string | null | undefined): BrandKey | null {
         if (upper.includes('GRAND') || upper.includes('그랜드')) return 'grand_hyatt';
         if (upper.includes('ANDAZ') || upper.includes('안다즈')) return 'andaz';
     }
-    
+
     // Fallback
     return null;
 }

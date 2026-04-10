@@ -256,7 +256,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                                 y1={CHART_PADDING.top}
                                 x2={xScale(hoveredIndex)}
                                 y2={CHART_PADDING.top + innerHeight}
-                                stroke="#6366f1"
+                                stroke={CHART_COLORS.line}
                                 strokeDasharray="4 4"
                                 opacity={0.5}
                             />
@@ -264,7 +264,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                                 cx={xScale(hoveredIndex)}
                                 cy={yScale(hovered.price)}
                                 r={5}
-                                fill="#6366f1"
+                                fill={CHART_COLORS.line}
                                 stroke="white"
                                 strokeWidth={2}
                             />
@@ -274,8 +274,8 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     {/* Gradient definition */}
                     <defs>
                         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#6366f1" />
-                            <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                            <stop offset="0%" stopColor={CHART_COLORS.line} />
+                            <stop offset="100%" stopColor={CHART_COLORS.line} stopOpacity="0" />
                         </linearGradient>
                     </defs>
                 </svg>

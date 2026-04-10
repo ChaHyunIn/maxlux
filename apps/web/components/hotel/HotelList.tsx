@@ -61,6 +61,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'discount') {
+                // Secondary sort: Hot deals first (price <= threshold), then low to high
                 const aIsHot = a.min_price && a.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
                 const bIsHot = b.min_price && b.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
                 if (aIsHot !== bIsHot) return bIsHot - aIsHot;

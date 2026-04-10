@@ -1,4 +1,5 @@
 from src.clients.supabase_client import get_client
+from src.config import BENEFIT_VALUE_BREAKFAST_FOR_2, BENEFIT_VALUE_CREDIT_100USD
 from src.data.mappings import BRAND_MAPPING, HOTEL_KO_MAPPING, get_city
 from src.utils.logger import get_logger
 
@@ -26,9 +27,9 @@ def estimate_benefit_value(benefits: list[dict]) -> int:
     for b in benefits:
         desc = str(b.get("description", "")) + " " + " ".join(b.get("tags", []))
         if "100USD" in desc or "100美元" in desc:
-            value += 135000
+            value += BENEFIT_VALUE_CREDIT_100USD
         if "赠送早餐" in desc or "双早" in desc:
-            value += 120000
+            value += BENEFIT_VALUE_BREAKFAST_FOR_2
     return value
 
 
