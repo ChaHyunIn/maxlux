@@ -1,4 +1,4 @@
-export type Tag = 'SAT' | 'FRI_EVE' | 'HOL' | 'SUN' | 'WEEKDAY';
+export type Tag = 'SAT' | 'FRI_EVE' | 'HOL' | 'HOL_EVE' | 'SUN' | 'WEEKDAY';
 
 export interface Benefit {
     name?: string;

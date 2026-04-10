@@ -24,7 +24,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
 
     const { price_krw, is_sold_out, tag } = rate;
     const isHoliday = tag === 'HOL';
-    const isFriEve = tag === 'FRI_EVE';
+    const isFriEve = tag === 'FRI_EVE' || tag === 'HOL_EVE';
     const isSat = dayOfWeek === 6;
 
     let level: 'low' | 'mid' | 'high' = 'mid';

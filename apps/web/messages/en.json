@@ -120,6 +120,7 @@
         "tagSAT": "Saturday",
         "tagFRI_EVE": "Friday(Eve)",
         "tagHOL": "Holiday",
+        "tagHOL_EVE": "Holiday Eve",
         "tagSUN": "Sunday",
         "tagWEEKDAY": "Weekday",
         "scrapedAt": "Collected {absoluteTime} ({relativeTime})",

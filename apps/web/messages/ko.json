@@ -120,6 +120,7 @@
         "tagSAT": "토요일",
         "tagFRI_EVE": "금요일(전야)",
         "tagHOL": "공휴일",
+        "tagHOL_EVE": "공휴일 전날",
         "tagSUN": "일요일",
         "tagWEEKDAY": "평일",
         "scrapedAt": "{absoluteTime} 수집 ({relativeTime})",

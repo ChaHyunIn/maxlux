@@ -115,11 +115,6 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
             # same price, effectively skipped in terms of meaningful update
             pass
 
-    if not isinstance(inserted, int):
-        inserted = 0
-    if not isinstance(updated, int):
-        updated = 0
-
     hotel_ids_to_update = list(set(r["hotel_id"] for r in valid_rates))
     if hotel_ids_to_update:
         try:

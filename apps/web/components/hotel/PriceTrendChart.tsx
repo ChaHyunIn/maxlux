@@ -207,7 +207,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
                     {/* Weekend/holiday markers */}
                     {chartData.map((d, i) => {
-                        if (d.tag !== 'SAT' && d.tag !== 'HOL' && d.tag !== 'FRI_EVE') return null
+                        if (d.tag !== 'SAT' && d.tag !== 'HOL' && d.tag !== 'FRI_EVE' && d.tag !== 'HOL_EVE') return null
                         return (
                             <circle
                                 key={i}

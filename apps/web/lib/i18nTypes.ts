@@ -1,10 +1,10 @@
-export type BrandKey = 
-    | 'four_seasons' 
-    | 'lhw' 
-    | 'fairmont' 
-    | 'peninsula' 
-    | 'rosewood' 
-    | 'marriott' 
+export type BrandKey =
+    | 'four_seasons'
+    | 'lhw'
+    | 'fairmont'
+    | 'peninsula'
+    | 'rosewood'
+    | 'marriott'
     | 'jw_marriott'
     | 'mondrian'
     | 'park_hyatt'
@@ -23,16 +23,16 @@ export type BrandKey =
     | 'slh'
     | 'others'
 
-export type CityKey = 
-    | 'seoul' 
-    | 'busan' 
+export type CityKey =
+    | 'seoul'
+    | 'busan'
     | 'tokyo'
     | 'jeju'
 
-export type BenefitKey = 
-    | 'exclusive' 
-    | 'free' 
-    | 'amex_fhr' 
+export type BenefitKey =
+    | 'exclusive'
+    | 'free'
+    | 'amex_fhr'
     | 'fs_benefit'
     | 'credit'
     | 'upgrade'
@@ -40,18 +40,18 @@ export type BenefitKey =
     | 'lateCheckout'
 
 export type ApiTermKey =
-    | 'kingBed' | 'twinBed' | 'singleBed' | 'suite' | 'standard' | 'superior' | 'deluxe' | 'executive' 
-    | 'premium' | 'presidential' | 'oceanView' | 'riverView' | 'lakeView' | 'mountainView' | 'cityView' 
-    | 'gardenView' | 'view' | 'noWindow' | 'oneBedroom' | 'twoBedroom' | 'threeBedroom' | 'room' 
-    | 'breakfast2' | 'breakfast1' | 'roomOnly' | 'breakfastInc' | 'included' | 'breakfast' 
-    | 'memberExclusive' | 'memberRate' | 'member' | 'specialOffer' | 'promotion' | 'consecutive' 
+    | 'kingBed' | 'twinBed' | 'singleBed' | 'suite' | 'standard' | 'superior' | 'deluxe' | 'executive'
+    | 'premium' | 'presidential' | 'oceanView' | 'riverView' | 'lakeView' | 'mountainView' | 'cityView'
+    | 'gardenView' | 'view' | 'noWindow' | 'oneBedroom' | 'twoBedroom' | 'threeBedroom' | 'room'
+    | 'breakfast2' | 'breakfast1' | 'roomOnly' | 'breakfastInc' | 'included' | 'breakfast'
+    | 'memberExclusive' | 'memberRate' | 'member' | 'specialOffer' | 'promotion' | 'consecutive'
     | 'earlyBird' | 'special' | 'benefit' | 'free' | 'cancel' | 'flexible' | 'non' | 'prepaid'
 
-export type DayDetailKey = 
-    | 'nonRefundable' | 'soldOut' | 'tagSAT' | 'tagFRI_EVE' | 'tagHOL' | 'tagSUN' | 'tagWEEKDAY' 
+export type DayDetailKey =
+    | 'nonRefundable' | 'soldOut' | 'tagSAT' | 'tagFRI_EVE' | 'tagHOL' | 'tagHOL_EVE' | 'tagSUN' | 'tagWEEKDAY'
     | 'levelLow' | 'levelHigh' | 'levelMid' | 'refundable' | 'scrapedAt'
 
-export type GlobalKey = 
+export type GlobalKey =
     | 'ko' | 'en' | 'zh' | 'krw' | 'usd'
 
 export type Locale = 'ko' | 'en' | 'zh'
@@ -78,7 +78,7 @@ export function isSortByKey(val: unknown): val is SortByKey {
 
 export function isDayDetailKey(val: unknown): val is DayDetailKey {
     return typeof val === 'string' && [
-        'nonRefundable', 'soldOut', 'tagSAT', 'tagFRI_EVE', 'tagHOL', 'tagSUN', 'tagWEEKDAY', 
+        'nonRefundable', 'soldOut', 'tagSAT', 'tagFRI_EVE', 'tagHOL', 'tagHOL_EVE', 'tagSUN', 'tagWEEKDAY',
         'levelLow', 'levelHigh', 'levelMid', 'refundable', 'scrapedAt'
     ].includes(val);
 }

@@ -58,6 +58,7 @@
     "import/no-duplicates": "error",
     "no-duplicate-imports": "off",
     "import/no-unused-modules": "off",
+    // TODO: enable after baseline cleanup (currently 62 warnings)
     "@typescript-eslint/no-magic-numbers": "off",
     "import/order": [
       "error",
