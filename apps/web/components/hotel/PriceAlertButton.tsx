@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { PRICE_SUGGESTIONS } from '@/lib/constants'
+import { PRICE_SUGGESTIONS, LOCALE_DEFAULTS } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { isValidEmail } from '@/lib/validation'
 import { useSettingStore } from '@/stores/settingStore'
@@ -142,8 +142,8 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                         value={targetPrice}
                                         onChange={(e) => setTargetPrice(parseInt(e.target.value) || 0)}
                                         className="flex-1"
-                                        min={currency === 'USD' ? 10 : 10000}
-                                        step={currency === 'USD' ? 10 : 10000}
+                                        min={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}
+                                        step={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}
                                     />
                                     <Badge variant="outline" className="whitespace-nowrap">{currency}</Badge>
                                 </div>

@@ -1,22 +1,21 @@
-'use client';
-import { useTranslations } from 'next-intl';
+'use client'
 
 export default function Error({
-    error,
+    _error,
     reset,
 }: {
-    error: Error & { digest?: string };
-    reset: () => void;
+    _error: Error & { digest?: string }
+    reset: () => void
 }) {
-    const t = useTranslations('common');
-
     return (
-        <div className="flex items-center justify-center min-h-[60vh] flex-col gap-4">
-            <h2 className="text-2xl font-bold">{t('errorOccurred')}</h2>
-            <p className="text-gray-500">{t('errorMessage')}</p>
-            <button onClick={reset} className="px-4 py-2 bg-black text-white rounded-md">
-                {t('retry')}
+        <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
+            <h2 className="text-2xl font-bold mb-4">Something went wrong!</h2>
+            <button
+                onClick={() => reset()}
+                className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
+            >
+                Try again
             </button>
         </div>
-    );
+    )
 }

@@ -15,8 +15,6 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const tBrand = useTranslations('brand');
     const tCity = useTranslations('city');
     const tBenefitsList = useTranslations('benefits');
-    const rawWeekdays = t.raw('weekdays');
-    const weekdays: string[] = Array.isArray(rawWeekdays) ? rawWeekdays : [];
     const locale = useLocale();
     const primaryName = getHotelName(hotel, locale);
     const secondaryName = getHotelName(hotel, locale === 'en' ? 'ko' : 'en');

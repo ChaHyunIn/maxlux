@@ -24,8 +24,6 @@ interface DayDetailModalProps {
     p75: number
 }
 
-
-
 export function DayDetailModal({
     open,
     onOpenChange,
@@ -74,7 +72,7 @@ export function DayDetailModal({
         try {
             const res = await fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
             if (res.ok) {
-                const json = await res.json()
+                const json = (await res.json()) as { data: RoomRate[] }
                 setRoomRates(Array.isArray(json.data) ? json.data : [])
             }
         } catch {
@@ -118,7 +116,6 @@ export function DayDetailModal({
     const getRoomTypeLabel = (type: string | undefined | null) => {
         if (!type) return '';
         if (type === 'standard') return t('standardRoom');
-        // Convert snake_case to camelCase (nr_nobf -> nrNobf)
         const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
         try {
             return t(camelKey as any);
@@ -138,7 +135,6 @@ export function DayDetailModal({
                     </div>
                 </DialogHeader>
 
-                {/* Price Display */}
                 <PriceHeader
                     rate={rate}
                     refundableRate={refundableRate}
@@ -166,7 +162,6 @@ export function DayDetailModal({
                     currency={currency}
                 />
 
-                {/* Booking Button */}
                 {bookingUrl && !rate.is_sold_out && (
                     <div className="mt-4">
                         <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="block">
@@ -178,7 +173,6 @@ export function DayDetailModal({
                     </div>
                 )}
 
-                {/* Room type info */}
                 <div className="mt-3 text-xs text-slate-400 text-center">
                     {t('roomType')}: {getRoomTypeLabel(rate.room_type)}
                 </div>

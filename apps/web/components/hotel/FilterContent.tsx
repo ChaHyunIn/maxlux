@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';
-import { SUPPORTED_CITIES, PRICE_FILTER_RANGES } from '@/lib/constants';
+import { SUPPORTED_CITIES, PRICE_FILTER_RANGES, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 import { formatPrice } from '@/lib/utils';
 import { useFilterStore } from "@/stores/filterStore"
 import { useSettingStore } from "@/stores/settingStore"
@@ -50,7 +50,6 @@ export function FilterContent({
         setLocalSearch(searchQuery);
     }, [searchQuery]);
 
-    // Close autocomplete on outside click
     useClickOutside(containerRef, () => setShowAutocomplete(false));
 
     const handleSearchChange = useCallback((val: string) => {
@@ -66,13 +65,13 @@ export function FilterContent({
         if (currency === 'USD') {
             const parts = opt.value.split('-').map(Number);
             const min = parts[0] ?? 0;
-            const max = parts[1] ?? 2000000;
-            if (min === 0 && max >= 2000000) return { value: opt.value, label: t('priceAll') };
+            const max = parts[1] ?? DEFAULT_FILTER_PRICE_RANGE[1];
+            if (min === 0 && max >= DEFAULT_FILTER_PRICE_RANGE[1]) return { value: opt.value, label: t('priceAll') };
             const minFormatted = formatPrice(min, 'USD');
             const maxFormatted = formatPrice(max, 'USD');
             return {
                 value: opt.value,
-                label: max >= 2000000 ? `${minFormatted}+` : `${minFormatted}-${maxFormatted}`
+                label: max >= DEFAULT_FILTER_PRICE_RANGE[1] ? `${minFormatted}+` : `${minFormatted}-${maxFormatted}`
             };
         }
         return {
@@ -98,7 +97,6 @@ export function FilterContent({
 
     return (
         <div className="flex flex-col gap-4 w-full">
-            {/* Search bar with autocomplete */}
             <div className="relative" ref={containerRef}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                 <Input
@@ -131,7 +129,6 @@ export function FilterContent({
                 />
             </div>
 
-            {/* City chips */}
             <div className="flex flex-wrap gap-2">
                 <button
                     className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
@@ -153,7 +150,6 @@ export function FilterContent({
                 })}
             </div>
 
-            {/* Row 2: Brand + Price + Sort + Favorites */}
             <div className="flex flex-wrap gap-3">
                 <Select value={selectedBrand} onValueChange={(val) => { setSelectedBrand(val || 'all'); onClose?.(); }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
