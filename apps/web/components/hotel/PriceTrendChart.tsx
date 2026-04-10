@@ -115,7 +115,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     }
 
     const formatPriceShort = (price: number) => {
-        if (currency === 'USD') return formatPrice(price, 'USD') || ''
+        if (currency === 'USD') return formatPrice(price, 'USD')
         return `${Math.round(price / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     }
 

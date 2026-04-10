@@ -81,3 +81,9 @@ export function isDayDetailKey(val: unknown): val is DayDetailKey {
         'levelLow', 'levelHigh', 'levelMid', 'refundable', 'scrapedAt'
     ].includes(val);
 }
+
+export type OtaKey = 'hotellux' | 'agoda' | 'booking' | 'hotels_com' | 'trip_com' | 'expedia';
+const OTA_KEYS: readonly string[] = ['hotellux', 'agoda', 'booking', 'hotels_com', 'trip_com', 'expedia'];
+export function isOtaKey(value: string): value is OtaKey {
+    return typeof value === 'string' && OTA_KEYS.includes(value);
+}
