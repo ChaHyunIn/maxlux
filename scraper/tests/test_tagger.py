@@ -1,5 +1,7 @@
 from datetime import date
+
 from src.services.tagger import tag_date
+
 
 def test_saturday():
     assert tag_date(date(2026, 4, 11), set()) == "SAT"
