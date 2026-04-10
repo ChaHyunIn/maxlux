@@ -1,16 +1,17 @@
 'use client'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { useFilterStore, DEFAULT_FILTER_PRICE_RANGE } from "@/stores/filterStore"
-import { useTranslations } from 'next-intl';
-import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Search, X, SlidersHorizontal } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useClickOutside } from '@/hooks/useClickOutside';
-import type { Hotel } from '@/lib/types';
+import { useFilterStore } from "@/stores/filterStore"
+import { DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 import { FilterContent } from './FilterContent';
 import { SearchAutocomplete } from './SearchAutocomplete';
+import type { Hotel } from '@/lib/types';
 
 export function HotelFilters({
     brands,

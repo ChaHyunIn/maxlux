@@ -1,8 +1,8 @@
+import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ExternalLink } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
 import { OTA_DISPLAY } from '@/lib/ota';
+import { formatPrice } from '@/lib/utils';
 import type { useTranslations } from 'next-intl';
 
 interface PriceEntry {

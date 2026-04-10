@@ -1,11 +1,11 @@
 'use client'
 import { useState, useMemo, useRef, useEffect, useId } from 'react'
-import { useSettingStore } from '@/stores/settingStore'
-import { formatPrice } from '@/lib/utils'
-import { useTranslations, useLocale } from 'next-intl'
 import { TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
-import type { DailyRate } from '@/lib/types'
+import { useTranslations, useLocale } from 'next-intl'
 import { LOCALE_DEFAULTS, CHART_CONFIG } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
+import { useSettingStore } from '@/stores/settingStore'
+import type { DailyRate } from '@/lib/types'
 
 interface PriceTrendChartProps {
     rates: DailyRate[]

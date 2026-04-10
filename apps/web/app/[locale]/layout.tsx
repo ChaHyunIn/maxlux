@@ -4,10 +4,10 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import '../../styles/globals.css';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
+import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));

@@ -1,10 +1,8 @@
 from datetime import date, timedelta
+
 from src.utils.logger import get_logger
 
 log = get_logger("tagger")
-
-
-from src.utils.holidays import load_holidays
 
 
 def tag_date(stay_date: date, holidays: set[date]) -> str:

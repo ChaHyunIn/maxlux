@@ -1,11 +1,11 @@
 'use client';
-import { useSettingStore } from '@/stores/settingStore';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Globe, DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Globe, DollarSign } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { isGlobalKey, isLocale } from '@/lib/i18nTypes';
+import { useSettingStore } from '@/stores/settingStore';
 
 export function HeaderActions() {
     const { currency, setCurrency } = useSettingStore();

@@ -1,6 +1,6 @@
-import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
-import { getHotelName } from '@/lib/hotelUtils';
 import { NextResponse } from 'next/server';
+import { getHotelName } from '@/lib/hotelUtils';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 
 interface Props {
     params: { slug: string };

@@ -1,18 +1,17 @@
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Search, X, Heart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useFilterStore } from "@/stores/filterStore"
-import { Search, X, Heart } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useSettingStore } from "@/stores/settingStore"
-import { formatPrice } from '@/lib/utils';
 import { useClickOutside } from '@/hooks/useClickOutside';
-import type { Hotel } from '@/lib/types';
-import { getCityKey } from '@/lib/cityMapper';
 import { getBrandKey } from '@/lib/brandMapper';
-import { SearchAutocomplete } from './SearchAutocomplete';
-import { useTranslations } from 'next-intl';
-
+import { getCityKey } from '@/lib/cityMapper';
 import { SUPPORTED_CITIES, PRICE_FILTER_RANGES } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils';
+import { useFilterStore } from "@/stores/filterStore"
+import { useSettingStore } from "@/stores/settingStore"
+import { SearchAutocomplete } from './SearchAutocomplete';
+import type { Hotel } from '@/lib/types';
 
 const PRICE_RANGE_VALUES = PRICE_FILTER_RANGES;
 

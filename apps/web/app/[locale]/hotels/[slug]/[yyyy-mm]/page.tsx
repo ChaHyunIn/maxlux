@@ -1,9 +1,8 @@
-import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
-import { getTranslations } from 'next-intl/server';
+import { setRequestLocale , getTranslations } from 'next-intl/server';
 import { getHotelName } from '@/lib/hotelUtils';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
+import type { Metadata } from 'next';
 
 interface Props {
     params: { locale: string; slug: string; 'yyyy-mm': string };

@@ -1,6 +1,6 @@
 'use client'
-import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { HeaderActions } from './HeaderActions';
 
 export default function Header() {

@@ -1,10 +1,12 @@
 import asyncio
-from src.services.stats_aggregator import compress_old_data
-from src.services.ota_collector import collect_ota_prices
+
 from src.services.alert_checker import check_and_send_alerts
+from src.services.ota_collector import collect_ota_prices
+from src.services.stats_aggregator import compress_old_data
 from src.utils.logger import get_logger
 
 log = get_logger("post_scrape_phase")
+
 
 async def run_post_scrape():
     try:

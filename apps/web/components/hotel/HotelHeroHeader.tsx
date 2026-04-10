@@ -1,14 +1,14 @@
 'use client'
 import { MapPin, Building, Sparkles } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { useLocale, useTranslations } from 'next-intl';
 import { HotelHeroImage } from '@/components/hotel/HotelHeroImage';
 import { PriceAlertButton } from '@/components/hotel/PriceAlertButton';
+import { Badge } from '@/components/ui/badge';
+import { getBenefitKey } from '@/lib/benefitMapper';
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';
-import { getBenefitKey } from '@/lib/benefitMapper';
 import { getHotelName } from '@/lib/hotelUtils';
 import type { Hotel } from '@/lib/types';
-import { useLocale, useTranslations } from 'next-intl';
 
 export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const t = useTranslations('hotel');

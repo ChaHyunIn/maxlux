@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
-import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
-import { getRates } from '@/lib/supabase/queries/rates';
+import { setRequestLocale } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
-import { setRequestLocale } from 'next-intl/server';
+import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
+import { getRates } from '@/lib/supabase/queries/rates';
 
 export const revalidate = 3600;
 

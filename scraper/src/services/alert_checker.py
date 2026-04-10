@@ -7,10 +7,13 @@
 3. 조건 충족 시 이메일 발송 (Resend API)
 4. triggered_at 업데이트 (24시간 중복 방지)
 """
-import os
+
 import asyncio
+import os
+from datetime import UTC, datetime, timedelta
+
 import httpx
-from datetime import datetime, timedelta
+
 from src.clients.supabase_client import get_client
 from src.utils.logger import get_logger
 
@@ -33,24 +36,23 @@ def _mask_email(email: str) -> str:
 def _fetch_active_alerts() -> list[dict]:
     """동기: DB에서 active 알림 목록 조회."""
     client = get_client()
-    res = client.table("price_alerts") \
-        .select("*, hotels(name_ko, name_en, slug)") \
-        .eq("is_active", True) \
-        .execute()
+    res = client.table("price_alerts").select("*, hotels(name_ko, name_en, slug)").eq("is_active", True).execute()
     return res.data or []
 
 
 def _fetch_lowest_price(hotel_id: str, stay_date_from: str | None, stay_date_to: str | None) -> dict | None:
     """동기: 특정 호텔의 현재 최저가 조회."""
     client = get_client()
-    query = client.table("daily_rates") \
-        .select("price_krw, stay_date") \
-        .eq("hotel_id", hotel_id) \
-        .eq("is_sold_out", False) \
-        .gt("price_krw", 0) \
-        .gte("stay_date", datetime.utcnow().strftime("%Y-%m-%d")) \
-        .order("price_krw") \
+    query = (
+        client.table("daily_rates")
+        .select("price_krw, stay_date")
+        .eq("hotel_id", hotel_id)
+        .eq("is_sold_out", False)
+        .gt("price_krw", 0)
+        .gte("stay_date", datetime.now(UTC).strftime("%Y-%m-%d"))
+        .order("price_krw")
         .limit(1)
+    )
 
     if stay_date_from:
         query = query.gte("stay_date", stay_date_from)
@@ -64,10 +66,7 @@ def _fetch_lowest_price(hotel_id: str, stay_date_from: str | None, stay_date_to:
 def _update_triggered_at(alert_id: int, now_iso: str):
     """동기: triggered_at 업데이트."""
     client = get_client()
-    client.table("price_alerts") \
-        .update({"triggered_at": now_iso}) \
-        .eq("id", alert_id) \
-        .execute()
+    client.table("price_alerts").update({"triggered_at": now_iso}).eq("id", alert_id).execute()
 
 
 async def check_and_send_alerts() -> dict:
@@ -90,7 +89,7 @@ async def check_and_send_alerts() -> dict:
         log.info("no_active_alerts")
         return {"checked": 0, "sent": 0, "skipped": 0}
 
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
 
     for alert in alerts:
         checked += 1
@@ -167,7 +166,7 @@ async def send_alert_email(
         formatted_target = f"₩{target_price:,}"
         hotel_url = f"{SITE_URL}/hotels/{hotel_slug}"
 
-        if locale == 'en':
+        if locale == "en":
             subject = f"💰 Price Alert: {hotel_name} - {formatted_price}"
             html_body = f"""
             <div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">

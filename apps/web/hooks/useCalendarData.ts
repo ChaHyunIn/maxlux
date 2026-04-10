@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { getYear, getMonth } from 'date-fns';
-import type { DailyRate } from '@/lib/types';
 import { FALLBACK_PERCENTILES } from '@/lib/constants';
+import type { DailyRate } from '@/lib/types';
 
 export function useCalendarData(rates: DailyRate[]) {
     // 4-bucket 폴백 순서에 따른 베이스 요금 결정 (nr_nobf -> nr_bf -> r_nobf -> r_bf)

@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,8 +28,8 @@ DEFAULT_HEADERS = {
     "y-raw-required": "false",
     "y-src": "ysys-web",
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/146.0.0.0 Safari/537.36",
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/146.0.0.0 Safari/537.36",
 }
 
 HOTELLUX_RATES_URL = "https://hotel.hotelux.com/services/booking/hotel/rates?mode=asyncPagingMerged"

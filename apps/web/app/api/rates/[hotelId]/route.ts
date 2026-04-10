@@ -1,5 +1,5 @@
-import { getRates } from '@/lib/supabase/queries/rates';
 import { successResponse, errorResponse } from '@/lib/apiResponse';
+import { getRates } from '@/lib/supabase/queries/rates';
 
 interface Props {
     params: { hotelId: string };

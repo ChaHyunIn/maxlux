@@ -1,6 +1,6 @@
+import { FALLBACK_PERCENTILES } from '../../constants';
 import { supabase } from '../anon';
 import type { DailyRate, PricePercentiles, RoomRate, PriceChange } from '../../types';
-import { FALLBACK_PERCENTILES } from '../../constants';
 
 export async function getRates(hotelId: string): Promise<DailyRate[]> {
     const today = new Date().toISOString().split('T')[0];

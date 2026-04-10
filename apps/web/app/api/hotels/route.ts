@@ -1,5 +1,5 @@
-import { getHotels } from '@/lib/supabase/queries/hotels';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
+import { getHotels } from '@/lib/supabase/queries/hotels';
 
 export async function GET() {
     try {

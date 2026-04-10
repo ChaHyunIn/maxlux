@@ -3,8 +3,10 @@ OTA 가격 수집 오케스트레이터.
 
 여러 OTA 소스의 가격을 수집하고 ota_prices 테이블에 저장합니다.
 """
+
 import asyncio
-from datetime import date, timedelta
+from datetime import UTC, datetime, timedelta
+
 from src.clients.agoda import AgodaClient
 from src.clients.booking import BookingClient
 from src.clients.supabase_client import get_client
@@ -29,28 +31,17 @@ async def collect_ota_prices() -> dict:
 
     try:
         # 1. OTA ID가 있는 호텔 조회
-        hotels_res = client.table("hotels") \
-            .select("id, agoda_id, booking_id") \
-            .eq("is_active", True) \
-            .execute()
+        hotels_res = client.table("hotels").select("id, agoda_id, booking_id").eq("is_active", True).execute()
 
         if not hotels_res.data:
             log.warning("no_hotels_for_ota")
             return {"agoda": 0, "booking": 0}
 
         hotels = hotels_res.data
-        agoda_hotels = [
-            {"hotel_id": h["id"], "agoda_id": h["agoda_id"]}
-            for h in hotels if h.get("agoda_id")
-        ]
-        booking_hotels = [
-            {"hotel_id": h["id"], "booking_id": h["booking_id"]}
-            for h in hotels if h.get("booking_id")
-        ]
+        agoda_hotels = [{"hotel_id": h["id"], "agoda_id": h["agoda_id"]} for h in hotels if h.get("agoda_id")]
+        booking_hotels = [{"hotel_id": h["id"], "booking_id": h["booking_id"]} for h in hotels if h.get("booking_id")]
 
-        log.info("ota_hotels_found",
-                 agoda=len(agoda_hotels),
-                 booking=len(booking_hotels))
+        log.info("ota_hotels_found", agoda=len(agoda_hotels), booking=len(booking_hotels))
 
         if not agoda_hotels and not booking_hotels:
             log.info("no_ota_ids_configured")
@@ -61,7 +52,7 @@ async def collect_ota_prices() -> dict:
         semaphore = asyncio.Semaphore(3)
 
         # 2. 향후 14일 수집
-        today = date.today()
+        today = datetime.now(UTC).date()
         for day_offset in range(OTA_DAYS_AHEAD):
             check_in = today + timedelta(days=day_offset)
             check_out = check_in + timedelta(days=1)
@@ -89,8 +80,7 @@ async def collect_ota_prices() -> dict:
             if all_prices:
                 try:
                     client.table("ota_prices").upsert(
-                        all_prices,
-                        on_conflict="hotel_id,stay_date,source,room_type"
+                        all_prices, on_conflict="hotel_id,stay_date,source,room_type"
                     ).execute()
                 except Exception as e:
                     log.error("ota_upsert_failed", date=ci, error=str(e))
@@ -100,9 +90,7 @@ async def collect_ota_prices() -> dict:
             total_agoda += agoda_count
             total_booking += booking_count
 
-        log.info("ota_collection_done",
-                 agoda_total=total_agoda,
-                 booking_total=total_booking)
+        log.info("ota_collection_done", agoda_total=total_agoda, booking_total=total_booking)
 
         return {"agoda": total_agoda, "booking": total_booking}
 

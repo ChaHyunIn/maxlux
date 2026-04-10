@@ -1,9 +1,9 @@
 'use client'
 import { useMemo } from 'react';
-import type { DailyRate } from '@/lib/types';
-import { DayCell } from './DayCell';
 import { getDaysInMonth, startOfMonth, getDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
+import { DayCell } from './DayCell';
+import type { DailyRate } from '@/lib/types';
 
 export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, month: number, rates: DailyRate[], p25: number, p75: number }) {
     const t = useTranslations('calendar');

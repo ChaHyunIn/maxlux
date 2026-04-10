@@ -1,9 +1,9 @@
-import { getHotelsByCity } from '@/lib/supabase/queries/hotels';
-import { HotelList } from '@/components/hotel/HotelList';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Metadata } from 'next';
-import type { Hotel } from '@/lib/types';
+import { HotelList } from '@/components/hotel/HotelList';
 import { getCityKey } from '@/lib/cityMapper';
+import { getHotelsByCity } from '@/lib/supabase/queries/hotels';
+import type { Hotel } from '@/lib/types';
+import type { Metadata } from 'next';
 
 export const revalidate = 300;
 

@@ -9,7 +9,7 @@ export const MONTHS_TO_SHOW = 12;
 export const VIRTUAL_RENDER_RANGE = 1; // current ± 1 month
 
 export const LOCALE_DEFAULTS = {
-    exchangeRateUsd: Number(process.env.NEXT_PUBLIC_EXCHANGE_RATE_USD) || 1400,
+    exchangeRateUsd: Number(process.env['NEXT_PUBLIC_EXCHANGE_RATE_USD']) || 1400,
     priceUnitManDivisor: 10000,
 } as const;
 
@@ -19,7 +19,7 @@ export const FALLBACK_PERCENTILES = {
 } as const;
 
 /** Price threshold (KRW) below which a hotel is considered a "hot deal" */
-export const HOT_DEAL_THRESHOLD = Number(process.env.NEXT_PUBLIC_HOT_DEAL_THRESHOLD) || 350000;
+export const HOT_DEAL_THRESHOLD = Number(process.env['NEXT_PUBLIC_HOT_DEAL_THRESHOLD']) || 350000;
 
 export const SUPPORTED_CITIES = ['seoul', 'busan', 'jeju'] as const;
 

@@ -5,8 +5,11 @@
 - 호텔의 agoda_id가 있어야 검색 가능
 - rate limit을 준수하기 위해 delay 적용
 """
-import httpx
+
 import asyncio
+
+import httpx
+
 from src.utils.logger import get_logger
 
 log = get_logger("agoda")
@@ -167,14 +170,16 @@ class AgodaClient:
                 price_data = await self.get_hotel_price(agoda_id, check_in, check_out)
 
             if price_data:
-                results.append({
-                    "hotel_id": hotel["hotel_id"],
-                    "stay_date": check_in,
-                    "source": "agoda",
-                    "price_krw": price_data["price_krw"],
-                    "room_type": price_data["room_type"],
-                    "url": price_data["url"],
-                })
+                results.append(
+                    {
+                        "hotel_id": hotel["hotel_id"],
+                        "stay_date": check_in,
+                        "source": "agoda",
+                        "price_krw": price_data["price_krw"],
+                        "room_type": price_data["room_type"],
+                        "url": price_data["url"],
+                    }
+                )
 
             await asyncio.sleep(REQUEST_DELAY)
 

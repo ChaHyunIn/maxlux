@@ -1,12 +1,11 @@
+import { useTranslations, useLocale } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatPrice } from '@/lib/utils';
-import { getLocalizedText } from '@/lib/translator';
-import type { RoomRate } from '@/lib/types';
-
 import { getBenefitKey } from '@/lib/benefitMapper';
 import { BENEFIT_COLORS } from '@/lib/constants';
-import { useTranslations, useLocale } from 'next-intl';
+import { getLocalizedText } from '@/lib/translator';
+import { formatPrice } from '@/lib/utils';
+import type { RoomRate } from '@/lib/types';
 
 interface RoomRateListProps {
     roomRatesLoading: boolean;

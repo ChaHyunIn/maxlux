@@ -1,6 +1,6 @@
-import type { NextRequest } from 'next/server';
-import { getRoomRates } from '@/lib/supabase/queries/rates';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
+import { getRoomRates } from '@/lib/supabase/queries/rates';
+import type { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
     const hotelId = req.nextUrl.searchParams.get('hotelId');

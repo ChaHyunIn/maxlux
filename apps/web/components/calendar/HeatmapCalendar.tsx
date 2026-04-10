@@ -1,15 +1,15 @@
 'use client'
-import type { DailyRate, Hotel } from '@/lib/types';
-import { MonthGrid } from './MonthGrid';
-import { SniperFilters } from './SniperFilters';
-import { CalendarLegend } from './CalendarLegend';
-import { DayDetailModal } from './DayDetailModal';
-import { useCalendarStore } from '@/stores/calendarStore';
-import { useLocale, useTranslations } from 'next-intl';
-import { getRelativeTime, formatAbsoluteTime } from '@/lib/utils';
 import { Clock } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCalendarData } from '@/hooks/useCalendarData';
 import { getHotelName } from '@/lib/hotelUtils';
+import { getRelativeTime, formatAbsoluteTime } from '@/lib/utils';
+import { useCalendarStore } from '@/stores/calendarStore';
+import { CalendarLegend } from './CalendarLegend';
+import { DayDetailModal } from './DayDetailModal';
+import { MonthGrid } from './MonthGrid';
+import { SniperFilters } from './SniperFilters';
+import type { DailyRate, Hotel } from '@/lib/types';
 
 export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
     const t = useTranslations('calendar');

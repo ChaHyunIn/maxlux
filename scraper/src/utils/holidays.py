@@ -3,9 +3,12 @@
 - 공공데이터포털 API로 자동 수집 시도
 - API 실패 시 수동 하드코딩 데이터로 fallback
 """
+
 import os
+from datetime import UTC, date, datetime
+
 import httpx
-from datetime import date
+
 from src.utils.logger import get_logger
 
 log = get_logger("holidays")
@@ -132,7 +135,7 @@ async def seed_holidays_auto(supabase_client, year: int | None = None):
     2. 실패 시 fallback 하드코딩 데이터 사용
     """
     if year is None:
-        year = date.today().year
+        year = datetime.now(UTC).date().year
 
     # Try API first
     holidays_data = await fetch_holidays_from_api(year)
@@ -151,13 +154,16 @@ async def seed_holidays_auto(supabase_client, year: int | None = None):
     count = 0
     for entry in holidays_data:
         date_str, name_ko, name_en, is_sub = entry
-        supabase_client.table("holidays").upsert({
-            "date": date_str,
-            "name_ko": name_ko,
-            "name_en": name_en,
-            "is_substitute": is_sub,
-            "year": year,
-        }, on_conflict="date").execute()
+        supabase_client.table("holidays").upsert(
+            {
+                "date": date_str,
+                "name_ko": name_ko,
+                "name_en": name_en,
+                "is_substitute": is_sub,
+                "year": year,
+            },
+            on_conflict="date",
+        ).execute()
         count += 1
 
     log.info("holidays_seeded", year=year, count=count, source=source)
@@ -170,28 +176,35 @@ def seed_holidays(supabase_client):
     대신 seed_holidays_auto(client)를 사용하세요.
     """
     for date_str, name_ko, name_en, is_sub in HOLIDAYS_2026:
-        supabase_client.table("holidays").upsert({
-            "date": date_str,
-            "name_ko": name_ko,
-            "name_en": name_en,
-            "is_substitute": is_sub,
-            "year": 2026,
-        }, on_conflict="date").execute()
+        supabase_client.table("holidays").upsert(
+            {
+                "date": date_str,
+                "name_ko": name_ko,
+                "name_en": name_en,
+                "is_substitute": is_sub,
+                "year": 2026,
+            },
+            on_conflict="date",
+        ).execute()
     # 2027년도 시드
     for date_str, name_ko, name_en, is_sub in HOLIDAYS_2027:
-        supabase_client.table("holidays").upsert({
-            "date": date_str,
-            "name_ko": name_ko,
-            "name_en": name_en,
-            "is_substitute": is_sub,
-            "year": 2027,
-        }, on_conflict="date").execute()
+        supabase_client.table("holidays").upsert(
+            {
+                "date": date_str,
+                "name_ko": name_ko,
+                "name_en": name_en,
+                "is_substitute": is_sub,
+                "year": 2027,
+            },
+            on_conflict="date",
+        ).execute()
 
 
 def load_holidays(supabase_client=None, year: int | None = None) -> set[date]:
     """Load holidays from DB. Caller should cache the result if needed."""
     if supabase_client is None:
         from src.clients.supabase_client import get_client
+
         supabase_client = get_client()
     query = supabase_client.table("holidays").select("date")
     if year:

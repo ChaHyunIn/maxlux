@@ -1,7 +1,7 @@
-import type { NextRequest } from 'next/server';
-import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supabase/mutations/alerts';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
+import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supabase/mutations/alerts';
 import { isValidEmail } from '@/lib/validation';
+import type { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
     try {

@@ -2,3 +2,54 @@
 name = "maxlux-scraper"
 version = "0.1.0"
 requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort (import 정렬)
+    "N",      # pep8-naming
+    "UP",     # pyupgrade (deprecated 문법 자동 감지)
+    "B",      # flake8-bugbear (일반 버그 패턴)
+    "A",      # flake8-builtins (내장 함수 이름 섀도잉)
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking (런타임 불필요 import를 TYPE_CHECKING 블록으로)
+    "RUF",    # ruff 전용 규칙
+    "ASYNC",  # async 관련 린트
+    "DTZ",    # datetime timezone 관련 (datetime.utcnow() deprecated 감지)
+    "T20",    # print문 감지
+    "PT",     # pytest 스타일
+    "ERA",    # 주석 처리된 코드 감지
+    "PIE",    # 불필요한 코드 패턴
+]
+ignore = [
+    "E501",   # line-length는 formatter에 위임
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["T20", "ERA"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true

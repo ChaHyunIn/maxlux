@@ -1,5 +1,6 @@
 from supabase import create_client
-from src.config import SUPABASE_URL, SUPABASE_KEY
+
+from src.config import SUPABASE_KEY, SUPABASE_URL
 from src.utils.logger import get_logger
 
 log = get_logger("supabase")

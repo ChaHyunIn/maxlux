@@ -1,14 +1,14 @@
 'use client'
 import { useMemo } from 'react';
-import type { Hotel } from '@/lib/types';
+import { useLocale } from 'next-intl';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { useFavorites } from '@/hooks/useFavorites';
+import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
+import { getHotelName } from '@/lib/hotelUtils';
+import { useFilterStore } from '@/stores/filterStore';
 import { HotelCard } from './HotelCard';
 import { HotelFilters } from './HotelFilters';
-import { useFilterStore } from '@/stores/filterStore';
-import { EmptyState } from '@/components/shared/EmptyState';
-import { useLocale } from 'next-intl';
-import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
-import { useFavorites } from '@/hooks/useFavorites';
-import { getHotelName } from '@/lib/hotelUtils';
+import type { Hotel } from '@/lib/types';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
     const { searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly } = useFilterStore();

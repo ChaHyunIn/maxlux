@@ -1,10 +1,10 @@
 'use client'
-import { getPriceLevel, cn, formatPrice } from '@/lib/utils';
-import type { DailyRate } from '@/lib/types';
+import { useTranslations } from 'next-intl';
 import { PRICE_COLORS, LOCALE_DEFAULTS } from '@/lib/constants';
+import { getPriceLevel, cn, formatPrice } from '@/lib/utils';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useSettingStore } from '@/stores/settingStore';
-import { useTranslations } from 'next-intl';
+import type { DailyRate } from '@/lib/types';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
     const { sniperMode, openDayDetail } = useCalendarStore();

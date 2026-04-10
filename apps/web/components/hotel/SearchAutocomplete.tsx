@@ -1,11 +1,11 @@
-import { Search, MapPin } from 'lucide-react';
 import { useMemo } from 'react';
-import type { Hotel } from '@/lib/types';
-import { Link } from '@/i18n/navigation';
-import { getCityKey } from '@/lib/cityMapper';
-import { getBrandKey } from '@/lib/brandMapper';
-import { getHotelName } from '@/lib/hotelUtils';
+import { Search, MapPin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { getBrandKey } from '@/lib/brandMapper';
+import { getCityKey } from '@/lib/cityMapper';
+import { getHotelName } from '@/lib/hotelUtils';
+import type { Hotel } from '@/lib/types';
 
 interface AutocompleteItem {
     id: string;

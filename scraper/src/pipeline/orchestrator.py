@@ -1,36 +1,38 @@
-import asyncio
 import uuid
-from datetime import date, datetime
-from src.config import CITIES, DETAIL_SCRAPE_DAYS_AHEAD
+from datetime import UTC, datetime
+
 from src.clients.hotellux import HotelLuxClient
 from src.clients.supabase_client import get_client
-from src.utils.holidays import seed_holidays_auto, load_holidays
-from src.utils.logger import get_logger
-
+from src.config import CITIES, DETAIL_SCRAPE_DAYS_AHEAD
 from src.pipeline.hotel_sync_phase import run_hotel_sync
-from src.pipeline.rate_collection_phase import run_rate_collection
 from src.pipeline.post_scrape_phase import run_post_scrape
+from src.pipeline.rate_collection_phase import run_rate_collection
+from src.utils.holidays import load_holidays, seed_holidays_auto
+from src.utils.logger import get_logger
 
 log = get_logger("orchestrator")
 
+
 async def run_pipeline():
     run_id = str(uuid.uuid4())[:8]
-    started_at = datetime.utcnow().isoformat()
+    started_at = datetime.now(UTC).isoformat()
     client = get_client()
     hotellux = HotelLuxClient()
 
     try:
         log.info("run_started", run_id=run_id, cities=CITIES, days=DETAIL_SCRAPE_DAYS_AHEAD)
-        client.table("scrape_logs").insert({
-            "run_id": run_id,
-            "started_at": started_at,
-            "status": "running",
-        }).execute()
+        client.table("scrape_logs").insert(
+            {
+                "run_id": run_id,
+                "started_at": started_at,
+                "status": "running",
+            }
+        ).execute()
 
         # ── Holiday 시드 및 로드 ──
-        current_year = date.today().year
+        current_year = datetime.now(UTC).date().year
         await seed_holidays_auto(client, current_year)
-        if date.today().month >= 10:
+        if datetime.now(UTC).date().month >= 10:
             await seed_holidays_auto(client, current_year + 1)
         holidays = load_holidays(client)
 
@@ -64,21 +66,28 @@ async def run_pipeline():
 
         # ── DB 기록 ──
         try:
-            client.table("scrape_logs").update({
-                "finished_at": datetime.utcnow().isoformat(),
-                "hotels_count": total_hotels_count,
-                "rates_inserted": total_room_rates,
-                "rates_updated": total_daily_rates,
-                "errors": errors[:100],
-                "status": status,
-            }).eq("run_id", run_id).execute()
+            client.table("scrape_logs").update(
+                {
+                    "finished_at": datetime.now(UTC).isoformat(),
+                    "hotels_count": total_hotels_count,
+                    "rates_inserted": total_room_rates,
+                    "rates_updated": total_daily_rates,
+                    "errors": errors[:100],
+                    "status": status,
+                }
+            ).eq("run_id", run_id).execute()
         except Exception as db_e:
             log.error("scrape_log_update_failed", error=str(db_e))
 
-        log.info("run_completed", run_id=run_id, status=status,
-                 success_rate=round(success_rate, 3),
-                 room_rates=total_room_rates, daily_rates=total_daily_rates,
-                 errors=len(errors))
+        log.info(
+            "run_completed",
+            run_id=run_id,
+            status=status,
+            success_rate=round(success_rate, 3),
+            room_rates=total_room_rates,
+            daily_rates=total_daily_rates,
+            errors=len(errors),
+        )
 
         # ── Post-scrape ──
         await run_post_scrape()

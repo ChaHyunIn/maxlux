@@ -1,21 +1,21 @@
 "use client";
 
+import { useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { Hotel } from '@/lib/types';
-import { formatPrice, getRelativeTime } from '@/lib/utils';
-import { getHotelName } from '@/lib/hotelUtils';
-import { Link } from '@/i18n/navigation';
-import { useLocale, useTranslations } from 'next-intl';
-import { getCityKey } from '@/lib/cityMapper';
-import { getBrandKey } from '@/lib/brandMapper';
 import { useFavorites } from '@/hooks/useFavorites';
 
 import { Building2, Heart, TrendingDown } from 'lucide-react';
-import { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Link } from '@/i18n/navigation';
+import { getBrandKey } from '@/lib/brandMapper';
+import { getCityKey } from '@/lib/cityMapper';
 import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
+import { getHotelName } from '@/lib/hotelUtils';
+import { formatPrice, getRelativeTime } from '@/lib/utils';
 import { useSettingStore } from '@/stores/settingStore';
+import type { Hotel } from '@/lib/types';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; recent_drops?: number } }) {
     const t = useTranslations('hotel');

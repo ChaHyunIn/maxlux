@@ -5,8 +5,11 @@
 - 호텔의 booking_id가 있어야 검색 가능
 - rate limit을 준수하기 위해 delay 적용
 """
-import httpx
+
 import asyncio
+
+import httpx
+
 from src.utils.logger import get_logger
 
 log = get_logger("booking")
@@ -96,8 +99,7 @@ class BookingClient:
                 return None
 
             booking_url = (
-                f"https://www.booking.com/hotel/kr/{booking_id}.ko.html"
-                f"?checkin={check_in}&checkout={check_out}"
+                f"https://www.booking.com/hotel/kr/{booking_id}.ko.html?checkin={check_in}&checkout={check_out}"
             )
 
             return {
@@ -112,8 +114,8 @@ class BookingClient:
 
     def _extract_price_from_response(self, html: str, booking_id: str) -> dict | None:
         """응답에서 최저가를 추출합니다."""
-        import re
         import json
+        import re
 
         try:
             # Try to find JSON-LD structured data
@@ -181,14 +183,16 @@ class BookingClient:
                 price_data = await self.get_hotel_price(booking_id, check_in, check_out)
 
             if price_data:
-                results.append({
-                    "hotel_id": hotel["hotel_id"],
-                    "stay_date": check_in,
-                    "source": "booking",
-                    "price_krw": price_data["price_krw"],
-                    "room_type": price_data["room_type"],
-                    "url": price_data["url"],
-                })
+                results.append(
+                    {
+                        "hotel_id": hotel["hotel_id"],
+                        "stay_date": check_in,
+                        "source": "booking",
+                        "price_krw": price_data["price_krw"],
+                        "room_type": price_data["room_type"],
+                        "url": price_data["url"],
+                    }
+                )
 
             await asyncio.sleep(REQUEST_DELAY)
 

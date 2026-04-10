@@ -1,12 +1,22 @@
 from src.clients.supabase_client import get_client
-from src.data.mappings import HOTEL_KO_MAPPING, BRAND_MAPPING, get_city
+from src.data.mappings import BRAND_MAPPING, HOTEL_KO_MAPPING, get_city
 from src.utils.logger import get_logger
 
 log = get_logger("hotel_sync")
 
+
 def slugify(name: str) -> str:
-    return (name.lower().replace(",", "").replace(".", "").replace("'", "")
-            .replace("&", "and").replace("  ", " ").replace(" ", "-").strip("-"))
+    return (
+        name.lower()
+        .replace(",", "")
+        .replace(".", "")
+        .replace("'", "")
+        .replace("&", "and")
+        .replace("  ", " ")
+        .replace(" ", "-")
+        .strip("-")
+    )
+
 
 def estimate_benefit_value(benefits: list[dict]) -> int:
     value = 0
@@ -17,6 +27,7 @@ def estimate_benefit_value(benefits: list[dict]) -> int:
         if "赠送早餐" in desc or "双早" in desc:
             value += 120000
     return value
+
 
 def sync_hotels(hotels_data: list[dict]) -> int:
     client = get_client()
@@ -47,39 +58,40 @@ def sync_hotels(hotels_data: list[dict]) -> int:
 
         benefits_list = h.get("benefits", [])
 
-        rows.append({
-            "hotellux_id": hotel_id,
-            "hotellux_code": h.get("code"),
-            "name_ko": name_ko,
-            "name_en": name_en,
-            "slug": slugify(name_en),
-            "city": city_val,
-            "brand": brand_val,
-            "image_url": h.get("images", [None])[0],
-            "address": h.get("address"),
-            "latitude": location.get("latitude"),
-            "longitude": location.get("longitude"),
-            "benefits": benefits_list,
-            "benefit_value_krw": estimate_benefit_value(benefits_list),
-            "description": h.get("description"),
-            "booking_url": (
-                h.get("bookingUrl")
-                or h.get("deeplink")
-                or h.get("url")
-                or f"https://hotel.hotelux.com/hotel/{hotel_id}"
-            ),
-            "is_active": True,
-        })
+        rows.append(
+            {
+                "hotellux_id": hotel_id,
+                "hotellux_code": h.get("code"),
+                "name_ko": name_ko,
+                "name_en": name_en,
+                "slug": slugify(name_en),
+                "city": city_val,
+                "brand": brand_val,
+                "image_url": h.get("images", [None])[0],
+                "address": h.get("address"),
+                "latitude": location.get("latitude"),
+                "longitude": location.get("longitude"),
+                "benefits": benefits_list,
+                "benefit_value_krw": estimate_benefit_value(benefits_list),
+                "description": h.get("description"),
+                "booking_url": (
+                    h.get("bookingUrl")
+                    or h.get("deeplink")
+                    or h.get("url")
+                    or f"https://hotel.hotelux.com/hotel/{hotel_id}"
+                ),
+                "is_active": True,
+            }
+        )
 
     # Batch upsert in chunks of 50 to stay within Supabase request limits
-    BATCH_SIZE = 50
+    batch_size = 50
     upserted = 0
-    for i in range(0, len(rows), BATCH_SIZE):
-        batch = rows[i:i + BATCH_SIZE]
+    for i in range(0, len(rows), batch_size):
+        batch = rows[i : i + batch_size]
         client.table("hotels").upsert(batch, on_conflict="hotellux_id").execute()
         upserted += len(batch)
         log.info("hotel_batch_upserted", batch_start=i, count=len(batch))
 
     log.info("hotels_synced", count=upserted)
     return upserted
-

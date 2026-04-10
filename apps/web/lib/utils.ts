@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { useTranslations } from 'next-intl';
 import { LOCALE_DEFAULTS } from "./constants"
+import type { useTranslations } from 'next-intl';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

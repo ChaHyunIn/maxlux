@@ -1,13 +1,13 @@
-import { Badge } from '@/components/ui/badge';
 import { TrendingDown, TrendingUp, Minus, Tag } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { isDayDetailKey } from '@/lib/i18nTypes';
 import { formatPrice, formatAbsoluteTime, getRelativeTime } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import type { useTranslations } from 'next-intl';
-import { isDayDetailKey } from '@/lib/i18nTypes';
 
 interface PriceHeaderProps {
     rate: DailyRate;
-    refundableRate?: DailyRate | null;
+    refundableRate?: DailyRate | null | undefined;
     t: ReturnType<typeof useTranslations>;
     currency: 'KRW' | 'USD';
     style: { bg: string; text: string };

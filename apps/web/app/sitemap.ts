@@ -1,10 +1,9 @@
-import type { MetadataRoute } from 'next';
+import { routing } from '@/i18n/routing';
 import { SUPPORTED_CITIES } from '@/lib/constants';
 import { supabase } from '@/lib/supabase/anon';
+import type { MetadataRoute } from 'next';
 
-import { routing } from '@/i18n/routing';
-
-const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://maxlux.kr';
+const DOMAIN = process.env['NEXT_PUBLIC_SITE_URL'] || 'https://maxlux.kr';
 const LOCALES = routing.locales;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

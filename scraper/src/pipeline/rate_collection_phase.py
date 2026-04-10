@@ -1,23 +1,27 @@
 import asyncio
-from datetime import date, timedelta
+from datetime import UTC, datetime, timedelta
+
 from src.config import DETAIL_SCRAPE_DAYS_AHEAD
 from src.services.rate_collector import save_room_rates
 from src.utils.logger import get_logger
 
 log = get_logger("rate_collection_phase")
 
+
 async def run_rate_collection(client, hotellux_client, holidays, errors):
-    hotels_res = client.table("hotels") \
-        .select("id, hotellux_id, name_en") \
-        .eq("is_active", True) \
-        .not_.is_("hotellux_id", "null") \
+    hotels_res = (
+        client.table("hotels")
+        .select("id, hotellux_id, name_en")
+        .eq("is_active", True)
+        .not_.is_("hotellux_id", "null")
         .execute()
+    )
 
     all_hotels = hotels_res.data or []
     log.info("detail_scrape_starting", hotels=len(all_hotels), days=DETAIL_SCRAPE_DAYS_AHEAD)
 
     semaphore = asyncio.Semaphore(5)
-    today = date.today()
+    today = datetime.now(UTC).date()
 
     async def process_hotel_day(hotel_row, day_offset):
         check_in = today + timedelta(days=day_offset)
@@ -48,14 +52,13 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
 
             except Exception as e:
                 if attempt == 2:
-                    log.error("hotel_day_failed", hotel=hotellux_id,
-                              date=str(check_in), error=str(e))
+                    log.error("hotel_day_failed", hotel=hotellux_id, date=str(check_in), error=str(e))
                     return None, {
                         "type": type(e).__name__,
                         "message": str(e),
                         "context": f"{hotel_row.get('name_en', hotellux_id)}/{check_in}",
                     }
-                await asyncio.sleep(2 ** attempt)
+                await asyncio.sleep(2**attempt)
 
     all_tasks = []
     for hotel_row in all_hotels:
@@ -68,9 +71,9 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
     total_daily_rates = 0
     total_processed = 0
 
-    BATCH_SIZE = 500
-    for batch_start in range(0, len(all_tasks), BATCH_SIZE):
-        batch_items = all_tasks[batch_start:batch_start + BATCH_SIZE]
+    batch_size = 500
+    for batch_start in range(0, len(all_tasks), batch_size):
+        batch_items = all_tasks[batch_start : batch_start + batch_size]
 
         coros = [
             asyncio.wait_for(
@@ -86,11 +89,13 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
         for res_obj in results:
             if isinstance(res_obj, Exception):
                 if len(errors) < 1000:
-                    errors.append({
-                        "type": type(res_obj).__name__,
-                        "message": str(res_obj),
-                        "context": "fatal",
-                    })
+                    errors.append(
+                        {
+                            "type": type(res_obj).__name__,
+                            "message": str(res_obj),
+                            "context": "fatal",
+                        }
+                    )
                 continue
 
             res, err = res_obj
@@ -100,7 +105,6 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
                 total_room_rates += res.get("room_rates_saved", 0)
                 total_daily_rates += res.get("daily_rates_updated", 0)
 
-        log.info("batch_done", start=batch_start, size=len(batch_items),
-                 processed=total_processed)
+        log.info("batch_done", start=batch_start, size=len(batch_items), processed=total_processed)
 
     return total_room_rates, total_daily_rates, total_processed
