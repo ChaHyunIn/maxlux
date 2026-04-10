@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useClickOutside } from '@/hooks/useClickOutside';
-import { useFilterStore } from "@/stores/filterStore"
 import { DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
+import { useFilterStore } from "@/stores/filterStore"
 import { FilterContent } from './FilterContent';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import type { Hotel } from '@/lib/types';
@@ -31,7 +31,6 @@ export function HotelFilters({
     } = useFilterStore();
     const [sheetOpen, setSheetOpen] = useState(false);
 
-    // Mobile autocomplete state
     const mobileContainerRef = useRef<HTMLDivElement>(null);
     const [mobileSearch, setMobileSearch] = useState(searchQuery);
     const [showMobileAutocomplete, setShowMobileAutocomplete] = useState(false);
@@ -61,7 +60,6 @@ export function HotelFilters({
 
     return (
         <div className="mb-6">
-            {/* Desktop */}
             <div className="hidden sm:flex flex-wrap items-center gap-4">
                 <FilterContent brands={brands} hotels={hotels} t={t} locale={locale} />
                 {activeCount > 0 && (
@@ -77,7 +75,6 @@ export function HotelFilters({
                 )}
             </div>
 
-            {/* Mobile */}
             <div className="flex sm:hidden items-center justify-between gap-3">
                 <div className="relative flex-1" ref={mobileContainerRef}>
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
@@ -129,7 +126,6 @@ export function HotelFilters({
                 </Sheet>
             </div>
 
-            {/* Result count + reset for desktop */}
             <div className="hidden sm:flex items-center justify-between mt-3">
                 <p className="text-sm text-slate-500">{t('resultCount', { count: resultCount })}</p>
             </div>

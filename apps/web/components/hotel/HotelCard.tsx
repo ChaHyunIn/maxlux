@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useFavorites } from '@/hooks/useFavorites';
-
 import { Building2, Heart, TrendingDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { useFavorites } from '@/hooks/useFavorites';
 import { Link } from '@/i18n/navigation';
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';

@@ -72,8 +72,12 @@ export function DayDetailModal({
         try {
             const res = await fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
             if (res.ok) {
-                const json = (await res.json()) as { data: RoomRate[] }
-                setRoomRates(Array.isArray(json.data) ? json.data : [])
+                const json = await res.json()
+                if (json && typeof json === 'object' && 'data' in json && Array.isArray(json.data)) {
+                    setRoomRates(json.data as RoomRate[])
+                } else {
+                    setRoomRates([])
+                }
             }
         } catch {
             setRoomRates([])
@@ -117,11 +121,8 @@ export function DayDetailModal({
         if (!type) return '';
         if (type === 'standard') return t('standardRoom');
         const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        try {
-            return t(camelKey as any);
-        } catch {
-            return type;
-        }
+        // Safe check for translation key existence if possible, or just use as string
+        return t(camelKey as any);
     };
 
     return (

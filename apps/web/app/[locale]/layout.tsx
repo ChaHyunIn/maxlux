@@ -2,7 +2,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { routing } from '@/i18n/routing';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
