@@ -128,6 +128,8 @@ export function DayDetailModal({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
             return t(camelKey as any);
         } catch {
+            // Systematic block: If fallback type contains Chinese, return empty string
+            if (/[\u4e00-\u9fa5]/.test(type)) return '';
             return type;
         }
     };

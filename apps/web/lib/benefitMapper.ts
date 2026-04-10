@@ -27,6 +27,7 @@ export const BENEFIT_MAP: Record<string, BenefitKey> = {
     '延迟退房': 'lateCheckout',
     '延退': 'lateCheckout',
     '레이트체크아웃': 'lateCheckout',
+    '会员礼遇': 'exclusive',
 };
 
 /**
@@ -35,19 +36,27 @@ export const BENEFIT_MAP: Record<string, BenefitKey> = {
  */
 export function getBenefitKey(benefit: string | null | undefined): BenefitKey | null {
     if (!benefit) return null;
-    
+
+    // Systematic Guardrail: If it contains Chinese characters and is NOT in our map, block it.
+    const hasChinese = /[\u4e00-\u9fa5]/.test(benefit);
+
     // Check direct mapping
     if (benefit in BENEFIT_MAP) {
         const mapped = BENEFIT_MAP[benefit];
         if (mapped) return mapped;
     }
-    
+
     // Fallback search
     for (const [key, value] of Object.entries(BENEFIT_MAP)) {
-        if (benefit.toUpperCase().includes(key)) {
+        if (benefit.toUpperCase().includes(key.toUpperCase())) {
             return value;
         }
     }
-    
+
+    // If it contains Chinese and we reached here, it's unmapped -> block it to ensure Chinese-free UI
+    if (hasChinese) {
+        return null;
+    }
+
     return null;
 }

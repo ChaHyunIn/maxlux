@@ -70,9 +70,10 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                         {hotel.benefits.map((benefit, i) => {
                             const benefitStr = typeof benefit === 'string' ? benefit : benefit.name;
                             const bKey = getBenefitKey(benefitStr);
+                            if (!bKey) return null;
                             return (
                                 <Badge key={i} variant="outline" className="bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-muted">
-                                    {bKey ? tBenefitsList(bKey) : benefitStr}
+                                    {tBenefitsList(bKey)}
                                 </Badge>
                             );
                         })}

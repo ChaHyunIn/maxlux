@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import '@/styles/globals.css';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import type { Metadata } from 'next';
 
