@@ -124,13 +124,19 @@ module.exports = {
             },
         },
         {
-            files: ['hooks/**/*.ts', 'hooks/**/*.tsx'],
+            files: ['hooks/useFavorites.ts'],
             rules: {
                 'no-restricted-syntax': 'off',
             },
         },
         {
-            files: ['lib/supabase/server.ts', 'app/sitemap.ts'],
+            files: [
+                'lib/supabase/server.ts',
+                'app/sitemap.ts',
+                'app/**/page.tsx',
+                'app/**/layout.tsx',
+                'components/shared/ErrorBoundary.tsx',
+            ],
             rules: {
                 'no-console': 'off',
             },

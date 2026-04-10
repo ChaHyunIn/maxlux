@@ -14,7 +14,9 @@ export default async function HomePage({ params }: { params: { locale: string } 
     let hotels: (Hotel & { min_price?: number })[] = [];
     try {
         hotels = await getHotels();
-    } catch { }
+    } catch (e) {
+        console.error('Failed to fetch hotels:', e);
+    }
 
     if (hotels.length === 0) {
         return (

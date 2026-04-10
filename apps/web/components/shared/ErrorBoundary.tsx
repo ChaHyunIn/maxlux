@@ -11,6 +11,10 @@ export class ErrorBoundary extends Component<Props, State> {
     static getDerivedStateFromError(_: Error): State {
         return { hasError: true };
     }
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error('ErrorBoundary caught:', error, errorInfo);
+        // TODO: Sentry 또는 에러 리포팅 서비스 연동
+    }
     render() {
         if (this.state.hasError) {
             return <ErrorFallback />;

@@ -16,11 +16,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.hotellux.com',
+        hostname: 'hotel.hotelux.com',
       },
       {
         protocol: 'https',
-        hostname: '**.hotellux.com.cn',
+        hostname: 'img.hotellux.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.hotellux.com.cn',
       },
     ],
   },

@@ -5,10 +5,13 @@ from src.utils.logger import get_logger
 log = get_logger("hotel_sync")
 
 
-def slugify(name: str) -> str:
+def slugify(name: str, city: str = "") -> str:
+    base = name.lower()
+    # 이미 city가 name에 포함되어 있으면 그대로, 아니면 접미사 추가
+    if city and city.lower() not in base:
+        base = f"{base}-{city.lower()}"
     return (
-        name.lower()
-        .replace(",", "")
+        base.replace(",", "")
         .replace(".", "")
         .replace("'", "")
         .replace("&", "and")
@@ -64,7 +67,7 @@ def sync_hotels(hotels_data: list[dict]) -> int:
                 "hotellux_code": h.get("code"),
                 "name_ko": name_ko,
                 "name_en": name_en,
-                "slug": slugify(name_en),
+                "slug": slugify(name_en, city_val),
                 "city": city_val,
                 "brand": brand_val,
                 "image_url": h.get("images", [None])[0],

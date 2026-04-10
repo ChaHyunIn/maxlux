@@ -1,9 +1,14 @@
 import { errorResponse, successResponse } from '@/lib/apiResponse';
+import { rateLimit } from '@/lib/rateLimit';
 import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supabase/mutations/alerts';
 import { isValidEmail } from '@/lib/validation';
 import type { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    if (!rateLimit(ip, 10, 60_000)) {
+        return errorResponse('RATE_LIMITED', 429);
+    }
     try {
         const body = await req.json();
         const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale } = body;

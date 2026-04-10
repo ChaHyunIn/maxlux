@@ -90,7 +90,8 @@ async def run_pipeline():
         )
 
         # ── Post-scrape ──
-        await run_post_scrape()
+        post_result = await run_post_scrape()
+        errors.extend(post_result.get("post_scrape_errors", []))
 
     finally:
         await hotellux.close()

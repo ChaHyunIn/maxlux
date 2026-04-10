@@ -37,14 +37,16 @@ export function useCalendarData(rates: DailyRate[]) {
     }, [rates]);
 
     const { p25, p75 } = useMemo(() => {
-        const prices = baseRates.filter(r => !r.is_sold_out && r.price_krw).map(r => r.price_krw).sort((a, b) => a - b);
-        if (prices.length === 0) return FALLBACK_PERCENTILES;
+        const prices = baseRates
+            .filter(r => !r.is_sold_out && r.price_krw)
+            .map(r => r.price_krw)
+            .sort((a, b) => a - b);
+        if (prices.length < 2) return FALLBACK_PERCENTILES;
         const p25Val = prices[Math.floor(prices.length * 0.25)];
         const p75Val = prices[Math.floor(prices.length * 0.75)];
-        return {
-            p25: p25Val ?? FALLBACK_PERCENTILES.p25,
-            p75: p75Val ?? FALLBACK_PERCENTILES.p75
-        };
+        if (p25Val === undefined || p75Val === undefined) return FALLBACK_PERCENTILES;
+        if (p25Val === p75Val) return { p25: p25Val * 0.9, p75: p75Val * 1.1 };
+        return { p25: p25Val, p75: p75Val };
     }, [baseRates]);
 
     // rates에서 가장 최신 scraped_at 계산
