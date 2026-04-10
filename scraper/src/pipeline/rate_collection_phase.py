@@ -1,7 +1,13 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
 
-from src.config import DETAIL_SCRAPE_DAYS_AHEAD
+from src.config import (
+    DETAIL_SCRAPE_DAYS_AHEAD,
+    RATE_COLLECTION_BATCH_SIZE,
+    RATE_COLLECTION_CONCURRENCY,
+    RATE_COLLECTION_MAX_RETRIES,
+    RATE_COLLECTION_TIMEOUT,
+)
 from src.services.rate_collector import save_room_rates
 from src.utils.logger import get_logger
 
@@ -20,7 +26,7 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
     all_hotels = hotels_res.data or []
     log.info("detail_scrape_starting", hotels=len(all_hotels), days=DETAIL_SCRAPE_DAYS_AHEAD)
 
-    semaphore = asyncio.Semaphore(5)
+    semaphore = asyncio.Semaphore(RATE_COLLECTION_CONCURRENCY)
     today = datetime.now(UTC).date()
 
     async def process_hotel_day(hotel_row, day_offset):
@@ -29,7 +35,7 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
         hotel_uuid = hotel_row["id"]
         hotellux_id = hotel_row["hotellux_id"]
 
-        for attempt in range(3):
+        for attempt in range(RATE_COLLECTION_MAX_RETRIES):
             try:
                 async with semaphore:
                     api_response = await hotellux_client.get_hotel_rates(
@@ -71,14 +77,14 @@ async def run_rate_collection(client, hotellux_client, holidays, errors):
     total_daily_rates = 0
     total_processed = 0
 
-    batch_size = 500
+    batch_size = RATE_COLLECTION_BATCH_SIZE
     for batch_start in range(0, len(all_tasks), batch_size):
         batch_items = all_tasks[batch_start : batch_start + batch_size]
 
         coros = [
             asyncio.wait_for(
                 process_hotel_day(hotel_row, day_offset),
-                timeout=120,
+                timeout=RATE_COLLECTION_TIMEOUT,
             )
             for hotel_row, day_offset in batch_items
         ]

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
     try {
         const body = await req.json();
-        const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale } = body;
+        const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale, currency } = body;
 
         if (!hotel_id || !email || !target_price) {
             return errorResponse('MISSING_FIELDS', 400);
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
             stay_date_from,
             stay_date_to,
             locale,
+            currency,
         });
 
         return successResponse({ alert });

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { LOCALE_DEFAULTS } from "./constants"
+import { LOCALE_DEFAULTS, TIME_MS } from "./constants"
 import type { useTranslations } from 'next-intl';
 
 export function cn(...inputs: ClassValue[]) {
@@ -26,9 +26,9 @@ export function getRelativeTime(scraped_at: string | null | undefined, t: Return
   const now = new Date();
   const scraped = new Date(scraped_at);
   const diffMs = now.getTime() - scraped.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHour = Math.floor(diffMs / 3600000);
-  const diffDay = Math.floor(diffMs / 86400000);
+  const diffMin = Math.floor(diffMs / TIME_MS.MINUTE);
+  const diffHour = Math.floor(diffMs / TIME_MS.HOUR);
+  const diffDay = Math.floor(diffMs / TIME_MS.DAY);
 
   if (diffMin < 1) return t('justNow');
   if (diffMin < 60) return t('minutesAgo', { count: diffMin });

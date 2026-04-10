@@ -3,10 +3,11 @@ import { setRequestLocale } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
+import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates } from '@/lib/supabase/queries/rates';
 
-export const revalidate = 3600;
+export const revalidate = REVALIDATE_SECONDS.hotelDetail;
 
 export default async function HotelDetailPage({
     params,
