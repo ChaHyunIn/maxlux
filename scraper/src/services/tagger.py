@@ -15,7 +15,7 @@ def tag_date(stay_date: date, holidays: set[date]) -> str:
     if stay_date.weekday() == 4:
         return "FRI_EVE"
     if next_day in holidays:
-        return "FRI_EVE"
+        return "HOL_EVE"
     if stay_date.weekday() == 5:
         return "SAT"
     if stay_date.weekday() == 6:

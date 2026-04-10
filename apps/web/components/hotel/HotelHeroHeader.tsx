@@ -15,6 +15,8 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     const tBrand = useTranslations('brand');
     const tCity = useTranslations('city');
     const tBenefitsList = useTranslations('benefits');
+    const rawWeekdays = t.raw('weekdays');
+    const weekdays: string[] = Array.isArray(rawWeekdays) ? rawWeekdays : [];
     const locale = useLocale();
     const primaryName = getHotelName(hotel, locale);
     const secondaryName = getHotelName(hotel, locale === 'en' ? 'ko' : 'en');
@@ -25,7 +27,7 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
     return (
         <div className="mb-12 rounded-3xl overflow-hidden border bg-card text-card-foreground shadow-sm relative group">
             <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-muted overflow-hidden">
-                <HotelHeroImage url={hotel.image_url || ''} alt={hotel.name_ko} />
+                <HotelHeroImage url={hotel.image_url || ''} alt={primaryName} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6 md:p-12 text-white">
                     <div className="flex flex-wrap gap-2 mb-4">
                         {brandKey && (

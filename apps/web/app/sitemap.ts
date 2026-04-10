@@ -10,10 +10,14 @@ const LOCALES = routing.locales;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Fetch hotel slugs for detail pages
-    const { data: hotels } = await supabase
+    const { data: hotels, error } = await supabase
         .from('hotels')
         .select('slug, city')
         .eq('is_active', true);
+
+    if (error) {
+        console.error('Sitemap hotel fetch error:', error);
+    }
 
     const entries: MetadataRoute.Sitemap = [];
 

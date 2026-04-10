@@ -7,7 +7,8 @@ import { useTranslations } from 'next-intl';
 
 export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, month: number, rates: DailyRate[], p25: number, p75: number }) {
     const t = useTranslations('calendar');
-    const weekdays: string[] = t.raw('weekdays');
+    const rawWeekdays = t.raw('weekdays');
+    const weekdays: string[] = Array.isArray(rawWeekdays) ? rawWeekdays : [];
     const header = t('monthFormat', { year: String(year), month: String(month) });
 
     const daysInMonth = getDaysInMonth(new Date(year, month - 1));

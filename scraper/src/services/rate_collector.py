@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from src.clients.supabase_client import get_client
 from src.services.tagger import tag_date
 from src.services.cdc import log_price_change
@@ -93,8 +93,11 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
 
         if old_price is None:
             inserted += 1
-        else:
+        elif old_price != new_price:
             updated += 1
+        else:
+            # same price, effectively skipped in terms of meaningful update
+            pass
             
     if not isinstance(inserted, int): inserted = 0
     if not isinstance(updated, int): updated = 0
@@ -103,7 +106,7 @@ def save_rates_from_search(hotels_data: list[dict], check_in: str, holidays: set
     if hotel_ids_to_update:
         try:
             client.table('hotels').update(
-                {'latest_scraped_at': datetime.utcnow().isoformat()}
+                {'latest_scraped_at': datetime.now(timezone.utc).isoformat()}
             ).in_('id', hotel_ids_to_update).execute()
         except Exception as e:
             log.warning("latest_scraped_at_update_failed", error=str(e))
@@ -162,7 +165,7 @@ def save_room_rates(hotel_uuid: str, check_in: str, api_response: dict, holidays
     # 3. latest_scraped_at 업데이트
     try:
         client.table("hotels").update(
-            {"latest_scraped_at": datetime.utcnow().isoformat()}
+            {"latest_scraped_at": datetime.now(timezone.utc).isoformat()}
         ).eq("id", hotel_uuid).execute()
     except Exception as e:
         log.warning("latest_scraped_at_failed", error=str(e))

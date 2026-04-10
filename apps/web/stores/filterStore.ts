@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 
 type SortBy = 'price' | 'name' | 'discount' | 'benefit';
 
@@ -18,14 +19,12 @@ interface FilterState {
     resetFilters: () => void;
 }
 
-const DEFAULT_PRICE_RANGE: [number, number] = [0, 2000000];
-
 export const useFilterStore = create<FilterState>((set) => ({
     searchQuery: '',
     selectedBrand: 'all',
     selectedCity: 'all',
     sortBy: 'price',
-    priceRange: DEFAULT_PRICE_RANGE,
+    priceRange: DEFAULT_FILTER_PRICE_RANGE,
     showFavoritesOnly: false,
     setSearchQuery: (q) => set({ searchQuery: q }),
     setSelectedBrand: (b) => set({ selectedBrand: b }),
@@ -38,9 +37,7 @@ export const useFilterStore = create<FilterState>((set) => ({
         selectedBrand: 'all',
         selectedCity: 'all',
         sortBy: 'price',
-        priceRange: DEFAULT_PRICE_RANGE,
+        priceRange: DEFAULT_FILTER_PRICE_RANGE,
         showFavoritesOnly: false,
     }),
 }));
-
-export const DEFAULT_FILTER_PRICE_RANGE = DEFAULT_PRICE_RANGE;

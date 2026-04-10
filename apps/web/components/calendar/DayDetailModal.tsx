@@ -68,15 +68,25 @@ export function DayDetailModal({
         fetchOtaPrices()
     }, [fetchOtaPrices])
 
-    useEffect(() => {
+    const fetchRoomRates = useCallback(async () => {
         if (!open || !rate) return;
         setRoomRatesLoading(true);
-        fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
-            .then(res => res.json())
-            .then(json => setRoomRates(Array.isArray(json.data) ? json.data : []))
-            .catch(() => setRoomRates([]))
-            .finally(() => setRoomRatesLoading(false));
+        try {
+            const res = await fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
+            if (res.ok) {
+                const json = await res.json()
+                setRoomRates(Array.isArray(json.data) ? json.data : [])
+            }
+        } catch {
+            setRoomRates([])
+        } finally {
+            setRoomRatesLoading(false);
+        }
     }, [open, rate]);
+
+    useEffect(() => {
+        fetchRoomRates()
+    }, [fetchRoomRates]);
 
     if (!rate) return null
 
@@ -91,7 +101,7 @@ export function DayDetailModal({
             price_krw: rate.price_krw,
             url: bookingUrl,
             is_sold_out: rate.is_sold_out,
-            refund_policy: REFUNDABLE_ROOM_TYPES.some(t => t === rate.room_type) ? 'refundable' : 'non_refundable',
+            refund_policy: REFUNDABLE_ROOM_TYPES.some(type => type === rate.room_type) ? 'refundable' : 'non_refundable',
         },
         ...otaPrices.map(op => ({
             source: op.source,

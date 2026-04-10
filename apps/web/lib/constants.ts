@@ -19,7 +19,7 @@ export const FALLBACK_PERCENTILES = {
 } as const;
 
 /** Price threshold (KRW) below which a hotel is considered a "hot deal" */
-export const HOT_DEAL_THRESHOLD = 350000;
+export const HOT_DEAL_THRESHOLD = Number(process.env.NEXT_PUBLIC_HOT_DEAL_THRESHOLD) || 350000;
 
 export const SUPPORTED_CITIES = ['seoul', 'busan', 'jeju'] as const;
 
@@ -36,12 +36,13 @@ export const PRICE_FILTER_RANGES = [
     { value: '0-300000', labelKey: 'priceUnder300' },
     { value: '300000-500000', labelKey: 'price300to500' },
     { value: '500000-2000000', labelKey: 'priceOver500' },
-];
+] as const;
 
 export const DEFAULT_FILTER_PRICE_RANGE: [number, number] = [0, 2000000];
 
 export const STORAGE_KEYS = {
     FAVORITES: 'maxlux_favorites',
+    SETTINGS: 'maxlux-settings',
 } as const;
 
 export const CHART_CONFIG = {

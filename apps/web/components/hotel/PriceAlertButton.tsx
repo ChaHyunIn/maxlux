@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,14 +9,13 @@ import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import { isValidEmail } from '@/lib/validation'
+import { PRICE_SUGGESTIONS } from '@/lib/constants'
 
 interface PriceAlertButtonProps {
     hotelId: string
     hotelName: string
     currentMinPrice?: number
 }
-
-import { PRICE_SUGGESTIONS, LOCALE_DEFAULTS } from '@/lib/constants'
 
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
@@ -26,16 +25,21 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const [open, setOpen] = useState(false)
     const [email, setEmail] = useState('')
 
-    // Default target price: 90% of current or a sensible default
-    const getDefaultTarget = () => {
+    const getDefaultTarget = useCallback(() => {
         if (currentMinPrice) return Math.round(currentMinPrice * 0.9)
         return currency === 'USD' ? 250 : 300000
-    }
+    }, [currentMinPrice, currency])
 
     const [targetPrice, setTargetPrice] = useState(getDefaultTarget())
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
+
+    useEffect(() => {
+        if (open) {
+            setTargetPrice(getDefaultTarget())
+        }
+    }, [open, getDefaultTarget])
 
     const handleSubmit = async () => {
         if (!email.trim()) {
@@ -71,7 +75,6 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                     setSuccess(false)
                 }, 2000)
             } else {
-                // translate using the new errors namespace
                 const errorKey = data.error
                 setError(tErr(errorKey) || t('submitError'))
             }
@@ -115,7 +118,6 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                         </div>
                     ) : (
                         <div className="space-y-4 mt-2">
-                            {/* Target price */}
                             <div>
                                 <label className="text-sm font-medium text-slate-700 mb-2 block">
                                     {t('targetPriceLabel')} ({currency})
@@ -152,7 +154,6 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                 )}
                             </div>
 
-                            {/* Email */}
                             <div>
                                 <label className="text-sm font-medium text-slate-700 mb-2 block">
                                     {t('emailLabel')}
