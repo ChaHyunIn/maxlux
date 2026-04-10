@@ -51,8 +51,11 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                             <span>{hotel.address}</span>
                         </div>
                     )}
-                    {/* Price Alert Button */}
+                    {/* PRICE ALERT BUTTON */}
                     <div className="mt-4">
+                        {/* NOTE: Hotel 상세 페이지에서는 min_price가 조인 뷰에서만 제공되므로
+                            currentMinPrice를 전달하지 않음. 기본값이 사용됨.
+                            향후 getRates 결과에서 최저가를 계산하여 전달 고려. */}
                         <PriceAlertButton
                             hotelId={hotel.id}
                             hotelName={primaryName}

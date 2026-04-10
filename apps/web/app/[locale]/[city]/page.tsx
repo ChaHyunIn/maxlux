@@ -8,7 +8,8 @@ import type { Metadata } from 'next';
 
 export const revalidate = REVALIDATE_SECONDS.cityPage;
 
-export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string; city: string }> }): Promise<Metadata> {
+    const params = await props.params;
     const tCity = await getTranslations({ locale: params.locale, namespace: 'city' });
     const tSeo = await getTranslations({ locale: params.locale, namespace: 'seo' });
     const cityKey = getCityKey(params.city);
@@ -20,7 +21,8 @@ export async function generateMetadata({ params }: { params: { locale: string; c
     };
 }
 
-export default async function CityPage({ params }: { params: { locale: string; city: string } }) {
+export default async function CityPage(props: { params: Promise<{ locale: string; city: string }> }) {
+    const params = await props.params;
     setRequestLocale(params.locale);
 
     let hotels: (Hotel & { min_price?: number })[] = [];

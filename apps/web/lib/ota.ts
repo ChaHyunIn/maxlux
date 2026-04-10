@@ -1,5 +1,6 @@
 /**
  * Shared OTA display mapping for consistency across components.
+ * TODO: ota_sources DB 테이블과 연동하여 동적으로 가져오도록 개선 필요.
  */
 
 export const OTA_DISPLAY: Record<string, { name: string; color: string }> = {

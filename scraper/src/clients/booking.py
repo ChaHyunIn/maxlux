@@ -7,9 +7,12 @@
 """
 
 import asyncio
+import json
+import re
 
 import httpx
 
+from src.config import USER_AGENT
 from src.utils.logger import get_logger
 
 log = get_logger("booking")
@@ -22,11 +25,7 @@ DEFAULT_HEADERS = {
     "content-type": "application/json",
     "origin": "https://www.booking.com",
     "referer": "https://www.booking.com/",
-    "user-agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/146.0.0.0 Safari/537.36"
-    ),
+    "user-agent": USER_AGENT,
 }
 
 REQUEST_DELAY = 3.0
@@ -98,6 +97,7 @@ class BookingClient:
             if price is None:
                 return None
 
+            # NOTE: /kr/ 경로는 한국 호텔 전용. 다국가 확장 시 국가코드 파라미터화 필요.
             booking_url = (
                 f"https://www.booking.com/hotel/kr/{booking_id}.ko.html?checkin={check_in}&checkout={check_out}"
             )
@@ -114,8 +114,6 @@ class BookingClient:
 
     def _extract_price_from_response(self, html: str, booking_id: str) -> dict | None:
         """응답에서 최저가를 추출합니다."""
-        import json
-        import re
 
         try:
             # Try to find JSON-LD structured data

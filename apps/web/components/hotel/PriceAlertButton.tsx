@@ -17,6 +17,8 @@ interface PriceAlertButtonProps {
     currentMinPrice?: number
 }
 
+const DEFAULT_ALERT_PRICE = { KRW: 300000, USD: 250 } as const;
+
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
     const tErr = useTranslations('errors')
@@ -27,7 +29,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
 
     const getDefaultTarget = useCallback(() => {
         if (currentMinPrice) return Math.round(currentMinPrice * 0.9)
-        return currency === 'USD' ? 250 : 300000
+        return DEFAULT_ALERT_PRICE[currency]
     }, [currentMinPrice, currency])
 
     const [targetPrice, setTargetPrice] = useState(getDefaultTarget())
@@ -79,8 +81,12 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                     setSuccess(false)
                 }, 2000)
             } else {
-                const errorKey = data.error
-                setError(tErr(errorKey) || t('submitError'))
+                const errorKey = data.error;
+                try {
+                    setError(tErr(errorKey));
+                } catch {
+                    setError(t('submitError'));
+                }
             }
         } catch {
             setError(t('submitError'))

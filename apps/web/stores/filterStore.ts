@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 
-type SortBy = 'price' | 'name' | 'discount' | 'benefit';
+export type SortBy = 'price' | 'name' | 'discount' | 'benefit';
 
 interface FilterState {
     searchQuery: string;
@@ -20,6 +20,7 @@ interface FilterState {
 }
 
 export const useFilterStore = create<FilterState>((set) => ({
+    // NOTE: 초기 상태는 lib/constants.ts의 기본값들과 동기화되어야 함.
     searchQuery: '',
     selectedBrand: 'all',
     selectedCity: 'all',
@@ -37,7 +38,7 @@ export const useFilterStore = create<FilterState>((set) => ({
         selectedBrand: 'all',
         selectedCity: 'all',
         sortBy: 'price',
-        priceRange: DEFAULT_FILTER_PRICE_RANGE,
+        priceRange: [0, 2000000], // DEFAULT_FILTER_PRICE_RANGE 명시적 값 유지 권장
         showFavoritesOnly: false,
     }),
 }));

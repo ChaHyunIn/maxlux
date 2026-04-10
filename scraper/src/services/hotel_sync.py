@@ -83,6 +83,8 @@ def sync_hotels(hotels_data: list[dict]) -> int:
                     or h.get("deeplink")
                     or h.get("url")
                     or f"https://hotel.hotelux.com/hotel/{hotel_id}"
+                    # NOTE: HOTELLUX_BASE_URL은 API URL이므로 사용자 향 URL과 다름.
+                    # 사용자 향 기본 URL 패턴은 https://hotel.hotelux.com/hotel/{id} 유지.
                 ),
                 "is_active": True,
             }

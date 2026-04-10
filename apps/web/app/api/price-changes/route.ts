@@ -10,6 +10,11 @@ export async function GET(req: NextRequest) {
         return errorResponse('MISSING_HOTEL_ID', 400);
     }
 
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!UUID_REGEX.test(hotelId)) {
+        return errorResponse('INVALID_PARAMS', 400);
+    }
+
     try {
         const changes = await getPriceChanges(hotelId, limit);
         return successResponse({ changes });

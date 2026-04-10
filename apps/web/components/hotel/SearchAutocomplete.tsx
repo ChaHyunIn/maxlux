@@ -34,7 +34,7 @@ export function SearchAutocomplete({
     const tCity = useTranslations('city');
 
     const suggestions = useMemo<AutocompleteItem[]>(() => {
-        if (!query.trim() || query.trim().length < 1) return [];
+        if (!query.trim() || query.trim().length < 2) return [];
         const lowerQ = query.toLowerCase();
         return hotels
             .filter(h =>

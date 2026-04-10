@@ -12,7 +12,6 @@ HOTEL_KO_MAPPING = {
     "Grand Hyatt Seoul": "그랜드 하얏트 서울",
     "Four Seasons Hotel Seoul": "포시즌스 호텔 서울",
     "Josun Palace, a Luxury Collection Hotel, Seoul Gangnam": "조선 팰리스 서울 강남",
-    " JW Marriott Hotel Seoul": "JW 메리어트 호텔 서울",
     "JW Marriott Hotel Seoul": "JW 메리어트 호텔 서울",
     "The Westin Josun Seoul": "웨스틴 조선 서울",
     "Jw Marriott Dongdaemun Square": "JW 메리어트 동대문 스퀘어",

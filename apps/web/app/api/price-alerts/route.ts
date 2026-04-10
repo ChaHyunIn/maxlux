@@ -13,6 +13,11 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale, currency } = body;
 
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!UUID_REGEX.test(hotel_id)) {
+            return errorResponse('INVALID_PARAMS', 400);
+        }
+
         if (!hotel_id || !email || !target_price) {
             return errorResponse('MISSING_FIELDS', 400);
         }
@@ -41,7 +46,12 @@ export async function POST(req: NextRequest) {
     }
 }
 
+// TODO: 이메일 열거 방지를 위해 reCAPTCHA 또는 토큰 인증 추가 고려
 export async function GET(req: NextRequest) {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    if (!rateLimit(`get-alerts-${ip}`, 20, 60_000)) {
+        return errorResponse('RATE_LIMITED', 429);
+    }
     const email = req.nextUrl.searchParams.get('email');
     const hotelId = req.nextUrl.searchParams.get('hotelId');
 
@@ -58,6 +68,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    if (!rateLimit(`delete-alert-${ip}`, 10, 60_000)) {
+        return errorResponse('RATE_LIMITED', 429);
+    }
     const alertId = req.nextUrl.searchParams.get('id');
     const email = req.nextUrl.searchParams.get('email');
 

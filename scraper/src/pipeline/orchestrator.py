@@ -72,6 +72,7 @@ async def run_pipeline():
                     "hotels_count": total_hotels_count,
                     "rates_inserted": total_room_rates,
                     "rates_updated": total_daily_rates,
+                    # TODO: DB 용량 제한으로 인해 에러는 최근 100건만 유지.
                     "errors": errors[:100],
                     "status": status,
                 }
@@ -92,6 +93,14 @@ async def run_pipeline():
         # ── Post-scrape ──
         post_result = await run_post_scrape()
         errors.extend(post_result.get("post_scrape_errors", []))
+
+        # ── Post-scrape 결과 추가 기록 ──
+        if post_result.get("post_scrape_errors"):
+            import contextlib
+            with contextlib.suppress(Exception):
+                client.table("scrape_logs").update(
+                    {"errors": errors[:100]}
+                ).eq("run_id", run_id).execute()
 
     finally:
         await hotellux.close()

@@ -9,6 +9,7 @@
 """
 
 import asyncio
+import html as html_module
 import os
 from datetime import UTC, datetime, timedelta
 
@@ -20,8 +21,8 @@ from src.utils.logger import get_logger
 log = get_logger("alert_checker")
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "alerts@maxlux.app")
-SITE_URL = os.getenv("SITE_URL", "https://maxlux.app")
+RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "alerts@maxlux.kr")
+SITE_URL = os.getenv("SITE_URL", "https://maxlux.kr")
 
 
 def _mask_email(email: str) -> str:
@@ -101,7 +102,8 @@ async def check_and_send_alerts() -> dict:
         # 24시간 중복 방지
         if triggered_at:
             last_triggered = datetime.fromisoformat(triggered_at.replace("Z", "+00:00"))
-            if now - last_triggered.replace(tzinfo=None) < timedelta(hours=24):
+            # 둘 다 timezone-aware로 비교
+            if now - last_triggered < timedelta(hours=24):
                 skipped += 1
                 continue
 
@@ -160,8 +162,16 @@ async def send_alert_email(
     hotel_slug: str,
     locale: str = "ko",
 ) -> bool:
-    """Resend API를 사용하여 가격 알림 이메일을 발송합니다."""
+    """
+    Resend API를 사용하여 가격 알림 이메일을 발송합니다.
+
+    TODO: 이메일 템플릿을 별도 파일(또는 DB)로 분리하고
+    프론트엔드 i18n 키와 동기화하는 것을 권장.
+    현재는 ko/en 2개 언어만 지원하므로 인라인 유지.
+    """
     try:
+        hotel_name = html_module.escape(hotel_name)
+        # TODO: alert 테이블에 currency 컬럼 추가 후 통화별 분기
         formatted_price = f"₩{current_price:,}"
         formatted_target = f"₩{target_price:,}"
         hotel_url = f"{SITE_URL}/hotels/{hotel_slug}"

@@ -6,8 +6,8 @@ import type { Hotel } from '@/lib/types';
 
 export const revalidate = REVALIDATE_SECONDS.homePage;
 
-export default async function HomePage({ params }: { params: { locale: string } }) {
-    const { locale } = await params;
+export default async function HomePage(props: { params: Promise<{ locale: string }> }) {
+    const { locale } = await props.params;
     setRequestLocale(locale);
     const t = await getTranslations('common');
 

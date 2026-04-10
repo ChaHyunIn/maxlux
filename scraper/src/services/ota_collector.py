@@ -11,12 +11,12 @@ from typing import Any
 from src.clients.agoda import AgodaClient
 from src.clients.booking import BookingClient
 from src.clients.supabase_client import get_client
+from src.config import OTA_DAYS_AHEAD
 from src.utils.logger import get_logger
 
 log = get_logger("ota_collector")
 
-# OTA 수집은 주요 날짜만 (향후 14일)
-OTA_DAYS_AHEAD = 14
+# OTA 수집은 주요 날짜만 (src.config.OTA_DAYS_AHEAD 참고)
 
 
 async def collect_ota_prices() -> dict:

@@ -41,6 +41,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
     let opacityClass = '';
     if (sniperMode !== 'none') {
         // Highlight Fri/Sat if either Fri-Eve/Sat-Eve (tag) or literal Saturday (dayOfWeek)
+        // dayOfWeek !== 5: 금요일이 공휴일(HOL)일 때도 금/토 필터에 표시하기 위한 조건
         if (sniperMode === 'fri_sat' && !isFriEve && !isSat && dayOfWeek !== 5) opacityClass = 'opacity-20';
         if (sniperMode === 'holiday_low' && !isHoliday && !isFriEve) opacityClass = 'opacity-20';
         if (sniperMode === 'cheapest_sat' && !isSat) opacityClass = 'opacity-20';
@@ -50,6 +51,8 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
         currency === 'USD'
             ? (formatPrice(price_krw, 'USD') ?? '')
             : `${Math.round(price_krw / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
+        // NOTE: 캘린더 셀은 공간이 작으므로 만원 단위 축약 유지.
+        // formatPrice()는 전체 원가를 표시하므로 여기서는 의도적으로 별도 포맷 사용.
     );
 
     const handleClick = () => {

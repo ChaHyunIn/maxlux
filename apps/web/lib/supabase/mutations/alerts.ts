@@ -56,8 +56,7 @@ export async function deactivateAlert(alertId: number, email: string) {
         .update({ is_active: false })
         .eq('id', alertId)
         .eq('email', email)
-        // @ts-expect-error - explicitly requested by user despite TS error
-        .execute();
+        .select()
 
     if (error) {
         throw error;

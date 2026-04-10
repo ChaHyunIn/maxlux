@@ -25,10 +25,12 @@ class SessionExpiredError(Exception):
 
 
 def should_retry(e):
-    return isinstance(e, (httpx.HTTPError, asyncio.TimeoutError)) and getattr(e.response, "status_code", 200) not in (
-        401,
-        403,
-    )
+    if not isinstance(e, (httpx.HTTPError, asyncio.TimeoutError)):
+        return False
+    response = getattr(e, "response", None)
+    if response is None:
+        return True  # 네트워크 에러 → 재시도
+    return response.status_code not in (401, 403)
 
 
 class HotelLuxClient(BaseOtaClient):

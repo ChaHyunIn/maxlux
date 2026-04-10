@@ -68,7 +68,7 @@
     },
     "layout": {
         "brandName": "MaxLux",
-        "copyright": "© 2026 MaxLux",
+        "copyright": "© {year} MaxLux",
         "disclaimer": "Prices are for reference only and may differ from actual rates",
         "dataSource": "Data source: HotelLux"
     },
@@ -151,7 +151,7 @@
     "seo": {
         "monthlyTitle": "{name} {month} Prices | MaxLux",
         "monthlyDescription": "Check the monthly prices for {name} in {month}.",
-        "monthlyLandingTodo": "TODO: Monthly SEO Landing Page",
+        "monthlyLandingTodo": "Monthly price page is coming soon.",
         "metaTitle": "MaxLux - Luxury Hotel Best Price Sniper",
         "metaDescription": "Track 12-month luxury hotel prices with a heatmap calendar on HotelLux.",
         "cityTitle": "{city} Hotel Deals | Best Price Sniper",
@@ -259,6 +259,8 @@
         "MISSING_PARAMS": "Required parameters are missing.",
         "MISSING_HOTEL_ID": "Hotel ID is missing.",
         "INVALID_PARAMS": "Invalid parameter format.",
-        "NOT_FOUND": "Data not found."
+        "NOT_FOUND": "Data not found.",
+        "RATE_LIMITED": "Too many requests. Please try again later.",
+        "INVALID_ID": "Invalid ID."
     }
 }

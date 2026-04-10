@@ -170,34 +170,7 @@ async def seed_holidays_auto(supabase_client, year: int | None = None):
     return count
 
 
-def seed_holidays(supabase_client):
-    """
-    [DEPRECATED] 동기 호환 래퍼 — 기존 main.py 호출부 호환용.
-    대신 seed_holidays_auto(client)를 사용하세요.
-    """
-    for date_str, name_ko, name_en, is_sub in HOLIDAYS_2026:
-        supabase_client.table("holidays").upsert(
-            {
-                "date": date_str,
-                "name_ko": name_ko,
-                "name_en": name_en,
-                "is_substitute": is_sub,
-                "year": 2026,
-            },
-            on_conflict="date",
-        ).execute()
-    # 2027년도 시드
-    for date_str, name_ko, name_en, is_sub in HOLIDAYS_2027:
-        supabase_client.table("holidays").upsert(
-            {
-                "date": date_str,
-                "name_ko": name_ko,
-                "name_en": name_en,
-                "is_substitute": is_sub,
-                "year": 2027,
-            },
-            on_conflict="date",
-        ).execute()
+
 
 
 def load_holidays(supabase_client=None, year: int | None = None) -> set[date]:

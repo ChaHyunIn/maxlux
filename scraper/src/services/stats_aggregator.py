@@ -9,11 +9,12 @@ stats_aggregator: 오래된 daily_rates를 monthly_stats로 압축하여 DB 용�
 from datetime import UTC, date, datetime
 
 from src.clients.supabase_client import get_client
+from src.config import RETENTION_MONTHS
 from src.utils.logger import get_logger
 
 log = get_logger("stats_aggregator")
 
-RETENTION_MONTHS = 6  # 이 기간보다 오래된 데이터를 압축
+STATS_BATCH_SIZE = 500  # monthly_stats upsert 청크 크기
 
 
 def get_cutoff_date() -> date:
@@ -82,10 +83,9 @@ def compress_old_data() -> dict:
         )
 
     if stats_rows:
-        # Batch upsert in chunks of 500
-        chunk_size = 500
-        for i in range(0, len(stats_rows), chunk_size):
-            chunk = stats_rows[i : i + chunk_size]
+        # Batch upsert in chunks
+        for i in range(0, len(stats_rows), STATS_BATCH_SIZE):
+            chunk = stats_rows[i : i + STATS_BATCH_SIZE]
             client.table("monthly_stats").upsert(chunk, on_conflict="hotel_id,month,room_type").execute()
         log.info("stats_upserted", count=len(stats_rows))
 

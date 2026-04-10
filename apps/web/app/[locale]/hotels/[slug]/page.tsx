@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
@@ -14,12 +14,16 @@ export const revalidate = REVALIDATE_SECONDS.hotelDetail;
 export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
     const params = await props.params;
     const hotel = await getHotelBySlug(params.slug);
-    if (!hotel) return { title: 'Hotel Not Found' };
+    if (!hotel) {
+        const tCommon = await getTranslations({ locale: params.locale, namespace: 'common' });
+        return { title: tCommon('notFound') };
+    }
 
     const name = params.locale === 'ko' ? hotel.name_ko : hotel.name_en;
+    const tSeo = await getTranslations({ locale: params.locale, namespace: 'seo' });
     return {
         title: `${name} | MaxLux`,
-        description: `Track prices and find hot deals for ${name}.`,
+        description: tSeo('metaDescription'),
     };
 }
 

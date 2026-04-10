@@ -5,10 +5,11 @@ import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import type { Metadata } from 'next';
 
 interface Props {
-    params: { locale: string; slug: string; 'yyyy-mm': string };
+    params: Promise<{ locale: string; slug: string; 'yyyy-mm': string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: Props): Promise<Metadata> {
+    const params = await paramsPromise;
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) return {};
 
@@ -21,7 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-export default async function MonthlyLandingPage({ params }: Props) {
+export default async function MonthlyLandingPage({ params: paramsPromise }: Props) {
+    const params = await paramsPromise;
     setRequestLocale(params.locale);
     const t = await getTranslations('seo');
 

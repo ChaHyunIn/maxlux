@@ -10,6 +10,7 @@ import asyncio
 
 import httpx
 
+from src.config import USER_AGENT
 from src.utils.logger import get_logger
 
 log = get_logger("agoda")
@@ -17,17 +18,16 @@ log = get_logger("agoda")
 AGODA_SEARCH_URL = "https://www.agoda.com/api/cronos/search/SearchResultListV1"
 AGODA_HOTEL_URL = "https://www.agoda.com/api/cronos/property/BelowFoldParams/GetSecondaryData"
 
+# 아고다 languageId: 9=Korean, 1=English, 11=Chinese(Simplified)
+AGODA_LANGUAGE_ID = 9
+
 DEFAULT_HEADERS = {
     "accept": "application/json",
     "accept-language": "ko-KR,ko;q=0.9",
     "content-type": "application/json",
     "origin": "https://www.agoda.com",
     "referer": "https://www.agoda.com/",
-    "user-agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/146.0.0.0 Safari/537.36"
-    ),
+    "user-agent": USER_AGENT,
 }
 
 REQUEST_DELAY = 3.0  # seconds between requests
@@ -82,7 +82,7 @@ class AgodaClient:
                 "children": 0,
                 "childAges": [],
                 "currency": "KRW",
-                "languageId": 9,  # Korean
+                "languageId": AGODA_LANGUAGE_ID,
                 "los": 1,
             }
 

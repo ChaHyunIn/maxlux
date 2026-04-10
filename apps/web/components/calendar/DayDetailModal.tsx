@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { PRICE_COLORS, REFUNDABLE_ROOM_TYPES } from '@/lib/constants'
+import { isDayDetailKey } from '@/lib/i18nTypes';
 import { getPriceLevel } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import { OtaPriceList } from './OtaPriceList'
@@ -122,16 +123,14 @@ export function DayDetailModal({
     const getRoomTypeLabel = (type: string | undefined | null) => {
         if (!type) return '';
         if (type === 'standard') return t('standardRoom');
-        const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        const camelKey = type.replace(/_([a-z])/g, (_: string, letter: string) => letter.toUpperCase());
 
-        try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-            return t(camelKey as any);
-        } catch {
-            // Systematic block: If fallback type contains Chinese, return empty string
-            if (/[\u4e00-\u9fa5]/.test(type)) return '';
-            return type;
+        if (isDayDetailKey(camelKey)) {
+            return t(camelKey);
         }
+        // Systematic block: If fallback type contains Chinese, return empty string
+        if (/[\u4e00-\u9fa5]/.test(type)) return '';
+        return type;
     };
 
     return (
