@@ -57,12 +57,8 @@
     "@typescript-eslint/no-shadow": "error",
     "import/no-duplicates": "error",
     "no-duplicate-imports": "off",
-    "import/no-unused-modules": [
-      "warn",
-      {
-        "unusedExports": true
-      }
-    ],
+    "import/no-unused-modules": "off",
+    "@typescript-eslint/no-magic-numbers": "off",
     "import/order": [
       "error",
       {
