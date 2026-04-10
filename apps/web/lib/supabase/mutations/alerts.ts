@@ -7,6 +7,7 @@ export async function createPriceAlert(data: {
     stay_date_from?: string | null;
     stay_date_to?: string | null;
     locale?: string;
+    currency?: 'KRW' | 'USD';
 }) {
     const { data: result, error } = await adminSupabase
         .from('price_alerts')
@@ -19,6 +20,8 @@ export async function createPriceAlert(data: {
                 stay_date_to: data.stay_date_to || null,
                 locale: data.locale || 'ko',
                 is_active: true,
+                // TODO: DB에 currency 컬럼 추가 후 활성화
+                // currency: data.currency || 'KRW',
             },
             { onConflict: 'hotel_id,email,target_price' }
         )

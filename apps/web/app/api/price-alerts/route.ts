@@ -60,7 +60,11 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-        await deactivateAlert(parseInt(alertId, 10), email);
+        const parsed = parseInt(alertId, 10);
+        if (isNaN(parsed)) {
+            return errorResponse('INVALID_ID', 400);
+        }
+        await deactivateAlert(parsed, email);
         return successResponse();
     } catch {
         return errorResponse('DELETE_FAILED', 500);
