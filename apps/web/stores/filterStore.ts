@@ -38,7 +38,7 @@ export const useFilterStore = create<FilterState>((set) => ({
         selectedBrand: 'all',
         selectedCity: 'all',
         sortBy: 'price',
-        priceRange: [0, 2000000], // DEFAULT_FILTER_PRICE_RANGE 명시적 값 유지 권장
+        priceRange: DEFAULT_FILTER_PRICE_RANGE,
         showFavoritesOnly: false,
     }),
 }));

@@ -170,9 +170,6 @@ async def seed_holidays_auto(supabase_client, year: int | None = None):
     return count
 
 
-
-
-
 def load_holidays(supabase_client=None, year: int | None = None) -> set[date]:
     """Load holidays from DB. Caller should cache the result if needed."""
     if supabase_client is None:

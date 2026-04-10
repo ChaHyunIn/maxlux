@@ -13,13 +13,13 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { hotel_id, email, target_price, stay_date_from, stay_date_to, locale, currency } = body;
 
+        if (!hotel_id || !email || !target_price) {
+            return errorResponse('MISSING_FIELDS', 400);
+        }
+
         const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (!UUID_REGEX.test(hotel_id)) {
             return errorResponse('INVALID_PARAMS', 400);
-        }
-
-        if (!hotel_id || !email || !target_price) {
-            return errorResponse('MISSING_FIELDS', 400);
         }
 
         if (!isValidEmail(email)) {

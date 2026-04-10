@@ -4,6 +4,7 @@ import { ExternalLink, Calendar } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { fetchOtaPrices as fetchOtaPricesApi } from '@/lib/api/ota'
 import { PRICE_COLORS, REFUNDABLE_ROOM_TYPES } from '@/lib/constants'
 import { isDayDetailKey } from '@/lib/i18nTypes';
 import { getPriceLevel } from '@/lib/utils'
@@ -51,12 +52,8 @@ export function DayDetailModal({
         if (!rate || !open) return
         setLoading(true)
         try {
-            const res = await fetch(`/api/ota-prices?hotelId=${hotelId}&stayDate=${rate.stay_date}`)
-            if (res.ok) {
-                const data = await res.json()
-                const prices: OtaPrice[] = data.prices && Array.isArray(data.prices) ? data.prices : [];
-                setOtaPrices(prices)
-            }
+            const prices = await fetchOtaPricesApi(hotelId, rate.stay_date)
+            setOtaPrices(prices)
         } catch {
             setOtaPrices([])
         } finally {

@@ -1,3 +1,4 @@
+import contextlib
 import uuid
 from datetime import UTC, datetime
 
@@ -96,7 +97,6 @@ async def run_pipeline():
 
         # ── Post-scrape 결과 추가 기록 ──
         if post_result.get("post_scrape_errors"):
-            import contextlib
             with contextlib.suppress(Exception):
                 client.table("scrape_logs").update(
                     {"errors": errors[:100]}

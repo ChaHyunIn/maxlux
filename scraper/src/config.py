@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 HOTELLUX_BASE_URL = "https://hotel.hotelux.com/services/booking/hotel"
 HOTELLUX_SESSION_COOKIE = os.getenv("HOTELLUX_SESSION_COOKIE")
@@ -20,11 +20,10 @@ RATE_COLLECTION_TIMEOUT = int(os.getenv("RATE_COLLECTION_TIMEOUT", 120))
 RATE_COLLECTION_MAX_RETRIES = int(os.getenv("RATE_COLLECTION_MAX_RETRIES", 3))
 
 # Chrome 버전은 주기적으로 업데이트 필요. 너무 오래된 UA는 차단될 수 있음.
-USER_AGENT = os.getenv(
-    "SCRAPER_USER_AGENT",
+USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/126.0.0.0 Safari/537.36",
+    "Chrome/134.0.0.0 Safari/537.36"
 )
 
 DEFAULT_HEADERS = {

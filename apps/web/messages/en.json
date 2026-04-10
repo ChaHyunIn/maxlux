@@ -262,5 +262,13 @@
         "NOT_FOUND": "Data not found.",
         "RATE_LIMITED": "Too many requests. Please try again later.",
         "INVALID_ID": "Invalid ID."
+    },
+    "ota": {
+        "hotellux": "HotelLux",
+        "agoda": "Agoda",
+        "booking": "Booking.com",
+        "hotels_com": "Hotels.com",
+        "trip_com": "Trip.com",
+        "expedia": "Expedia"
     }
 }

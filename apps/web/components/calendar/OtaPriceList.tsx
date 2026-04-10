@@ -1,9 +1,9 @@
 import { ExternalLink } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OTA_DISPLAY } from '@/lib/ota';
 import { formatPrice } from '@/lib/utils';
-import type { useTranslations } from 'next-intl';
 
 interface PriceEntry {
     source: string;
@@ -22,6 +22,8 @@ interface OtaPriceListProps {
 }
 
 export function OtaPriceList({ loading, allPrices, lowestPrice, currency, t }: OtaPriceListProps) {
+    const tOta = useTranslations('ota');
+
     return (
         <div className="border rounded-xl overflow-hidden">
             <div className="bg-slate-50 px-4 py-2.5 border-b">
@@ -35,13 +37,17 @@ export function OtaPriceList({ loading, allPrices, lowestPrice, currency, t }: O
                     </div>
                 ) : (
                     allPrices.map((p, idx) => {
-                        const display = OTA_DISPLAY[p.source] || { name: p.source, color: 'bg-slate-100 text-slate-700' };
+                        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                        const display = OTA_DISPLAY[p.source as keyof typeof OTA_DISPLAY] || { nameKey: p.source, color: 'bg-slate-100 text-slate-700' };
                         const isLowest = !p.is_sold_out && p.price_krw === lowestPrice && p.price_krw > 0;
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
+                        const otaName = 'nameKey' in display && display.nameKey ? tOta(display.nameKey as any) : p.source;
+
                         return (
                             <div key={`${p.source}-${idx}`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors">
                                 <div className="flex items-center gap-2">
                                     <Badge className={`text-xs ${display.color} border-none`}>
-                                        {display.name}
+                                        {otaName}
                                     </Badge>
                                     {isLowest && (
                                         <Badge className="bg-emerald-500 text-white text-[10px] border-none px-1.5">

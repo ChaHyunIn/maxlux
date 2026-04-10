@@ -5,8 +5,10 @@ import { cn } from '@/lib/utils';
 import { useCalendarStore } from '@/stores/calendarStore';
 
 export function SniperFilters() {
-    const { sniperMode, setSniperMode } = useCalendarStore();
+    const { sniperMode, setSniperMode, _hydrated } = useCalendarStore();
     const t = useTranslations('calendar');
+
+    if (!_hydrated) return null;
 
     const handleToggle = (mode: 'fri_sat' | 'holiday_low' | 'cheapest_sat') => {
         setSniperMode(sniperMode === mode ? 'none' : mode);
