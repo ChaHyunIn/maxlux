@@ -6,8 +6,9 @@ import { HotelFilters } from './HotelFilters';
 import { useFilterStore } from '@/stores/filterStore';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useLocale } from 'next-intl';
-import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
+import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 import { useFavorites } from '@/hooks/useFavorites';
+import { getHotelName } from '@/lib/hotelUtils';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
     const { searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly } = useFilterStore();
@@ -26,8 +27,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
         if (searchQuery.trim()) {
             const lowerQ = searchQuery.toLowerCase();
             result = result.filter(h =>
-                h.name_ko.toLowerCase().includes(lowerQ) ||
-                h.name_en.toLowerCase().includes(lowerQ)
+                getHotelName(h, locale).toLowerCase().includes(lowerQ)
             );
         }
 
@@ -43,7 +43,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
 
         // Price range filter
         const [minPrice, maxPrice] = priceRange;
-        if (minPrice > 0 || maxPrice < 2000000) {
+        if (minPrice > 0 || maxPrice < DEFAULT_FILTER_PRICE_RANGE[1]) {
             result = result.filter(h => {
                 if (!h.min_price) return minPrice === 0;
                 return h.min_price >= minPrice && h.min_price <= maxPrice;
@@ -71,7 +71,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
                 const bVal = b.benefit_value_krw ?? 0;
                 return bVal - aVal;
             }
-            return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);
+            return getHotelName(a, locale).localeCompare(getHotelName(b, locale));
         });
 
         return result;

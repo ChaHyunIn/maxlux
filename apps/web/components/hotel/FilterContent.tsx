@@ -3,6 +3,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFilterStore } from "@/stores/filterStore"
 import { Search, X, Heart } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useSettingStore } from "@/stores/settingStore"
+import { formatPrice } from '@/lib/utils';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import type { Hotel } from '@/lib/types';
 import { getCityKey } from '@/lib/cityMapper';
@@ -10,14 +12,9 @@ import { getBrandKey } from '@/lib/brandMapper';
 import { SearchAutocomplete } from './SearchAutocomplete';
 import { useTranslations } from 'next-intl';
 
-import { SUPPORTED_CITIES } from '@/lib/constants';
+import { SUPPORTED_CITIES, PRICE_FILTER_RANGES } from '@/lib/constants';
 
-const PRICE_RANGE_VALUES = [
-    { value: '0-2000000', labelKey: 'priceAll' },
-    { value: '0-300000', labelKey: 'priceUnder300' },
-    { value: '300000-500000', labelKey: 'price300to500' },
-    { value: '500000-2000000', labelKey: 'priceOver500' },
-];
+const PRICE_RANGE_VALUES = PRICE_FILTER_RANGES;
 
 export function FilterContent({
     brands,
@@ -34,7 +31,7 @@ export function FilterContent({
 }) {
     const tBrand = useTranslations('brand');
     const tCity = useTranslations('city');
-    
+
     const {
         searchQuery, setSearchQuery,
         selectedBrand, setSelectedBrand,
@@ -64,10 +61,26 @@ export function FilterContent({
         debounceRef.current = setTimeout(() => setSearchQuery(val), 300);
     }, [setSearchQuery]);
 
-    const PRICE_OPTIONS = useMemo(() => PRICE_RANGE_VALUES.map((opt: { value: string; labelKey: string }) => ({
-        value: opt.value,
-        label: t(opt.labelKey)
-    })), [t]);
+    const { currency } = useSettingStore();
+
+    const PRICE_OPTIONS = useMemo(() => PRICE_RANGE_VALUES.map((opt: { value: string; labelKey: string }) => {
+        if (currency === 'USD') {
+            const parts = opt.value.split('-').map(Number);
+            const min = parts[0] ?? 0;
+            const max = parts[1] ?? 2000000;
+            if (min === 0 && max >= 2000000) return { value: opt.value, label: t('priceAll') };
+            const minFormatted = formatPrice(min, 'USD');
+            const maxFormatted = formatPrice(max, 'USD');
+            return {
+                value: opt.value,
+                label: max >= 2000000 ? `${minFormatted}+` : `${minFormatted}-${maxFormatted}`
+            };
+        }
+        return {
+            value: opt.value,
+            label: t(opt.labelKey)
+        };
+    }), [t, currency]);
 
     const priceKey = `${priceRange[0]}-${priceRange[1]}`;
     const handlePriceChange = (val: string) => {

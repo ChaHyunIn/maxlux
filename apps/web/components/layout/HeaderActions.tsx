@@ -21,9 +21,6 @@ export function HeaderActions() {
     const handleLocaleChange = (newLocale: string | null) => {
         if (isLocale(newLocale)) {
             router.replace(pathname, { locale: newLocale });
-            // Auto-sync currency with locale
-            if (newLocale === 'en') setCurrency('USD');
-            if (newLocale === 'ko') setCurrency('KRW');
         }
     };
 

@@ -5,14 +5,13 @@ import { formatPrice } from '@/lib/utils'
 import { useTranslations, useLocale } from 'next-intl'
 import { TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
 import type { DailyRate } from '@/lib/types'
-import { LOCALE_DEFAULTS } from '@/lib/constants'
+import { LOCALE_DEFAULTS, CHART_CONFIG } from '@/lib/constants'
 
 interface PriceTrendChartProps {
     rates: DailyRate[]
 }
 
-const CHART_HEIGHT = 200
-const CHART_PADDING = { top: 20, right: 16, bottom: 40, left: 60 }
+const { height: CHART_HEIGHT, padding: CHART_PADDING, trendThreshold: TREND_THRESHOLD } = CHART_CONFIG
 
 export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const gradientId = useId()
@@ -100,10 +99,11 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     // X-axis labels (show ~5 dates)
     const xLabelStep = Math.max(1, Math.floor(chartData.length / 5))
     const xLabels = chartData
-        .filter((_, i) => i % xLabelStep === 0 || i === chartData.length - 1)
-        .map((d, _, _arr) => ({
+        .map((d, i) => ({ d, i }))
+        .filter(({ i }) => i % xLabelStep === 0 || i === chartData.length - 1)
+        .map(({ d, i }) => ({
             date: d.date,
-            x: xScale(chartData.indexOf(d)),
+            x: xScale(i),
         }))
 
     const formatDateShort = (dateStr: string) => {
@@ -130,19 +130,19 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     {t('title')}
                 </h3>
                 <div className="flex items-center gap-1.5">
-                    {stats.trendPct < -2 && (
+                    {stats.trendPct < -TREND_THRESHOLD && (
                         <span className="flex items-center gap-1 text-sm text-emerald-600 font-medium">
                             <TrendingDown className="w-4 h-4" />
                             {t('trendDown', { pct: Math.abs(stats.trendPct).toFixed(1) })}
                         </span>
                     )}
-                    {stats.trendPct > 2 && (
+                    {stats.trendPct > TREND_THRESHOLD && (
                         <span className="flex items-center gap-1 text-sm text-red-600 font-medium">
                             <TrendingUp className="w-4 h-4" />
                             {t('trendUp', { pct: stats.trendPct.toFixed(1) })}
                         </span>
                     )}
-                    {stats.trendPct >= -2 && stats.trendPct <= 2 && (
+                    {stats.trendPct >= -TREND_THRESHOLD && stats.trendPct <= TREND_THRESHOLD && (
                         <span className="flex items-center gap-1 text-sm text-slate-500 font-medium">
                             <Minus className="w-4 h-4" />
                             {t('trendStable')}

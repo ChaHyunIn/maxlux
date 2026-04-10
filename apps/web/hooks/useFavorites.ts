@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { STORAGE_KEYS } from '@/lib/constants';
 
-const STORAGE_KEY = 'maxlux_favorites';
+const STORAGE_KEY = STORAGE_KEYS.FAVORITES;
 
 export function useFavorites() {
     const [favorites, setFavorites] = useState<string[]>([]);
@@ -40,7 +41,7 @@ export function useFavorites() {
     const toggleFavorite = useCallback((id: string) => {
         const current = loadFavorites();
         let updated: string[];
-        
+
         if (current.includes(id)) {
             updated = current.filter((favId: string) => favId !== id);
         } else {
@@ -49,7 +50,7 @@ export function useFavorites() {
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         setFavorites(updated);
-        
+
         // Dispatch custom event for components in the same window
         window.dispatchEvent(new Event('favorites-updated'));
     }, [loadFavorites]);

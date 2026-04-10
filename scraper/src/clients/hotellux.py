@@ -11,37 +11,24 @@ from src.config import (
     RETRY_WAIT_SEC,
     HOTELLUX_SESSION_COOKIE,
 )
+from src.clients.base_client import BaseOtaClient
 from src.utils.logger import get_logger
 
 log = get_logger("hotellux")
 
-
 class SessionExpiredError(Exception):
     pass
 
-
 def should_retry(e):
-    # 더 넓은 네트워크 에러 커버
     return isinstance(e, (httpx.HTTPError, asyncio.TimeoutError)) and \
            not getattr(e.response, "status_code", 200) in (401, 403)
 
-
-class HotelLuxClient:
+class HotelLuxClient(BaseOtaClient):
     def __init__(self):
-        self.base_url = HOTELLUX_BASE_URL
-        self.headers = {**DEFAULT_HEADERS}
+        super().__init__(base_url=HOTELLUX_BASE_URL, headers={**DEFAULT_HEADERS})
         if HOTELLUX_SESSION_COOKIE:
             self.headers["cookie"] = f"connect.sid={HOTELLUX_SESSION_COOKIE}"
-        self._client: httpx.AsyncClient | None = None
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        if self._client is None or self._client.is_closed:
-            self._client = httpx.AsyncClient(timeout=30, headers=self.headers)
-        return self._client
-
-    async def close(self):
-        if self._client and not self._client.is_closed:
-            await self._client.aclose()
 
     @retry(
         stop=stop_after_attempt(MAX_RETRIES),
@@ -52,8 +39,9 @@ class HotelLuxClient:
     async def search_hotels(self, city: str, check_in: str, check_out: str, skip: int = 0) -> dict:
         url = f"{self.base_url}/search?mode=async"
 
+        lang = self.headers.get("y-platform-language", "ko")
         payload = {
-            "preferred": {"currency": "KRW", "language": "ko", "version": "v1"},
+            "preferred": {"currency": "KRW", "language": lang, "version": "v1"},
             "filter": {"search": city},
             "stay": {"date": {"checkIn": check_in, "checkOut": check_out}},
             "paging": {"limit": PAGING_LIMIT, "skip": skip},
@@ -152,8 +140,9 @@ class HotelLuxClient:
         Returns:
             API 응답 dict (rooms 배열 포함) 또는 None (실패 시)
         """
+        lang = self.headers.get("y-platform-language", "ko")
         payload = {
-            "preferred": {"currency": "local", "language": "ko", "version": "v1"},
+            "preferred": {"currency": "local", "language": lang, "version": "v1"},
             "hotel": {"_id": hotel_id},
             "stay": {
                 "date": {"checkIn": check_in, "checkOut": check_out},

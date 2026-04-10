@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import type { Hotel } from '@/lib/types';
 import { getCityKey } from '@/lib/cityMapper';
-import { getHotelName } from '@/lib/hotelUtils';
 
 export const revalidate = 300;
 

@@ -1,10 +1,9 @@
 'use client'
-import { getPriceLevel, cn } from '@/lib/utils';
+import { getPriceLevel, cn, formatPrice } from '@/lib/utils';
 import type { DailyRate } from '@/lib/types';
 import { PRICE_COLORS, LOCALE_DEFAULTS } from '@/lib/constants';
 import { useCalendarStore } from '@/stores/calendarStore';
 import { useSettingStore } from '@/stores/settingStore';
-import { formatPrice } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {

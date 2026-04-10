@@ -102,7 +102,20 @@ export function DayDetailModal({
         })),
     ].filter(p => !p.is_sold_out || p.source === 'hotellux')
 
-    const lowestPrice = Math.min(...allPrices.filter(p => !p.is_sold_out && p.price_krw > 0).map(p => p.price_krw))
+    const activePrices = allPrices.filter(p => !p.is_sold_out && p.price_krw > 0).map(p => p.price_krw);
+    const lowestPrice = activePrices.length > 0 ? Math.min(...activePrices) : 0;
+
+    const getRoomTypeLabel = (type: string | undefined | null) => {
+        if (!type) return '';
+        if (type === 'standard') return t('standardRoom');
+        // Convert snake_case to camelCase (nr_nobf -> nrNobf)
+        const camelKey = type.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        try {
+            return t(camelKey as any);
+        } catch {
+            return type;
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -157,7 +170,7 @@ export function DayDetailModal({
 
                 {/* Room type info */}
                 <div className="mt-3 text-xs text-slate-400 text-center">
-                    {t('roomType')}: {rate.room_type === 'standard' ? t('standardRoom') : rate.room_type}
+                    {t('roomType')}: {getRoomTypeLabel(rate.room_type)}
                 </div>
             </DialogContent>
         </Dialog>

@@ -16,10 +16,7 @@ interface PriceAlertButtonProps {
     currentMinPrice?: number
 }
 
-const PRICE_SUGGESTIONS = {
-    KRW: [200000, 250000, 300000, 350000, 400000, 500000],
-    USD: [150, 200, 250, 300, 350, 400]
-} as const
+import { PRICE_SUGGESTIONS, LOCALE_DEFAULTS } from '@/lib/constants'
 
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
@@ -28,13 +25,13 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const { currency } = useSettingStore()
     const [open, setOpen] = useState(false)
     const [email, setEmail] = useState('')
-    
+
     // Default target price: 90% of current or a sensible default
     const getDefaultTarget = () => {
         if (currentMinPrice) return Math.round(currentMinPrice * 0.9)
         return currency === 'USD' ? 250 : 300000
     }
-    
+
     const [targetPrice, setTargetPrice] = useState(getDefaultTarget())
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
@@ -129,8 +126,8 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                             key={price}
                                             onClick={() => setTargetPrice(price)}
                                             className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${targetPrice === price
-                                                    ? 'bg-indigo-600 text-white border-indigo-600'
-                                                    : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+                                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                                : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
                                                 }`}
                                         >
                                             {formatPrice(price, currency)}

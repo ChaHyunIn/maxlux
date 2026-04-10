@@ -23,7 +23,7 @@ DEFAULT_HEADERS = {
     "referer": "https://hotel.hotelux.com/",
     "x-requested-with": "XMLHttpRequest",
     "y-platform-channel": "hotelux",
-    "y-platform-language": "ko",  # ⚠️ Hardcoded: 다국어 스크래핑 확장 시 동적으로 변경 필요
+    "y-platform-language": os.getenv("SCRAPE_LANGUAGE", "ko"),
     "y-raw-required": "false",
     "y-src": "ysys-web",
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "

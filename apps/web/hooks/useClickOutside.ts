@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 
 /**
@@ -8,15 +8,19 @@ import type { RefObject } from 'react';
  * @param onOutsideClick - Callback function to execute when an outside click occurs
  */
 export function useClickOutside(ref: RefObject<HTMLElement | null>, onOutsideClick: () => void) {
-    const stableCallback = useCallback(onOutsideClick, [onOutsideClick]);
-    
+    const savedCallback = useRef(onOutsideClick);
+
+    useEffect(() => {
+        savedCallback.current = onOutsideClick;
+    }, [onOutsideClick]);
+
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (ref.current && (e.target instanceof Node) && !ref.current.contains(e.target)) {
-                stableCallback();
+                savedCallback.current();
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [ref, stableCallback]);
+    }, [ref]);
 }
