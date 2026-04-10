@@ -13,6 +13,18 @@ export const LOCALE_DEFAULTS = {
     priceUnitManDivisor: 10000,
 } as const;
 
+export const REVALIDATE_SECONDS = {
+    cityPage: 300,
+    hotelDetail: 3600,
+    homePage: 300,
+} as const;
+
+export const TIME_MS = {
+    MINUTE: 60_000,
+    HOUR: 3_600_000,
+    DAY: 86_400_000,
+} as const;
+
 export const FALLBACK_PERCENTILES = {
     p25: 300000,
     p75: 600000,
@@ -49,6 +61,14 @@ export const CHART_CONFIG = {
     height: 200,
     padding: { top: 20, right: 16, bottom: 40, left: 60 },
     trendThreshold: 2.0, // 2% threshold for trend determination
+} as const;
+
+export const CHART_COLORS = {
+    line: '#6366f1',
+    holiday: '#ef4444',
+    saturday: '#3b82f6',
+    fridayEve: '#f59e0b',
+    grid: '#e2e8f0',
 } as const;
 
 export const BENEFIT_COLORS: Record<string, string> = {

@@ -1,11 +1,12 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HotelList } from '@/components/hotel/HotelList';
 import { getCityKey } from '@/lib/cityMapper';
+import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelsByCity } from '@/lib/supabase/queries/hotels';
 import type { Hotel } from '@/lib/types';
 import type { Metadata } from 'next';
 
-export const revalidate = 300;
+export const revalidate = REVALIDATE_SECONDS.cityPage;
 
 export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
     const tCity = await getTranslations({ locale: params.locale, namespace: 'city' });

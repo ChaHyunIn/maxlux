@@ -1,12 +1,14 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HotelList } from '@/components/hotel/HotelList';
+import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotels } from '@/lib/supabase/queries/hotels';
 import type { Hotel } from '@/lib/types';
 
-export const revalidate = 300;
+export const revalidate = REVALIDATE_SECONDS.homePage;
 
 export default async function HomePage({ params }: { params: { locale: string } }) {
-    setRequestLocale(params.locale);
+    const { locale } = await params;
+    setRequestLocale(locale);
     const t = await getTranslations('common');
 
     let hotels: (Hotel & { min_price?: number })[] = [];

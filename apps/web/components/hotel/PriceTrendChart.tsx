@@ -2,7 +2,7 @@
 import { useState, useMemo, useRef, useEffect, useId } from 'react'
 import { TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
-import { LOCALE_DEFAULTS, CHART_CONFIG } from '@/lib/constants'
+import { LOCALE_DEFAULTS, CHART_CONFIG, CHART_COLORS } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import type { DailyRate } from '@/lib/types'
@@ -185,7 +185,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                                 y1={tick.y}
                                 x2={chartWidth - CHART_PADDING.right}
                                 y2={tick.y}
-                                stroke="#e2e8f0"
+                                stroke={CHART_COLORS.grid}
                                 strokeDasharray="4 4"
                             />
                             <text
@@ -203,7 +203,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     <path d={areaPath} fill={`url(#${gradientId})`} opacity={0.3} />
 
                     {/* Line */}
-                    <path d={linePath} fill="none" stroke="#6366f1" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                    <path d={linePath} fill="none" stroke={CHART_COLORS.line} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
 
                     {/* Weekend/holiday markers */}
                     {chartData.map((d, i) => {
@@ -214,7 +214,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                                 cx={xScale(i)}
                                 cy={yScale(d.price)}
                                 r={3}
-                                fill={d.tag === 'HOL' ? '#ef4444' : d.tag === 'SAT' ? '#3b82f6' : '#f59e0b'}
+                                fill={d.tag === 'HOL' ? CHART_COLORS.holiday : d.tag === 'SAT' ? CHART_COLORS.saturday : CHART_COLORS.fridayEve}
                                 stroke="white"
                                 strokeWidth={1.5}
                             />

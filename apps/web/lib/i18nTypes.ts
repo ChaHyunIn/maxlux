@@ -52,9 +52,9 @@ export type DayDetailKey =
     | 'levelLow' | 'levelHigh' | 'levelMid' | 'refundable' | 'scrapedAt'
 
 export type GlobalKey =
-    | 'ko' | 'en' | 'zh' | 'krw' | 'usd'
+    | 'ko' | 'en' | 'krw' | 'usd'
 
-export type Locale = 'ko' | 'en' | 'zh'
+export type Locale = 'ko' | 'en'
 
 export type SortByKey = 'price' | 'name' | 'discount' | 'benefit'
 
@@ -65,11 +65,11 @@ export type TimeKey =
  * Type guards for i18n types
  */
 export function isLocale(val: unknown): val is Locale {
-    return typeof val === 'string' && ['ko', 'en', 'zh'].includes(val);
+    return val === 'ko' || val === 'en';
 }
 
 export function isGlobalKey(val: unknown): val is GlobalKey {
-    return typeof val === 'string' && ['ko', 'en', 'zh', 'krw', 'usd'].includes(val);
+    return typeof val === 'string' && ['ko', 'en', 'krw', 'usd'].includes(val);
 }
 
 export function isSortByKey(val: unknown): val is SortByKey {
