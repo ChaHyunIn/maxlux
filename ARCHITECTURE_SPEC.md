@@ -12,7 +12,7 @@
 - **`apps/`**: 웹 애플리케이션 서비스 환경 (Next.js 기반).
 - **`scraper/`**: Python 기반의 고성능 데이터 수집 및 분석 엔진.
 - **`supabase/`**: PostgreSQL 데이터베이스 스키마 및 마이그레이션 관리.
-    - `migrations/`: 001~016번까지의 연쇄 마이그레이션. 테이블 생성, RPC 함수, RLS 보안 정책 히스토리 관리.
+    - `migrations/`: 001~019번까지의 연쇄 마이그레이션. 테이블 생성, RLS 보안 정책, 실시간 시스템 설정(환율) 히스토리 관리.
 - **루트 주요 문서**:
     - `PROJECT_STATUS.md`: 기능별 로드맵 및 현재 진행 상황 추적.
     - `DATABASE_SCHEMA.md`: 상세 테이블 명세 및 관계도.
@@ -26,8 +26,9 @@
 - **`/[locale]/hotels/[slug]/[yyyy-mm]`**: [NEW] 월별 전용 랜딩 페이지. SEO 타겟팅 및 특정 월 가격 공유 목적.
 - **`api/og/[slug]`**: [NEW] 동적 OG 이미지 생성 API. 호텔별 브랜딩 이미지를 실시간 Satori 렌더링으로 생성.
 - **`api/price-alerts`**: 가격 알림 등록(POST), 조회(GET), 해제(DELETE) 엔드포인트.
-- **`sitemap.ts`**: 전체 호텔 및 12개월 월간 페이지를 포함한 동적 XML 사이트맵 생성.
+- **`sitemap.ts`**: 전체 호텔 및 12개월 월간 페이지를 포함한 동적 XML 사이트맵 생성 (Scalability를 위해 언어별/주제별 분할 생성 지원).
 - **`robots.ts`**: 검색 엔진 크롤링 정책 정의.
+- **`sentry.*.config.ts`**: [NEW] 클라이언트/서버/엣지 런타임별 에러 추적 및 성능 모니터링 설정.
 
 ### `/components` (UI/UX 계층)
 - **`calendar/`**: 히트맵 엔진.
@@ -42,6 +43,7 @@
 ### `/lib` & `/stores` (데이터 및 상태)
 - **`supabase/`**: `queries/` (조회 로직), `mutations/` (알림 등록 등 변경 로직) 분리.
 - **`stores/`**: `settingStore.ts`(통화, 필터), `calendarStore.ts` 등 Zustand 기반 전역 상태 관리.
+- **`api/currency.ts`**: [NEW] `unstable_cache` 기반의 환율 데이터 관리. 매 요청 시 DB 부하를 줄이기 위해 1시간 단위 캐싱 적용.
 - **`mappers/`**: 가공되지 않은 데이터를 다국어/표준 용어로 치환 (Brand, City, Benefit).
 
 ---
@@ -62,6 +64,7 @@
 - **`alert_checker.py`**: [NEW] 가격 하락 감지 엔진. 통화별(KRW, USD) 이메일 템플릿 처리 및 Resend API 발송.
 - **`stats_aggregator.py`**: 가격 백분위수(p25, p75) 계산 및 통계 요약.
 - **`hotel_sync.py`**: DB 우선 매핑 로직을 통한 호텔 메타데이터 정규화.
+- **`exchange_rate_sync.py`**: [NEW] Frankfurter API를 통한 실시간 USD/KRW 환율 동기화 서비스.
 - **`tagger.py`**: 주말/공휴일 등 특수 날짜 속성 부여.
 
 ---
@@ -71,5 +74,6 @@
 1. **DB First Mapping**: 하드코딩된 Python 딕셔너리 의존성을 줄이고 DB에 저장된 한국어명을 우선적으로 신뢰하도록 설계.
 2. **Atomic Migrations**: 모든 DB 변경 사항은 `supabase/migrations`를 통해 관리되어 환경 간 일관성 보장.
 3. **SEO Optimized**: 동적 사이트맵, OG 이미지 API, 월간 전용 경로를 통해 검색 엔진 노출 최적화.
-4. **Security Hardened**: RLS(Row Level Security)를 전 테이블에 적용하여 프론트엔드(`anon`)에서의 악의적인 변조 및 비공개 데이터(사용자 이메일 등) 노출 차단.
-5. **Modular OTA Clients**: `BaseClient` 상속 구조를 통해 새로운 예약 사이트 추가가 용이하도록 모듈화.
+4. **Security Hardened**: RLS(Row Level Security)를 전 테이블에 적용하고, `price_alerts` 테이블의 고유 제약 조건을 강화하여 중복 방지. Turnstile 도입 로드맵 수립.
+5. **Observability**: Sentry SDK를 연동하여 빌드 타임 소스맵 업로드 및 런타임 에러 캡처 자동화. Production 샘플링(10%) 최적화.
+6. **Modular OTA Clients**: `BaseClient` 상속 구조를 통해 새로운 예약 사이트 추가가 용이하도록 모듈화.

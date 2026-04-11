@@ -30,9 +30,11 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 
 ### 스케일링 & SEO (Phase 6 가동 중)
 - [x] 동적 OG 이미지 생성 API (/api/og/[slug])
-- [x] 월별 전용 랜딩 페이지 ([yyyy-mm] 상세 라운트)
-- [x] 사이트맵(sitemap.xml) 및 로봇(robots.txt) 자동 생성
+- [x] 월별 전용 랜딩 페이지 ([yyyy-mm] 상세 라우트)
+- [x] 사이트맵(sitemap.xml) 및 로봇(robots.txt) 자동 생성 (규모별 분할 최적화)
 - [x] Supabase RLS 보안 정책 수립 (room_rates, price_alerts 등 전 테이블 적용)
+- [x] 에러 모니터링 시스템 구축 (Sentry SDK 통합)
+- [x] 실시간 환율 동기화 엔진 구축 (Python Sync Service + Next.js Caching)
 
 ### 스크래퍼 & 백엔드
 - [x] HotelLux API 클라이언트 (BaseClient 상속 구조로 리팩토링 완료)
@@ -80,9 +82,9 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 | OG 이미지 API 완성 | 🟢 Low | ✅ DONE | 동적 생성 완료 |
 | 월별 랜딩 페이지 구현 | 🟢 Low | ✅ DONE | SEO 강화 |
 | Google Search Console + sitemap | 🟢 Low | ✅ DONE | 자동 생성 완료 |
-| Vercel 배포 + 환경변수 설정 | 🔴 Critical | TODO | |
-| 커스텀 도메인 연결 | 🟡 Medium | TODO | |
-| 에러 모니터링 (Sentry) | 🟢 Low | TODO | |
+| Vercel 배포 + 환경변수 설정 | 🔴 Critical | ✅ DONE | Production 기동 완료 |
+| 커스텀 도메인 연결 | 🟡 Medium | 🟡 진행 중 | 도메인 설정 대기 |
+| 에러 모니터링 (Sentry) | 🟢 Low | ✅ DONE | Sampling 적용 및 통합 완료 |
 
 ---
 

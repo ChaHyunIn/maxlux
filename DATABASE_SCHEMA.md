@@ -36,7 +36,8 @@
 | locale | text | DEFAULT 'ko' |
 | triggered_at | timestamptz | NULL |
 | created_at | timestamptz | DEFAULT now() |
-| UNIQUE | | (hotel_id, email, target_price) |
+| UNIQUE | | (hotel_id, email, target_price) (레거시) |
+| UNIQUE (Hardened) | | UNIQUE(hotel_id, email, target_price, COALESCE(stay_date_from, '1900-01-01'), COALESCE(stay_date_to, '1900-01-01')) |
 
 ### monthly_stats
 | Column | Type | Constraint |
@@ -50,6 +51,25 @@
 | avg_price | integer | |
 | sample_count | integer | |
 | UNIQUE | | (hotel_id, month, room_type) |
+
+### system_settings
+| Column | Type | Constraint |
+|--------|------|-----------|
+| key | text | PK |
+| value | jsonb | NOT NULL |
+| updated_at | timestamptz | DEFAULT now() |
+
+### price_changes
+| Column | Type | Constraint |
+|--------|------|-----------|
+| id | serial | PK |
+| hotel_id | uuid | FK → hotels.id |
+| stay_date | date | NOT NULL |
+| old_price | integer | |
+| new_price | integer | |
+| change_amount | integer | |
+| source | text | |
+| changed_at | timestamptz | DEFAULT now() |
 
 ## 기존 테이블 변경사항
 

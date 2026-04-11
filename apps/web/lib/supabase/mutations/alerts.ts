@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { adminSupabase } from '../admin';
 
 export async function createPriceAlert(data: {
@@ -9,56 +10,83 @@ export async function createPriceAlert(data: {
     locale?: string;
     currency?: 'KRW' | 'USD';
 }) {
-    const { data: result, error } = await adminSupabase
-        .from('price_alerts')
-        .upsert(
-            {
-                hotel_id: data.hotel_id,
-                email: data.email.toLowerCase().trim(),
-                target_price: data.target_price,
-                stay_date_from: data.stay_date_from || null,
-                stay_date_to: data.stay_date_to || null,
-                locale: data.locale || 'ko',
-                is_active: true,
-                currency: data.currency || 'KRW',
-            },
-            { onConflict: 'hotel_id,email,target_price' }
-        )
-        .select()
-        .single();
+    try {
+        const { data: result, error } = await adminSupabase
+            .from('price_alerts')
+            .upsert(
+                {
+                    hotel_id: data.hotel_id,
+                    email: data.email.toLowerCase().trim(),
+                    target_price: data.target_price,
+                    stay_date_from: data.stay_date_from || null,
+                    stay_date_to: data.stay_date_to || null,
+                    locale: data.locale || 'ko',
+                    is_active: true,
+                    currency: data.currency || 'KRW',
+                },
+                { onConflict: 'hotel_id,email,target_price' }
+            )
+            .select()
+            .single();
 
-    if (error) throw error;
-    return result;
+        if (error) throw error;
+        return result;
+    } catch (error) {
+        console.error('createPriceAlert error:', error);
+        Sentry.captureException(error, {
+            tags: { mutation: 'createPriceAlert', hotelId: data.hotel_id },
+            extra: { email: '[REDACTED]' }
+        });
+        throw error;
+    }
 }
 
 export async function getActiveAlerts(email: string, hotelId?: string) {
-    // Uses service role key because RLS might prevent anon from reading others emails.
-    let query = adminSupabase
-        .from('price_alerts')
-        .select('*')
-        .eq('email', email.toLowerCase().trim())
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+    try {
+        // Uses service role key because RLS might prevent anon from reading others emails.
+        let query = adminSupabase
+            .from('price_alerts')
+            .select('*')
+            .eq('email', email.toLowerCase().trim())
+            .eq('is_active', true)
+            .order('created_at', { ascending: false });
 
-    if (hotelId) {
-        query = query.eq('hotel_id', hotelId);
+        if (hotelId) {
+            query = query.eq('hotel_id', hotelId);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('getActiveAlerts error:', error);
+        Sentry.captureException(error, {
+            tags: { query: 'getActiveAlerts', hotelId },
+            extra: { email: '[REDACTED]' }
+        });
+        throw error;
     }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
 }
 
 export async function deactivateAlert(alertId: number, email: string) {
-    const { error, count } = await adminSupabase
-        .from('price_alerts')
-        .update({ is_active: false })
-        .eq('id', alertId)
-        .eq('email', email)
-        .select()
+    try {
+        const { error, count } = await adminSupabase
+            .from('price_alerts')
+            .update({ is_active: false })
+            .eq('id', alertId)
+            .eq('email', email)
+            .select();
 
-    if (error) {
+        if (error) {
+            throw error;
+        }
+        return count;
+    } catch (error) {
+        console.error('deactivateAlert error:', error, alertId);
+        Sentry.captureException(error, {
+            tags: { mutation: 'deactivateAlert', alertId: String(alertId) },
+            extra: { email: '[REDACTED]' }
+        });
         throw error;
     }
-    return count;
 }

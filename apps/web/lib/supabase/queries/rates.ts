@@ -1,16 +1,23 @@
+import * as Sentry from '@sentry/nextjs';
 import { supabase } from '../anon';
 import type { DailyRate, RoomRate, PriceChange } from '../../types';
 
 export async function getRates(hotelId: string): Promise<DailyRate[]> {
-    const today = new Date().toISOString().split('T')[0];
-    const { data, error } = await supabase
-        .from('daily_rates')
-        .select('*')
-        .eq('hotel_id', hotelId)
-        .gte('stay_date', today)
-        .order('stay_date');
-    if (error) throw error;
-    return data;
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data, error } = await supabase
+            .from('daily_rates')
+            .select('*')
+            .eq('hotel_id', hotelId)
+            .gte('stay_date', today)
+            .order('stay_date');
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('getRates error:', error);
+        Sentry.captureException(error, { tags: { query: 'getRates', hotelId } });
+        throw error;
+    }
 }
 
 /**
@@ -27,24 +34,36 @@ export async function getRates(hotelId: string): Promise<DailyRate[]> {
 // }
 
 export async function getRoomRates(hotelId: string, stayDate: string): Promise<RoomRate[]> {
-    const { data, error } = await supabase
-        .from('room_rates')
-        .select('*')
-        .eq('hotel_id', hotelId)
-        .eq('stay_date', stayDate)
-        .eq('source', 'hotellux')
-        .order('price_krw');
-    if (error) return [];
-    return data;
+    try {
+        const { data, error } = await supabase
+            .from('room_rates')
+            .select('*')
+            .eq('hotel_id', hotelId)
+            .eq('stay_date', stayDate)
+            .eq('source', 'hotellux')
+            .order('price_krw');
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error('getRoomRates error:', error);
+        Sentry.captureException(error, { tags: { query: 'getRoomRates', hotelId, stayDate } });
+        return [];
+    }
 }
 
 export async function getPriceChanges(hotelId: string, limit = 20): Promise<PriceChange[]> {
-    const { data, error } = await supabase
-        .from('price_changes')
-        .select('*')
-        .eq('hotel_id', hotelId)
-        .order('changed_at', { ascending: false })
-        .limit(limit);
-    if (error) return [];
-    return data;
+    try {
+        const { data, error } = await supabase
+            .from('price_changes')
+            .select('*')
+            .eq('hotel_id', hotelId)
+            .order('changed_at', { ascending: false })
+            .limit(limit);
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error('getPriceChanges error:', error);
+        Sentry.captureException(error, { tags: { query: 'getPriceChanges', hotelId } });
+        return [];
+    }
 }
