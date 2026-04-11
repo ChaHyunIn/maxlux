@@ -325,5 +325,17 @@
         "hotelName": "Hotel",
         "targetPrice": "Target Price",
         "back": "Go Back"
+    },
+    "compare": {
+        "title": "Monthly Price Comparison for {name}",
+        "metaTitle": "Monthly Best Rates for {name} | MaxLux",
+        "metaDescription": "Compare monthly average rates for {name}. The cheapest month is {cheapestMonth}.",
+        "cheapestMonth": "Cheapest Month",
+        "averagePrice": "Avg / Night",
+        "monthlyAvg": "{month}",
+        "recommendation": "{month} is the cheapest time to stay at {name} (Avg {price})",
+        "noData": "Not enough data for comparison",
+        "backToHotel": "Back to Hotel Details",
+        "viewCalendar": "View Full Calendar"
     }
 }

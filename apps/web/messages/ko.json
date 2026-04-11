@@ -325,5 +325,17 @@
         "hotelName": "호텔명",
         "targetPrice": "목표 가격",
         "back": "돌아가기"
+    },
+    "compare": {
+        "title": "{name} 월별 가격 비교",
+        "metaTitle": "{name} 월별 최저가 비교 | MaxLux",
+        "metaDescription": "{name}의 월별 평균 가격을 비교하세요. 가장 저렴한 달은 {cheapestMonth}입니다.",
+        "cheapestMonth": "가장 저렴한 달",
+        "averagePrice": "월 평균가",
+        "monthlyAvg": "{month}월",
+        "recommendation": "{name}은(는) {month}월이 가장 저렴합니다 (평균 {price})",
+        "noData": "비교할 충분한 데이터가 없습니다",
+        "backToHotel": "호텔 상세로 돌아가기",
+        "viewCalendar": "전체 캘린더 보기"
     }
 }

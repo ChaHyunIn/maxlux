@@ -9,6 +9,8 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates, getPriceChanges } from '@/lib/supabase/queries/rates';
+import { Link } from '@/i18n/navigation';
+import { ChevronRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const revalidate = REVALIDATE_SECONDS.hotelDetail;
@@ -49,6 +51,8 @@ export default async function HotelDetailPage(props: { params: Promise<{ locale:
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) notFound();
 
+    const tCompare = await getTranslations({ locale: params.locale, namespace: 'compare' });
+
     const [rates, priceChanges] = await Promise.all([
         getRates(hotel.id),
         getPriceChanges(hotel.id)
@@ -68,6 +72,15 @@ export default async function HotelDetailPage(props: { params: Promise<{ locale:
                 <ErrorBoundary>
                     <HeatmapCalendar rates={rates} hotel={hotel} />
                 </ErrorBoundary>
+                <div className="mt-4 flex justify-center">
+                    <Link 
+                        href={`/hotels/${params.slug}/compare`} 
+                        className="group flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-indigo-600 transition-colors"
+                    >
+                        {tCompare('title', { name: hotel.name_ko })}
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                </div>
             </div>
 
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">

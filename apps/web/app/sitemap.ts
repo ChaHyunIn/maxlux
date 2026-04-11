@@ -72,6 +72,13 @@ export default async function sitemap({ id: locale }: { id: string }): Promise<M
                 priority: 0.6,
             });
         }
+
+        // Monthly comparison page
+        entries.push({
+            url: `${baseUrl}/compare`,
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        });
     }
 
     return entries;
