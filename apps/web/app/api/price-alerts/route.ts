@@ -20,7 +20,7 @@ import type { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(ip, 10, 60_000)) {
+    if (!(await rateLimit(ip, 'write'))) {
         return errorResponse('RATE_LIMITED', 429);
     }
     try {
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`get-alerts-${ip}`, 20, 60_000)) {
+    if (!(await rateLimit(`get-alerts-${ip}`, 'read'))) {
         return errorResponse('RATE_LIMITED', 429);
     }
 
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`delete-alert-${ip}`, 10, 60_000)) {
+    if (!(await rateLimit(`delete-alert-${ip}`, 'write'))) {
         return errorResponse('RATE_LIMITED', 429);
     }
 

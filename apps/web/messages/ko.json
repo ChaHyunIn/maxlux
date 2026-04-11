@@ -304,6 +304,16 @@
         "feature3Title": "OTA 비교",
         "feature3Desc": "아고다, 부킹닷컴 등 주요 OTA 가격을 한 곳에서 비교하세요"
     },
+    "priceSummary": {
+        "lowestPrice": "최저가",
+        "averagePrice": "평균가",
+        "recentChanges": "48시간 변동",
+        "dropsCount": "{count}건 하락",
+        "noChanges": "변동 없음",
+        "expensiveDay": "가장 비싼 요일",
+        "higherThanAvg": "평균 대비 {pct}% 높음",
+        "onDate": "{date}"
+    },
     "alertManager": {
         "title": "내 알림 관리하기",
         "description": "이메일을 입력하시면 현재 활성화된 알림 목록을 확인할 수 있습니다.",

@@ -304,6 +304,16 @@
         "feature3Title": "OTA Comparison",
         "feature3Desc": "Compare prices from Agoda, Booking.com, and more in one place"
     },
+    "priceSummary": {
+        "lowestPrice": "Lowest",
+        "averagePrice": "Average",
+        "recentChanges": "48hr Changes",
+        "dropsCount": "{count} drops",
+        "noChanges": "No changes",
+        "expensiveDay": "Most Expensive Day",
+        "higherThanAvg": "{pct}% above avg",
+        "onDate": "{date}"
+    },
     "alertManager": {
         "title": "Manage My Alerts",
         "description": "Enter your email to view your currently active price alerts.",

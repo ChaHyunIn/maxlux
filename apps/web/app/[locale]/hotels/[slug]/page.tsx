@@ -4,6 +4,7 @@ import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceChangesList } from '@/components/hotel/PriceChangesList';
 import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
+import PriceSummaryCard from '@/components/hotel/PriceSummaryCard';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
@@ -54,19 +55,33 @@ export default async function HotelDetailPage(props: { params: Promise<{ locale:
     ]);
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
             <HotelHeroHeader hotel={hotel} />
-            <ErrorBoundary>
-                <PriceTrendChart rates={rates} />
-            </ErrorBoundary>
+            
+            <div className="mt-6">
+                <ErrorBoundary>
+                    <PriceSummaryCard rates={rates} changes={priceChanges} />
+                </ErrorBoundary>
+            </div>
+
             <div className="mt-8">
                 <ErrorBoundary>
                     <HeatmapCalendar rates={rates} hotel={hotel} />
                 </ErrorBoundary>
             </div>
-            <ErrorBoundary>
-                <PriceChangesList changes={priceChanges} />
-            </ErrorBoundary>
+
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                    <ErrorBoundary>
+                        <PriceTrendChart rates={rates} />
+                    </ErrorBoundary>
+                </div>
+                <div className="space-y-4">
+                    <ErrorBoundary>
+                        <PriceChangesList changes={priceChanges} />
+                    </ErrorBoundary>
+                </div>
+            </div>
         </div>
     );
 }
