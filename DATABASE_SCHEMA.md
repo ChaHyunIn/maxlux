@@ -92,34 +92,33 @@
 
 ## 뷰 (Views)
 
-### hotels_with_min_price
-호텔 리스트 페이지에서 사용하는 뷰. `getHotels()`, `getHotelsByCity()`가 이 뷰를 참조한다.
+### hotels_with_min_price (Materialized View)
+
+호텔별 최저가 및 최근 가격 변동 정보를 집계하여 저장하는 물리적 뷰입니다.
+성능 최적화를 위해 조회 성능을 극대화하며, `refresh_hotels_with_min_price()` 함수를 통해 데이터를 갱신합니다.
 
 ```sql
-CREATE OR REPLACE VIEW hotels_with_min_price AS
+CREATE MATERIALIZED VIEW hotels_with_min_price AS
 SELECT
     h.*,
-    dr_min.min_price,
-    dr_ref.min_price_refundable
-FROM hotels h
-LEFT JOIN LATERAL (
-    SELECT MIN(price_krw) AS min_price
-    FROM daily_rates
-    WHERE hotel_id = h.id
-      AND is_sold_out = false
-      AND price_krw > 0
-      AND stay_date >= CURRENT_DATE
-      AND room_type IN ('nr_nobf', 'nr_bf')
-) dr_min ON true
-LEFT JOIN LATERAL (
-    SELECT MIN(price_krw) AS min_price_refundable
-    FROM daily_rates
-    WHERE hotel_id = h.id
-      AND is_sold_out = false
-      AND price_krw > 0
-      AND stay_date >= CURRENT_DATE
-      AND room_type IN ('r_nobf', 'r_bf')
-) dr_ref ON true;
+    (
+        SELECT MIN(dr.price_krw)
+        FROM daily_rates dr
+        WHERE dr.hotel_id = h.id 
+          AND dr.is_sold_out = FALSE 
+          AND dr.stay_date >= CURRENT_DATE
+          AND dr.price_krw > 0
+    ) AS min_price,
+    (
+        SELECT COUNT(*)::INTEGER
+        FROM price_changes pc
+        WHERE pc.hotel_id = h.id
+          AND pc.changed_at >= NOW() - INTERVAL '48 hours'
+          AND pc.new_price < pc.old_price
+    ) AS recent_drops
+FROM hotels h;
+
+CREATE UNIQUE INDEX idx_hotels_with_min_price_id ON hotels_with_min_price(id);
 ```
 
 > **주의**: 이 뷰가 Supabase에 아직 생성되지 않았다면 위 SQL을 실행해야 한다. `latest_scraped_at`, `min_price_refundable` 컬럼이 포함되려면 `hotels` 테이블에 해당 컬럼이 존재해야 한다.
