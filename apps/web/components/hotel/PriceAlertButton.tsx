@@ -10,6 +10,7 @@ import { PRICE_SUGGESTIONS, LOCALE_DEFAULTS } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { isValidEmail } from '@/lib/validation'
 import { useSettingStore } from '@/stores/settingStore'
+import { trackEvent } from '@/lib/analytics'
 
 interface PriceAlertButtonProps {
     hotelId: string
@@ -76,6 +77,12 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
             const data = await res.json()
             if (res.ok) {
                 setSuccess(true)
+                trackEvent('alert_created', { 
+                    hotelId, 
+                    hotelName, 
+                    targetPrice: priceToSend,
+                    currency
+                })
                 setTimeout(() => {
                     setOpen(false)
                     setSuccess(false)

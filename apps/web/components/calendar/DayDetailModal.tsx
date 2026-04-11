@@ -13,6 +13,7 @@ import { useSettingStore } from '@/stores/settingStore'
 import { OtaPriceList } from './OtaPriceList'
 import { PriceHeader } from './PriceHeader'
 import { RoomRateList } from './RoomRateList'
+import { trackEvent } from '@/lib/analytics'
 import type { DailyRate, OtaPrice, RoomRate } from '@/lib/types'
 
 interface DayDetailModalProps {
@@ -55,6 +56,16 @@ export function DayDetailModal({
         try {
             const prices = await fetchOtaPricesApi(hotelId, rate.stay_date)
             setOtaPrices(prices)
+            
+            // 데이터 로드 성공 시 트래킹
+            if (prices.length > 0) {
+                trackEvent('ota_compare', { 
+                    hotelId, 
+                    hotelName, 
+                    stayDate: rate.stay_date, 
+                    otaCount: prices.length 
+                });
+            }
         } catch {
             setOtaPrices([])
         } finally {
@@ -153,7 +164,18 @@ export function DayDetailModal({
 
                 {bookingUrl && !rate.is_sold_out && (
                     <div className="mt-4">
-                        <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="block">
+                        <a 
+                            href={bookingUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="block"
+                            onClick={() => trackEvent('booking_click', { 
+                                hotelId, 
+                                hotelName, 
+                                stayDate: rate.stay_date, 
+                                source: 'hotellux' 
+                            })}
+                        >
                             <Button className="w-full" size="lg">
                                 <ExternalLink className="w-4 h-4 mr-2" />
                                 {t('bookNow')}

@@ -10,6 +10,7 @@ import { SUPPORTED_CITIES, PRICE_FILTER_RANGES, DEFAULT_FILTER_PRICE_RANGE } fro
 import { formatPrice } from '@/lib/utils';
 import { useFilterStore } from "@/stores/filterStore"
 import { useSettingStore } from "@/stores/settingStore"
+import { trackEvent } from '@/lib/analytics'
 import { SearchAutocomplete } from './SearchAutocomplete';
 import type { Hotel } from '@/lib/types';
 
@@ -56,7 +57,12 @@ export function FilterContent({
         setLocalSearch(val);
         setShowAutocomplete(val.trim().length > 0);
         if (debounceRef.current) clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => setSearchQuery(val), 300);
+        debounceRef.current = setTimeout(() => {
+            setSearchQuery(val);
+            if (val.trim()) {
+                trackEvent('search_used', { query: val });
+            }
+        }, 300);
     }, [setSearchQuery]);
 
     const { currency, exchangeRate } = useSettingStore();
@@ -80,13 +86,13 @@ export function FilterContent({
         };
     }), [t, currency]);
 
-    const priceKey = `${priceRange[0]}-${priceRange[1]}`;
     const handlePriceChange = (val: string) => {
         const parts = val.split('-').map(Number);
         const min = parts[0];
         const max = parts[1];
         if (min !== undefined && max !== undefined) {
             setPriceRange([min, max]);
+            trackEvent('filter_used', { type: 'price', value: val });
         }
     };
 
@@ -132,7 +138,11 @@ export function FilterContent({
             <div className="flex flex-wrap gap-2">
                 <button
                     className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
-                    onClick={() => { setSelectedCity('all'); onClose?.(); }}
+                    onClick={() => { 
+                        setSelectedCity('all'); 
+                        trackEvent('filter_used', { type: 'city', value: 'all' });
+                        onClose?.(); 
+                    }}
                 >
                     {t('allCities')}
                 </button>
@@ -142,7 +152,11 @@ export function FilterContent({
                         <button
                             key={city}
                             className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${selectedCity === city ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
-                            onClick={() => { setSelectedCity(city); onClose?.(); }}
+                            onClick={() => { 
+                                setSelectedCity(city); 
+                                trackEvent('filter_used', { type: 'city', value: city });
+                                onClose?.(); 
+                            }}
                         >
                             {cityKey ? tCity(cityKey) : city}
                         </button>
@@ -151,7 +165,11 @@ export function FilterContent({
             </div>
 
             <div className="flex flex-wrap gap-3">
-                <Select value={selectedBrand} onValueChange={(val) => { setSelectedBrand(val || 'all'); onClose?.(); }}>
+                <Select value={selectedBrand} onValueChange={(val) => { 
+                    setSelectedBrand(val || 'all'); 
+                    trackEvent('filter_used', { type: 'brand', value: val || 'all' });
+                    onClose?.(); 
+                }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
                         <SelectValue placeholder={t('allBrands')}>
                             {brandLabel}
@@ -186,6 +204,7 @@ export function FilterContent({
                 <Select value={sortBy} onValueChange={(val) => {
                     if (val === 'price' || val === 'name' || val === 'discount' || val === 'benefit') {
                         setSortBy(val);
+                        trackEvent('filter_used', { type: 'sort', value: val });
                         onClose?.();
                     }
                 }}>
@@ -207,7 +226,12 @@ export function FilterContent({
 
                 <button
                     className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-colors ${showFavoritesOnly ? 'bg-red-500 text-white border-red-500' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'}`}
-                    onClick={() => { setShowFavoritesOnly(!showFavoritesOnly); onClose?.(); }}
+                    onClick={() => { 
+                        const next = !showFavoritesOnly;
+                        setShowFavoritesOnly(next); 
+                        trackEvent('filter_used', { type: 'favorites', value: next });
+                        onClose?.(); 
+                    }}
                 >
                     <Heart className={`w-3.5 h-3.5 ${showFavoritesOnly ? 'fill-white' : ''}`} />
                     {t('favoritesOnly')}

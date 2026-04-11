@@ -14,6 +14,7 @@ import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
 import { getHotelName } from '@/lib/hotelUtils';
 import { formatPrice, getRelativeTime } from '@/lib/utils';
 import { useSettingStore } from '@/stores/settingStore';
+import { trackEvent } from '@/lib/analytics';
 import type { Hotel } from '@/lib/types';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; recent_drops?: number } }) {
@@ -31,13 +32,27 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
 
     const handleToggleFavorite = (e: React.MouseEvent) => {
         e.preventDefault();
+        const newState = !isFavorite(hotel.id);
         toggleFavorite(hotel.id);
+        trackEvent('favorite_toggle', { 
+            hotelId: hotel.id, 
+            hotelSlug: hotel.slug, 
+            action: newState ? 'add' : 'remove',
+            name: getHotelName(hotel, locale)
+        });
     };
 
     const hasRecentDrop = hotel.recent_drops !== undefined && hotel.recent_drops > 0;
 
     return (
-        <Link href={`/hotels/${hotel.slug}`}>
+        <Link 
+            href={`/hotels/${hotel.slug}`}
+            onClick={() => trackEvent('hotel_view', { 
+                slug: hotel.slug, 
+                name: getHotelName(hotel, locale),
+                city: hotel.city
+            })}
+        >
             <Card className="overflow-hidden hover:shadow-md transition-shadow h-full cursor-pointer flex flex-col">
                 <div className="relative w-full aspect-[4/3] bg-slate-200 flex items-center justify-center overflow-hidden">
                     {hotel.image_url && !imageError ? (
