@@ -15,7 +15,7 @@ const { height: CHART_HEIGHT, padding: CHART_PADDING, trendThreshold: TREND_THRE
 
 export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const gradientId = useId()
-    const { currency } = useSettingStore()
+    const { currency, exchangeRate } = useSettingStore()
     const t = useTranslations('priceTrend')
     const locale = useLocale()
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -115,7 +115,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     }
 
     const formatPriceShort = (price: number) => {
-        if (currency === 'USD') return formatPrice(price, 'USD')
+        if (currency === 'USD') return formatPrice(price, 'USD', exchangeRate)
         return `${Math.round(price / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     }
 
@@ -155,16 +155,16 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
             <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="text-center p-2 bg-emerald-50 rounded-lg">
                     <div className="text-xs text-emerald-600 font-medium">{t('lowest')}</div>
-                    <div className="text-sm font-bold text-emerald-800">{formatPrice(stats.min, currency)}</div>
+                    <div className="text-sm font-bold text-emerald-800">{formatPrice(stats.min, currency, exchangeRate)}</div>
                     <div className="text-[10px] text-emerald-500">{formatDateShort(stats.minDate)}</div>
                 </div>
                 <div className="text-center p-2 bg-slate-50 rounded-lg">
                     <div className="text-xs text-slate-500 font-medium">{t('average')}</div>
-                    <div className="text-sm font-bold text-slate-700">{formatPrice(stats.avg, currency)}</div>
+                    <div className="text-sm font-bold text-slate-700">{formatPrice(stats.avg, currency, exchangeRate)}</div>
                 </div>
                 <div className="text-center p-2 bg-red-50 rounded-lg">
                     <div className="text-xs text-red-600 font-medium">{t('highest')}</div>
-                    <div className="text-sm font-bold text-red-800">{formatPrice(stats.max, currency)}</div>
+                    <div className="text-sm font-bold text-red-800">{formatPrice(stats.max, currency, exchangeRate)}</div>
                     <div className="text-[10px] text-red-500">{formatDateShort(stats.maxDate)}</div>
                 </div>
             </div>
@@ -289,7 +289,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                             top: yScale(hovered.price) - 48,
                         }}
                     >
-                        <div className="font-bold">{formatPrice(hovered.price, currency)}</div>
+                        <div className="font-bold">{formatPrice(hovered.price, currency, exchangeRate)}</div>
                         <div className="text-slate-300">{formatDateShort(hovered.date)}</div>
                     </div>
                 )}

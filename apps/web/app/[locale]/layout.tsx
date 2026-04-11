@@ -3,6 +3,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import '@/styles/globals.css';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { StoreInitializer } from '@/components/shared/StoreInitializer';
+import { getExchangeRate } from '@/lib/api/currency';
 import type { Metadata } from 'next';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -23,11 +25,13 @@ export default async function LocaleLayout({
 }) {
     const { locale } = await params;
     const messages = await getMessages();
+    const { rate } = await getExchangeRate();
 
     return (
         <html lang={locale}>
             <body>
                 <NextIntlClientProvider messages={messages}>
+                    <StoreInitializer exchangeRate={rate} />
                     <ErrorBoundary>
                         {children}
                         <Analytics />

@@ -24,7 +24,7 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
     const locale = useLocale();
     const [imageError, setImageError] = useState(false);
     const { isFavorite, toggleFavorite } = useFavorites();
-    const { currency } = useSettingStore();
+    const { currency, exchangeRate } = useSettingStore();
 
     const brandKey = hotel.brand ? getBrandKey(hotel.brand) : null;
     const cityKey = getCityKey(hotel.city);
@@ -86,12 +86,12 @@ export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; rece
                             <div className="flex flex-col items-end gap-1">
                                 <div className="flex items-center gap-1.5">
                                     <span className="text-[10px] text-red-500 font-medium">{t('nonRefundableShort')}</span>
-                                    <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price, currency)}~</p>
+                                    <p className="text-blue-600 font-bold text-xl">{formatPrice(hotel.min_price, currency, exchangeRate)}~</p>
                                 </div>
                                 {hotel.min_price_refundable && (
                                     <div className="flex items-center gap-1.5">
                                         <span className="text-[10px] text-green-600 font-medium">{t('refundableShort')}</span>
-                                        <p className="text-gray-500 font-semibold text-sm">{formatPrice(hotel.min_price_refundable, currency)}~</p>
+                                        <p className="text-gray-500 font-semibold text-sm">{formatPrice(hotel.min_price_refundable, currency, exchangeRate)}~</p>
                                     </div>
                                 )}
                                 {hotel.latest_scraped_at && (

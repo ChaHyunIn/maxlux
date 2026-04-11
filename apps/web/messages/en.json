@@ -279,6 +279,7 @@
         "changedAt": "{relativeTime}",
         "priceDrop": "Drop",
         "priceRise": "Rise",
+        "newRegistration": "New Entry",
         "amount": "{amount} change"
     }
 }

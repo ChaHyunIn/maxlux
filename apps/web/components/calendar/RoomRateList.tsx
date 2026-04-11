@@ -13,9 +13,10 @@ interface RoomRateListProps {
     t: ReturnType<typeof useTranslations>;
     tTerm: ReturnType<typeof useTranslations>;
     currency: 'KRW' | 'USD';
+    exchangeRate?: number;
 }
 
-export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency }: RoomRateListProps) {
+export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency, exchangeRate }: RoomRateListProps) {
     const tBenefits = useTranslations('benefits');
     const locale = useLocale();
     
@@ -75,7 +76,7 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency }
                                                 </div>
                                                 <div className="text-right whitespace-nowrap pt-0.5 shrink-0">
                                                     <div className="font-bold text-slate-800 text-[14px]">
-                                                        {formatPrice(rate.price_krw, currency)}
+                                                        {formatPrice(rate.price_krw, currency, exchangeRate)}
                                                     </div>
                                                 </div>
                                             </div>

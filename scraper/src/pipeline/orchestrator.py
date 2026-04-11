@@ -8,6 +8,7 @@ from src.config import CITIES, DETAIL_SCRAPE_DAYS_AHEAD
 from src.pipeline.hotel_sync_phase import run_hotel_sync
 from src.pipeline.post_scrape_phase import run_post_scrape
 from src.pipeline.rate_collection_phase import run_rate_collection
+from src.services.exchange_rate_sync import sync_exchange_rate
 from src.utils.holidays import load_holidays, seed_holidays_auto
 from src.utils.logger import get_logger
 
@@ -101,6 +102,9 @@ async def run_pipeline():
                 client.table("scrape_logs").update(
                     {"errors": errors[:100]}
                 ).eq("run_id", run_id).execute()
+
+        # ── 환율 동기화 (Phase C) ──
+        await sync_exchange_rate()
 
     finally:
         await hotellux.close()

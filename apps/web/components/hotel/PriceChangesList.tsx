@@ -10,7 +10,7 @@ interface PriceChangesListProps {
 }
 
 export function PriceChangesList({ changes }: PriceChangesListProps) {
-    const { currency } = useSettingStore()
+    const { currency, exchangeRate } = useSettingStore()
     const t = useTranslations('priceChanges')
     const tCommon = useTranslations('common')
 
@@ -34,15 +34,16 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                     </div>
                 ) : (
                     changes.map((change) => {
-                        const diff = change.new_price - (change.old_price || change.new_price);
-                        const isDrop = diff < 0;
-                        const isRise = diff > 0;
+                        const isNew = change.old_price === null || change.old_price === 0;
+                        const diff = isNew ? 0 : (change.new_price - (change.old_price || 0));
+                        const isDrop = !isNew && diff < 0;
+                        const isRise = !isNew && diff > 0;
                         
                         return (
                             <div key={change.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${isDrop ? 'bg-emerald-100 text-emerald-600' : isRise ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-400'}`}>
-                                        {isDrop ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
+                                        {isDrop ? <TrendingDown className="w-4 h-4" /> : isRise ? <TrendingUp className="w-4 h-4" /> : <History className="w-4 h-4" />}
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-sm font-semibold text-slate-800">
@@ -56,15 +57,18 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                                 
                                 <div className="text-right">
                                     <div className="flex items-center justify-end gap-1.5">
-                                        <span className="text-xs text-slate-400 line-through">
-                                            {formatPrice(change.old_price, currency)}
-                                        </span>
+                                        {!isNew && (
+                                            <span className="text-xs text-slate-400 line-through">
+                                                {formatPrice(change.old_price, currency, exchangeRate)}
+                                            </span>
+                                        )}
                                         <span className={`font-bold text-sm ${isDrop ? 'text-emerald-600' : isRise ? 'text-red-600' : 'text-slate-800'}`}>
-                                            {formatPrice(change.new_price, currency)}
+                                            {formatPrice(change.new_price, currency, exchangeRate)}
                                         </span>
                                     </div>
-                                    <div className={`text-[10px] font-medium ${isDrop ? 'text-emerald-500' : 'text-red-500'}`}>
-                                        {isDrop ? t('priceDrop') : t('priceRise')} {formatPrice(Math.abs(diff), currency)}
+                                    <div className={`text-[10px] font-medium ${isDrop ? 'text-emerald-500' : isRise ? 'text-red-500' : 'text-slate-400'}`}>
+                                        {isNew ? t('newRegistration') : (isDrop ? t('priceDrop') : t('priceRise'))} 
+                                        {!isNew && ` ${formatPrice(Math.abs(diff), currency, exchangeRate)}`}
                                     </div>
                                 </div>
                             </div>

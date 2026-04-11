@@ -38,7 +38,7 @@ export function DayDetailModal({
     p25,
     p75,
 }: DayDetailModalProps) {
-    const currency = useSettingStore(state => state.currency)
+    const { currency, exchangeRate } = useSettingStore();
     const t = useTranslations('dayDetail')
     const tTerm = useTranslations('apiTerms')
     const tTime = useTranslations('time')
@@ -126,6 +126,7 @@ export function DayDetailModal({
                     refundableRate={refundableRate}
                     t={t}
                     currency={currency}
+                    exchangeRate={exchangeRate}
                     style={style}
                     level={level}
                     locale={locale}
@@ -137,6 +138,7 @@ export function DayDetailModal({
                     allPrices={allPrices}
                     lowestPrice={lowestPrice}
                     currency={currency}
+                    exchangeRate={exchangeRate}
                     t={t}
                 />
 
@@ -146,6 +148,7 @@ export function DayDetailModal({
                     t={t}
                     tTerm={tTerm}
                     currency={currency}
+                    exchangeRate={exchangeRate}
                 />
 
                 {bookingUrl && !rate.is_sold_out && (

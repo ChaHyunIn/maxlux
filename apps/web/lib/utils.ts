@@ -8,10 +8,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price_krw: number | undefined | null, currency: 'KRW' | 'USD' = 'KRW'): string {
+export function formatPrice(
+  price_krw: number | undefined | null, 
+  currency: 'KRW' | 'USD' = 'KRW', 
+  exchangeRate?: number
+): string {
   if (price_krw === undefined || price_krw === null) return '';
   if (currency === 'USD') {
-    return `$${Math.round(price_krw / LOCALE_DEFAULTS.exchangeRateUsd).toLocaleString()}`;
+    const rate = exchangeRate || LOCALE_DEFAULTS.exchangeRateUsd;
+    return `$${Math.round(price_krw / rate).toLocaleString()}`;
   }
   return `₩${price_krw.toLocaleString()}`;
 }

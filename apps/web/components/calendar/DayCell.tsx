@@ -8,7 +8,7 @@ import type { DailyRate } from '@/lib/types';
 
 export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate | null, p25: number, p75: number }) {
     const { sniperMode, openDayDetail } = useCalendarStore();
-    const { currency } = useSettingStore();
+    const { currency, exchangeRate } = useSettingStore();
     const t = useTranslations('calendar');
 
     const day = date.getDate();
@@ -47,7 +47,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
 
     const priceText = is_sold_out ? t('soldOut') : (
         currency === 'USD'
-            ? formatPrice(price_krw, 'USD')
+            ? formatPrice(price_krw, 'USD', exchangeRate)
             : `${Math.round(price_krw / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     );
 

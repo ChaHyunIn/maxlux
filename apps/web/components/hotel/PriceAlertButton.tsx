@@ -23,7 +23,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const t = useTranslations('priceAlert')
     const tErr = useTranslations('errors')
     const locale = useLocale()
-    const { currency } = useSettingStore()
+    const { currency, exchangeRate } = useSettingStore();
     const [open, setOpen] = useState(false)
     const [email, setEmail] = useState('')
 
@@ -59,7 +59,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
 
         try {
             const priceToSend = currency === 'USD'
-                ? Math.round(targetPrice * LOCALE_DEFAULTS.exchangeRateUsd)
+                ? Math.round(targetPrice * exchangeRate)
                 : targetPrice;
 
             const res = await fetch('/api/price-alerts', {
@@ -142,7 +142,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                                 : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
                                                 }`}
                                         >
-                                            {formatPrice(price, currency)}
+                                            {formatPrice(price, currency, exchangeRate)}
                                         </button>
                                     ))}
                                 </div>
@@ -159,7 +159,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                 </div>
                                 {currentMinPrice && (
                                     <p className="text-xs text-slate-400 mt-1.5">
-                                        {t('currentMin')}: {formatPrice(currentMinPrice, currency)}
+                                        {t('currentMin')}: {formatPrice(currentMinPrice, currency, exchangeRate)}
                                     </p>
                                 )}
                             </div>

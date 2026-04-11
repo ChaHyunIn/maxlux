@@ -4,14 +4,18 @@ import { STORAGE_KEYS } from '@/lib/constants';
 
 interface SettingState {
     currency: 'KRW' | 'USD';
+    exchangeRate: number;
     setCurrency: (currency: 'KRW' | 'USD') => void;
+    setExchangeRate: (rate: number) => void;
 }
 
 export const useSettingStore = create<SettingState>()(
     persist(
         (set) => ({
             currency: 'KRW',
+            exchangeRate: 1400,
             setCurrency: (currency) => set({ currency }),
+            setExchangeRate: (exchangeRate) => set({ exchangeRate }),
         }),
         {
             name: STORAGE_KEYS.SETTINGS,

@@ -59,7 +59,7 @@ export function FilterContent({
         debounceRef.current = setTimeout(() => setSearchQuery(val), 300);
     }, [setSearchQuery]);
 
-    const { currency } = useSettingStore();
+    const { currency, exchangeRate } = useSettingStore();
 
     const PRICE_OPTIONS = useMemo(() => PRICE_RANGE_VALUES.map((opt: { value: string; labelKey: string }) => {
         if (currency === 'USD') {
@@ -67,8 +67,8 @@ export function FilterContent({
             const min = parts[0] ?? 0;
             const max = parts[1] ?? DEFAULT_FILTER_PRICE_RANGE[1];
             if (min === 0 && max >= DEFAULT_FILTER_PRICE_RANGE[1]) return { value: opt.value, label: t('priceAll') };
-            const minFormatted = formatPrice(min, 'USD');
-            const maxFormatted = formatPrice(max, 'USD');
+            const minFormatted = formatPrice(min, 'USD', exchangeRate);
+            const maxFormatted = formatPrice(max, 'USD', exchangeRate);
             return {
                 value: opt.value,
                 label: max >= DEFAULT_FILTER_PRICE_RANGE[1] ? `${minFormatted}+` : `${minFormatted}-${maxFormatted}`

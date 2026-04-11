@@ -10,13 +10,14 @@ interface PriceHeaderProps {
     refundableRate?: DailyRate | null | undefined;
     t: ReturnType<typeof useTranslations>;
     currency: 'KRW' | 'USD';
+    exchangeRate?: number;
     style: { bg: string; text: string };
     level: string;
     locale: string;
     tTime: ReturnType<typeof useTranslations>;
 }
 
-export function PriceHeader({ rate, refundableRate, t, currency, style, level, locale, tTime }: PriceHeaderProps) {
+export function PriceHeader({ rate, refundableRate, t, currency, exchangeRate, style, level, locale, tTime }: PriceHeaderProps) {
     const tagKey = `tag${rate.tag}`;
     const tagLabel = isDayDetailKey(tagKey) ? t(tagKey) : rate.tag;
 
@@ -27,7 +28,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                     <span className="text-xs text-slate-500 whitespace-nowrap mr-2">{t('nonRefundable')}</span>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
                         <div className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-sm font-semibold truncate ${style.bg} ${style.text}`}>
-                            {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency)}
+                            {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency, exchangeRate)}
                         </div>
                         <Badge variant="outline" className="gap-1 truncate max-w-[100px] sm:max-w-none">
                             <Tag className="w-3 h-3 shrink-0" />
@@ -55,7 +56,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, style, level, l
                     <div className="flex flex-wrap items-center justify-between w-full mt-1">
                         <span className="text-xs text-slate-500">{t('refundable')}</span>
                         <div className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-50 text-blue-800">
-                            {formatPrice(refundableRate.price_krw, currency)}
+                            {formatPrice(refundableRate.price_krw, currency, exchangeRate)}
                         </div>
                     </div>
                 )}

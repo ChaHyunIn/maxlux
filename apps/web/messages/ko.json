@@ -279,6 +279,7 @@
         "changedAt": "{relativeTime}",
         "priceDrop": "하락",
         "priceRise": "상승",
+        "newRegistration": "신규 등록",
         "amount": "{amount} 변동"
     }
 }
