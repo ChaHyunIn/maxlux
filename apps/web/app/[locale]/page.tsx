@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HotelList } from '@/components/hotel/HotelList';
+import HeroSection from '@/components/shared/HeroSection';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotels } from '@/lib/supabase/queries/hotels';
 import type { Hotel } from '@/lib/types';
@@ -26,5 +27,12 @@ export default async function HomePage(props: { params: Promise<{ locale: string
         );
     }
 
-    return <HotelList hotels={hotels} />;
+    return (
+        <>
+            <HeroSection />
+            <div id="hotel-list">
+                <HotelList hotels={hotels} />
+            </div>
+        </>
+    );
 }
