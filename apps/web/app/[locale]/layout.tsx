@@ -29,6 +29,12 @@ export default async function LocaleLayout({
 
     return (
         <html lang={locale}>
+            <head>
+                <link 
+                    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap" 
+                    rel="stylesheet" 
+                />
+            </head>
             <body>
                 <NextIntlClientProvider messages={messages}>
                     <StoreInitializer exchangeRate={rate} />

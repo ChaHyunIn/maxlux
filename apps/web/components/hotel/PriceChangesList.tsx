@@ -1,5 +1,5 @@
-'use client'
 import { TrendingDown, TrendingUp, History } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import { formatPrice, getRelativeTime } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
@@ -33,14 +33,20 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                         {t('noChanges')}
                     </div>
                 ) : (
-                    changes.map((change) => {
+                    changes.map((change, index) => {
                         const isNew = change.old_price === null || change.old_price === 0;
                         const diff = isNew ? 0 : (change.new_price - (change.old_price || 0));
                         const isDrop = !isNew && diff < 0;
                         const isRise = !isNew && diff > 0;
                         
                         return (
-                            <div key={change.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                            <motion.div 
+                                key={change.id} 
+                                initial={{ opacity: 0, x: -12 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.04, duration: 0.2 }}
+                                className="flex items-center justify-between p-3 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100"
+                            >
                                 <div className="flex items-center gap-3">
                                     <div className={`p-2 rounded-lg ${isDrop ? 'bg-emerald-100 text-emerald-600' : isRise ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-400'}`}>
                                         {isDrop ? <TrendingDown className="w-4 h-4" /> : isRise ? <TrendingUp className="w-4 h-4" /> : <History className="w-4 h-4" />}
@@ -71,7 +77,7 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                                         {!isNew && ` ${formatPrice(Math.abs(diff), currency, exchangeRate)}`}
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         )
                     })
                 )}

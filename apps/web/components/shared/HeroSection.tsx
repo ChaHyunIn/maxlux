@@ -62,7 +62,7 @@ export default function HeroSection() {
                                 MaxLux Premium Optimizer
                             </motion.div>
 
-                            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
+                            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
                                 {t.rich('headline', {
                                     highlight: (chunks) => <span className="text-emerald-500 underline decoration-emerald-500/30 underline-offset-8">{chunks}</span>
                                 })}

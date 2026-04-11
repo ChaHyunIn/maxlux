@@ -1,6 +1,5 @@
-'use client'
-import { useMemo } from 'react';
 import { useLocale } from 'next-intl';
+import { AnimatePresence, motion } from 'motion/react';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useFavorites } from '@/hooks/useFavorites';
 import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
@@ -86,9 +85,20 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
                 <EmptyState />
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredHotels.map(hotel => (
-                        <HotelCard key={hotel.id} hotel={hotel} />
-                    ))}
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {filteredHotels.map(hotel => (
+                            <motion.div
+                                key={hotel.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.96 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.96 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <HotelCard hotel={hotel} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             )}
         </div>

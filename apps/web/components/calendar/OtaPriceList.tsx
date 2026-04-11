@@ -45,7 +45,10 @@ export function OtaPriceList({ loading, allPrices, lowestPrice, currency, exchan
                         const otaName = isOtaKey(display.nameKey) ? tOta(display.nameKey) : p.source;
 
                         return (
-                            <div key={`${p.source}-${idx}`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors">
+                            <div 
+                                key={`${p.source}-${idx}`} 
+                                className={`flex items-center justify-between px-4 py-3 hover:bg-slate-50/50 transition-colors ${isLowest ? 'animate-price-glow relative z-10' : ''}`}
+                            >
                                 <div className="flex items-center gap-2">
                                     <Badge className={`text-xs ${display.color} border-none`}>
                                         {otaName}

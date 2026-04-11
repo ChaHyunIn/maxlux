@@ -41,7 +41,7 @@ export function HotelHeroHeader({ hotel }: { hotel: Hotel }) {
                             </Badge>
                         )}
                     </div>
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md">
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 text-balance leading-tight drop-shadow-md" style={{ fontFamily: 'var(--font-display)' }}>
                         {primaryName}
                     </h1>
                     <p className="text-slate-200 text-lg md:text-xl font-medium drop-shadow-md">{secondaryName}</p>
