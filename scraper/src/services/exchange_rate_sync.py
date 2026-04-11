@@ -8,14 +8,14 @@ from src.utils.logger import get_logger
 
 log = get_logger("exchange_rate_sync")
 
-# 무료 환율 API (Frankfurter)
-# base=USD, targets=KRW
+# 무료 환율 API (Frankfurter — ECB 기반, 무제한)
 API_URL = "https://api.frankfurter.app/latest?from=USD&to=KRW"
 
 
 async def sync_exchange_rate():
     """
     외부 API에서 USD/KRW 환율을 가져와 DB의 system_settings 테이블을 업데이트합니다.
+    API 실패 시 기존 데이터를 보존하고 에러만 로깅합니다.
     """
     try:
         async with httpx.AsyncClient(timeout=10) as client:
@@ -26,7 +26,12 @@ async def sync_exchange_rate():
         rate = data.get("rates", {}).get("KRW")
         if not rate:
             log.error("exchange_rate_not_found", data=data)
-            return
+            return None
+
+        # 환율 유효성 검증 (비정상 값 방지)
+        if rate <= 0 or rate > 100000:
+            log.error("exchange_rate_invalid", rate=rate)
+            return None
 
         db = get_client()
         settings_data = {
@@ -35,13 +40,16 @@ async def sync_exchange_rate():
                 "rate": rate,
                 "source": "frankfurter",
                 "date": data.get("date"),
+                "synced_at": datetime.now(UTC).isoformat(),
             },
             "updated_at": datetime.now(UTC).isoformat(),
         }
 
-        # Upsert
-        res = db.table("system_settings").upsert(settings_data).execute()
-        
+        # Upsert (PK = key 기준)
+        db.table("system_settings").upsert(
+            settings_data, on_conflict="key"
+        ).execute()
+
         log.info("exchange_rate_synced", rate=rate, date=data.get("date"))
         return rate
 

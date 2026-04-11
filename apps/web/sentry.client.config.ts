@@ -1,20 +1,21 @@
 import * as Sentry from "@sentry/nextjs";
 
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  
-  // Tracing
-  tracesSampleRate: 1.0,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
+  // Tracing — production에서는 10%만 샘플링하여 비용과 성능 부하 최소화
+  tracesSampleRate: IS_PRODUCTION ? 0.1 : 1.0,
+
   debug: false,
 
+  // 에러 발생 시 세션 리플레이는 100% 캡처 (에러 디버깅에 필수)
   replaysOnErrorSampleRate: 1.0,
 
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+  // 일반 세션 리플레이는 production에서 1%로 제한
+  replaysSessionSampleRate: IS_PRODUCTION ? 0.01 : 0.1,
 
-  // You can remove this option if you're not planning to use the Sentry browser profiling feature:
-  profilesSampleRate: 1.0,
+  // 브라우저 프로파일링도 production에서 10%만
+  profilesSampleRate: IS_PRODUCTION ? 0.1 : 1.0,
 });
