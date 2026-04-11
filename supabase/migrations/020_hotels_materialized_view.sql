@@ -23,7 +23,8 @@ SELECT
           AND pc.changed_at >= NOW() - INTERVAL '48 hours'
           AND pc.new_price < pc.old_price
     ) AS recent_drops
-FROM hotels h;
+FROM hotels h
+WHERE h.is_active = true;
 
 -- 3. 고유 인덱스 생성 (CONCURRENTLY 리프레시를 위해 필수)
 CREATE UNIQUE INDEX idx_hotels_with_min_price_id ON hotels_with_min_price(id);
@@ -39,7 +40,8 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 5. 권한 설정
-GRANT EXECUTE ON FUNCTION refresh_hotels_with_min_price() TO authenticated;
+-- service_role만 실행 가능 (보안: 일반 사용자가 MV refresh 호출 불가)
+REVOKE EXECUTE ON FUNCTION refresh_hotels_with_min_price() FROM public;
 GRANT EXECUTE ON FUNCTION refresh_hotels_with_min_price() TO service_role;
 
 -- 6. 설명 추가

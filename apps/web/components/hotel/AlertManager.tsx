@@ -62,8 +62,10 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
 
     const handleDeactivate = async (alertId: number) => {
         try {
-            const res = await fetch(`/api/price-alerts?id=${alertId}&email=${encodeURIComponent(email.trim())}`, {
-                method: 'DELETE'
+            const res = await fetch('/api/price-alerts', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: alertId, email: email.trim() })
             })
             if (res.ok) {
                 setAlerts(prev => prev.filter(a => a.id !== alertId))

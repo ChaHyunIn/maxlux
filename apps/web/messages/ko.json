@@ -294,8 +294,8 @@
         "domain": "maxlux.co"
     },
     "hero": {
-        "headline": "럭셔리 호텔, 최저가로 만나보세요",
-        "subheadline": "12개월 가격 히트맵으로 최적의 예약 타이밍을 찾아드립니다",
+        "headline": "럭셔리 호텔, <highlight>최저가</highlight>로 만나보세요",
+        "subheadline": "12개월 가격 히트맵으로 완벽한 예약 타이밍을 찾으세요",
         "cta": "호텔 가격 확인하기",
         "feature1Title": "실시간 가격 추적",
         "feature1Desc": "매일 업데이트되는 5성급 호텔 가격을 한눈에 비교하세요",

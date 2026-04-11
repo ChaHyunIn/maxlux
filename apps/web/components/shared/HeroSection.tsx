@@ -40,7 +40,7 @@ export default function HeroSection() {
         <section className="relative overflow-hidden bg-slate-900 text-white">
             {/* 배경 그라데이션 및 노이즈 효과 */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#1e293b_0%,_#0f172a_100%)] opacity-100" />
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
             <div className="container relative mx-auto px-4 z-10">
                 <AnimatePresence mode="wait">

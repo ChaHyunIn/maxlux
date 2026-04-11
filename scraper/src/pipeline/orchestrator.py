@@ -103,6 +103,15 @@ async def run_pipeline():
                     {"errors": errors[:100]}
                 ).eq("run_id", run_id).execute()
 
+        # ── Materialized View 갱신 ──
+        try:
+            log.info("refreshing_materialized_view", view="hotels_with_min_price")
+            client.rpc("refresh_hotels_with_min_price").execute()
+            log.info("materialized_view_refreshed", view="hotels_with_min_price")
+        except Exception as mv_err:
+            log.error("materialized_view_refresh_failed", error=str(mv_err))
+            errors.append({"phase": "mv_refresh", "error": str(mv_err)})
+
         # ── 환율 동기화 (Phase C) ──
         await sync_exchange_rate()
 
