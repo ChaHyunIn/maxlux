@@ -303,5 +303,17 @@
         "feature2Desc": "Get notified instantly when your target price is reached",
         "feature3Title": "OTA Comparison",
         "feature3Desc": "Compare prices from Agoda, Booking.com, and more in one place"
+    },
+    "alertManager": {
+        "title": "Manage My Alerts",
+        "description": "Enter your email to view your currently active price alerts.",
+        "manageLink": "Already have alerts?",
+        "fetchButton": "Find My Alerts",
+        "empty": "No active alerts found.",
+        "deactivate": "Turn Off",
+        "successDeactivate": "Alert deactivated successfully.",
+        "hotelName": "Hotel",
+        "targetPrice": "Target Price",
+        "back": "Go Back"
     }
 }

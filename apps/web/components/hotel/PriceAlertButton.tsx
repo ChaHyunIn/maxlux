@@ -11,6 +11,7 @@ import { formatPrice } from '@/lib/utils'
 import { isValidEmail } from '@/lib/validation'
 import { useSettingStore } from '@/stores/settingStore'
 import { trackEvent } from '@/lib/analytics'
+import { AlertManager } from './AlertManager'
 
 interface PriceAlertButtonProps {
     hotelId: string
@@ -23,9 +24,11 @@ const DEFAULT_ALERT_PRICE = { KRW: 300000, USD: 250 } as const;
 export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
     const t = useTranslations('priceAlert')
     const tErr = useTranslations('errors')
+    const tAM = useTranslations('alertManager')
     const locale = useLocale()
     const { currency, exchangeRate } = useSettingStore();
     const [open, setOpen] = useState(false)
+    const [managerOpen, setManagerOpen] = useState(false)
     const [email, setEmail] = useState('')
 
     const getDefaultTarget = useCallback(() => {
@@ -113,6 +116,8 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                 <Bell className="w-4 h-4" />
                 {t('button')}
             </Button>
+
+            <AlertManager open={managerOpen} onOpenChange={setManagerOpen} />
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent onClose={() => setOpen(false)} className="max-w-sm">
@@ -203,6 +208,16 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                             <p className="text-[11px] text-slate-400 text-center">
                                 {t('disclaimer')}
                             </p>
+
+                            <div className="flex justify-center border-t border-slate-50 pt-3">
+                                <button 
+                                    type="button"
+                                    onClick={() => { setOpen(false); setManagerOpen(true); }}
+                                    className="text-[11px] text-indigo-500 hover:text-indigo-600 font-medium underline underline-offset-2"
+                                >
+                                    {tAM('manageLink')}
+                                </button>
+                            </div>
                         </div>
                     )}
                 </DialogContent>
