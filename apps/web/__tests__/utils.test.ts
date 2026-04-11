@@ -4,8 +4,10 @@ import { isValidEmail } from '@/lib/validation';
 describe('formatPrice', () => {
     test('KRW 정상', () => expect(formatPrice(300000)).toBe('₩300,000'));
     test('USD 변환', () => expect(formatPrice(1400000, 'USD')).toBe('$1,000'));
-    test('null 처리', () => expect(formatPrice(null)).toBeNull());
+    test('null 처리', () => expect(formatPrice(null)).toBe(''));
+    test('undefined 처리', () => expect(formatPrice(undefined)).toBe(''));
     test('0원', () => expect(formatPrice(0)).toBe('₩0'));
+    test('USD with custom rate', () => expect(formatPrice(1500000, 'USD', 1500)).toBe('$1,000'));
 });
 
 describe('getPriceLevel', () => {
@@ -14,6 +16,7 @@ describe('getPriceLevel', () => {
     test('high', () => expect(getPriceLevel(700000, 300000, 600000)).toBe('high'));
     test('경계값 p25', () => expect(getPriceLevel(300000, 300000, 600000)).toBe('low'));
     test('경계값 p75', () => expect(getPriceLevel(600000, 300000, 600000)).toBe('high'));
+    test('p25 === p75', () => expect(getPriceLevel(300000, 300000, 300000)).toBe('mid'));
 });
 
 describe('isValidEmail', () => {
@@ -44,5 +47,9 @@ describe('getRelativeTime', () => {
         const d = new Date(Date.now() - 172800000).toISOString();
         // @ts-expect-error - mock function
         expect(getRelativeTime(d, mockT)).toBe('daysAgo');
+    });
+    test('null 처리', () => {
+        // @ts-expect-error - mock function
+        expect(getRelativeTime(null, mockT)).toBe('unknown');
     });
 });

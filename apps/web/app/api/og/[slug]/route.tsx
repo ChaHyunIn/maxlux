@@ -8,6 +8,15 @@ interface Props {
     params: Promise<{ slug: string }>;
 }
 
+const OG_TEXT: Record<string, { subtitle: string; tagline: string }> = {
+    ko: { subtitle: '가격 추이 탐색기', tagline: '럭셔리 호텔 최저가 스나이퍼' },
+    en: { subtitle: 'Price Trends Explorer', tagline: 'Luxury Hotel Price Sniper' },
+};
+
+const DOMAIN = process.env['NEXT_PUBLIC_SITE_URL']
+    ? new URL(process.env['NEXT_PUBLIC_SITE_URL']).hostname
+    : 'maxlux.co';
+
 export async function GET(req: Request, { params: paramsPromise }: Props) {
     try {
         const params = await paramsPromise;
@@ -20,6 +29,7 @@ export async function GET(req: Request, { params: paramsPromise }: Props) {
         }
 
         const name = getHotelName(hotel, locale);
+        const text = OG_TEXT[locale] || OG_TEXT['en']!;
 
         return new ImageResponse(
             (
@@ -37,7 +47,6 @@ export async function GET(req: Request, { params: paramsPromise }: Props) {
                         fontFamily: 'sans-serif',
                     }}
                 >
-                    {/* Decorative Elements */}
                     <div style={{
                         position: 'absolute',
                         top: 40,
@@ -70,7 +79,7 @@ export async function GET(req: Request, { params: paramsPromise }: Props) {
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
                         }}>
-                            Price Trends Explorer
+                            {text.subtitle}
                         </div>
                         <div style={{
                             color: 'white',
@@ -94,8 +103,8 @@ export async function GET(req: Request, { params: paramsPromise }: Props) {
                         color: '#94a3b8',
                         fontSize: 24,
                     }}>
-                        <div style={{ display: 'flex' }}>Luxury Hotel Price Sniper</div>
-                        <div style={{ display: 'flex' }}>maxlux.co</div>
+                        <div style={{ display: 'flex' }}>{text.tagline}</div>
+                        <div style={{ display: 'flex' }}>{DOMAIN}</div>
                     </div>
                 </div>
             ),

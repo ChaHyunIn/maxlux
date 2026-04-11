@@ -19,9 +19,9 @@
         "allCities": "All Cities",
         "favoritesOnly": "♥️ Favorites",
         "priceAll": "All Prices",
-        "priceUnder300": "Under \u20a9300k",
-        "price300to500": "\u20a9300-500k",
-        "priceOver500": "\u20a9500k+",
+        "priceUnder300": "Under ₩300k",
+        "price300to500": "₩300-500k",
+        "priceOver500": "₩500k+",
         "resetFilters": "Reset Filters",
         "resultCount": "{count} hotels",
         "filterButton": "Filter",
@@ -40,6 +40,13 @@
         "cheapestSat": "Cheapest Saturdays",
         "holidayLow": "Holiday Deals",
         "noData": "No rate data collected yet.",
+        "filterWeekend": "Weekends",
+        "filterHoliday": "Holidays",
+        "lastUpdated": "As of {absoluteTime} ({relativeTime})",
+        "backToFullCalendar": "View all dates for {name}",
+        "otherMonthsQuestion": "Curious about other months?",
+        "otherMonthsDescription": "MaxLux tracks all pricing data in real-time for the next 12 months.",
+        "viewFullCalendar": "View Full Calendar",
         "priceUnit": "k",
         "weekdays": [
             "Sun",
@@ -52,10 +59,7 @@
         ],
         "monthFormat": "{month} {year}",
         "monthlyTitle": "{name} {month} Prices | MaxLux",
-        "monthlyDescription": "Check the monthly prices for {name} in {month}.",
-        "filterWeekend": "Weekends",
-        "filterHoliday": "Holidays",
-        "lastUpdated": "As of {absoluteTime} ({relativeTime})"
+        "monthlyDescription": "Check the monthly prices for {name} in {month}."
     },
     "common": {
         "dataLoading": "Collecting data...",
@@ -66,7 +70,9 @@
         "refresh": "Refresh",
         "errorMessage": "Something went wrong. Please refresh the page.",
         "notFound": "Page not found.",
-        "notFoundCode": "404"
+        "notFoundCode": "404",
+        "somethingWentWrong": "Something went wrong!",
+        "tryAgain": "Try again"
     },
     "layout": {
         "brandName": "MaxLux",
@@ -281,5 +287,10 @@
         "priceRise": "Rise",
         "newRegistration": "New Entry",
         "amount": "{amount} change"
+    },
+    "og": {
+        "subtitle": "Price Trends Explorer",
+        "tagline": "Luxury Hotel Price Sniper",
+        "domain": "maxlux.co"
     }
 }

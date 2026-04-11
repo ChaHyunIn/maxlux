@@ -24,11 +24,10 @@ export async function generateMetadata({ params: paramsPromise }: Props): Promis
 
     const t = await getTranslations({ locale: params.locale, namespace: 'calendar' });
     const name = getHotelName(hotel, params.locale);
-    
-    // Format month for title: "2026-06" -> "June 2026" or "2026년 6월"
+
     const [year, month] = params['yyyy-mm'].split('-').map(Number);
     const formattedMonth = t('monthFormat', { year: String(year), month: String(month) });
-    
+
     const ogImageUrl = `/api/og/${params.slug}?locale=${params.locale}`;
 
     return {
@@ -53,42 +52,44 @@ export default async function MonthlyLandingPage({ params: paramsPromise }: Prop
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) notFound();
 
+    const t = await getTranslations({ locale: params.locale, namespace: 'calendar' });
     const rates = await getRates(hotel.id);
+    const hotelName = getHotelName(hotel, params.locale);
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <div className="mb-6">
-                <Link 
-                    href={`/hotels/${params.slug}`} 
+                <Link
+                    href={`/hotels/${params.slug}`}
                     className="inline-flex items-center text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
                 >
                     <ChevronLeft className="w-4 h-4 mr-1" />
-                    {getHotelName(hotel, params.locale)} 전체 기간 보기
+                    {t('backToFullCalendar', { name: hotelName })}
                 </Link>
             </div>
 
             <HotelHeroHeader hotel={hotel} />
-            
+
             <div className="mt-8">
                 <ErrorBoundary>
-                    <HeatmapCalendar 
-                        rates={rates} 
-                        hotel={hotel} 
-                        targetMonth={params['yyyy-mm']} 
+                    <HeatmapCalendar
+                        rates={rates}
+                        hotel={hotel}
+                        targetMonth={params['yyyy-mm']}
                     />
                 </ErrorBoundary>
             </div>
-            
+
             <div className="mt-12 p-8 bg-slate-50 rounded-2xl text-center">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    다른 달의 가격도 궁금하신가요?
+                    {t('otherMonthsQuestion')}
                 </h3>
                 <p className="text-slate-500 mb-6">
-                    MaxLux는 향후 12개월간의 모든 가격 데이터를 실시간으로 추적합니다.
+                    {t('otherMonthsDescription')}
                 </p>
                 <Link href={`/hotels/${params.slug}`}>
                     <button className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg">
-                        전체 캘린더 확인하기
+                        {t('viewFullCalendar')}
                     </button>
                 </Link>
             </div>

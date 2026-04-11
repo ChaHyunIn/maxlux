@@ -43,6 +43,10 @@
         "filterWeekend": "주말만",
         "filterHoliday": "공휴일만",
         "lastUpdated": "{absoluteTime} 기준 ({relativeTime})",
+        "backToFullCalendar": "{name} 전체 기간 보기",
+        "otherMonthsQuestion": "다른 달의 가격도 궁금하신가요?",
+        "otherMonthsDescription": "MaxLux는 향후 12개월간의 모든 가격 데이터를 실시간으로 추적합니다.",
+        "viewFullCalendar": "전체 캘린더 확인하기",
         "priceUnit": "만",
         "weekdays": [
             "일",
@@ -66,7 +70,9 @@
         "refresh": "새로고침",
         "errorMessage": "문제가 발생했습니다. 새로고침해주세요.",
         "notFound": "페이지를 찾을 수 없습니다.",
-        "notFoundCode": "404"
+        "notFoundCode": "404",
+        "somethingWentWrong": "문제가 발생했습니다!",
+        "tryAgain": "다시 시도"
     },
     "layout": {
         "brandName": "MaxLux",
@@ -281,5 +287,10 @@
         "priceRise": "상승",
         "newRegistration": "신규 등록",
         "amount": "{amount} 변동"
+    },
+    "og": {
+        "subtitle": "가격 추이 탐색기",
+        "tagline": "럭셔리 호텔 최저가 스나이퍼",
+        "domain": "maxlux.co"
     }
 }
