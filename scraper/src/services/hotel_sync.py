@@ -35,13 +35,28 @@ def estimate_benefit_value(benefits: list[dict]) -> int:
 
 def sync_hotels(hotels_data: list[dict]) -> int:
     client = get_client()
+
+    # DB에서 기존 호텔 정보를 미리 조회하여 캐싱 (name_ko 유지 목적)
+    try:
+        existing_res = client.table("hotels").select("hotellux_id, name_ko").execute()
+        existing_map = {row["hotellux_id"]: row["name_ko"] for row in existing_res.data}
+    except Exception:
+        log.warning("failed_to_fetch_existing_hotels", msg="Proceeding without DB cache")
+        existing_map = {}
+
     rows = []
     for h in hotels_data:
         hotel_id = h.get("_id")
         if not hotel_id:
             continue
+
         name_en = h.get("nameEn", h.get("name", "")).strip()
-        name_ko = HOTEL_KO_MAPPING.get(name_en, name_en)
+
+        # 1. DB에 이미 있는 호텔이면 기존 name_ko 유지
+        # 2. 없으면 HOTEL_KO_MAPPING 확인
+        # 3. 그외에는 영문명 사용
+        name_ko = existing_map.get(hotel_id) or HOTEL_KO_MAPPING.get(name_en, name_en)
+
         city_obj = h.get("city", {})
         location = h.get("location", {})
         brand_obj = h.get("brand", {})

@@ -141,6 +141,7 @@ async def check_and_send_alerts() -> dict:
             cheapest_date=cheapest_date,
             hotel_slug=hotel_slug,
             locale=alert_locale,
+            currency=alert.get("currency", "KRW"),
         )
 
         if success:
@@ -161,19 +162,22 @@ async def send_alert_email(
     cheapest_date: str,
     hotel_slug: str,
     locale: str = "ko",
+    currency: str = "KRW",
 ) -> bool:
     """
     Resend API를 사용하여 가격 알림 이메일을 발송합니다.
-
-    TODO: 이메일 템플릿을 별도 파일(또는 DB)로 분리하고
-    프론트엔드 i18n 키와 동기화하는 것을 권장.
-    현재는 ko/en 2개 언어만 지원하므로 인라인 유지.
     """
     try:
         hotel_name = html_module.escape(hotel_name)
-        # TODO: alert 테이블에 currency 컬럼 추가 후 통화별 분기
-        formatted_price = f"₩{current_price:,}"
-        formatted_target = f"₩{target_price:,}"
+        
+        # 통화 포맷팅
+        if currency == "USD":
+            formatted_price = f"${current_price:,}"
+            formatted_target = f"${target_price:,}"
+        else:
+            formatted_price = f"₩{current_price:,}"
+            formatted_target = f"₩{target_price:,}"
+            
         hotel_url = f"{SITE_URL}/hotels/{hotel_slug}"
 
         if locale == "en":

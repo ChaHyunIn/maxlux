@@ -7,7 +7,6 @@ const DOMAIN = process.env['NEXT_PUBLIC_SITE_URL'] || 'https://maxlux.kr';
 const LOCALES = routing.locales;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-
     // Fetch hotel slugs for detail pages
     const { data: hotels, error } = await supabase
         .from('hotels')
@@ -19,6 +18,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     const entries: MetadataRoute.Sitemap = [];
+
+    // Current date and next 11 months for landing pages
+    const now = new Date();
+    const months = Array.from({ length: 12 }, (_, i) => {
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        return `${year}-${month}`;
+    });
 
     for (const locale of LOCALES) {
         // Home page
@@ -40,15 +48,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Hotel detail pages
         for (const hotel of hotels || []) {
-            const entry: MetadataRoute.Sitemap[number] = {
-                url: `${DOMAIN}/${locale}/hotels/${hotel.slug}`,
+            const baseUrl = `${DOMAIN}/${locale}/hotels/${hotel.slug}`;
+            
+            // Main detail page
+            const mainEntry: MetadataRoute.Sitemap[number] = {
+                url: baseUrl,
                 changeFrequency: 'weekly' as const,
                 priority: 0.8,
             };
             if (hotel.latest_scraped_at) {
-                entry.lastModified = new Date(hotel.latest_scraped_at);
+                mainEntry.lastModified = new Date(hotel.latest_scraped_at);
             }
-            entries.push(entry);
+            entries.push(mainEntry);
+
+            // Monthly landing pages
+            for (const month of months) {
+                entries.push({
+                    url: `${baseUrl}/${month}`,
+                    changeFrequency: 'weekly',
+                    priority: 0.6,
+                });
+            }
         }
     }
 

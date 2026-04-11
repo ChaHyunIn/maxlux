@@ -1,8 +1,17 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { setRequestLocale , getTranslations } from 'next-intl/server';
+import { ChevronLeft } from 'lucide-react';
+import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
+import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelName } from '@/lib/hotelUtils';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
+import { getRates } from '@/lib/supabase/queries/rates';
 import type { Metadata } from 'next';
+
+export const revalidate = REVALIDATE_SECONDS.hotelDetail;
 
 interface Props {
     params: Promise<{ locale: string; slug: string; 'yyyy-mm': string }>;
@@ -13,27 +22,76 @@ export async function generateMetadata({ params: paramsPromise }: Props): Promis
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) return {};
 
-    const t = await getTranslations({ locale: params.locale, namespace: 'seo' });
+    const t = await getTranslations({ locale: params.locale, namespace: 'calendar' });
     const name = getHotelName(hotel, params.locale);
+    
+    // Format month for title: "2026-06" -> "June 2026" or "2026년 6월"
+    const [year, month] = params['yyyy-mm'].split('-').map(Number);
+    const formattedMonth = t('monthFormat', { year: String(year), month: String(month) });
+    
+    const ogImageUrl = `/api/og/${params.slug}?locale=${params.locale}`;
 
     return {
-        title: t('monthlyTitle', { name, month: params['yyyy-mm'] }),
-        description: t('monthlyDescription', { name, month: params['yyyy-mm'] }),
+        title: t('monthlyTitle', { name, month: formattedMonth }),
+        description: t('monthlyDescription', { name, month: formattedMonth }),
+        openGraph: {
+            title: t('monthlyTitle', { name, month: formattedMonth }),
+            description: t('monthlyDescription', { name, month: formattedMonth }),
+            images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            images: [ogImageUrl],
+        },
     };
 }
 
 export default async function MonthlyLandingPage({ params: paramsPromise }: Props) {
     const params = await paramsPromise;
     setRequestLocale(params.locale);
-    const t = await getTranslations('seo');
 
     const hotel = await getHotelBySlug(params.slug);
     if (!hotel) notFound();
 
+    const rates = await getRates(hotel.id);
+
     return (
-        <div>
-            <h1>{getHotelName(hotel, params.locale)} - {params['yyyy-mm']}</h1>
-            <p>{t('monthlyLandingTodo')}</p>
+        <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="mb-6">
+                <Link 
+                    href={`/hotels/${params.slug}`} 
+                    className="inline-flex items-center text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+                >
+                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    {getHotelName(hotel, params.locale)} 전체 기간 보기
+                </Link>
+            </div>
+
+            <HotelHeroHeader hotel={hotel} />
+            
+            <div className="mt-8">
+                <ErrorBoundary>
+                    <HeatmapCalendar 
+                        rates={rates} 
+                        hotel={hotel} 
+                        targetMonth={params['yyyy-mm']} 
+                    />
+                </ErrorBoundary>
+            </div>
+            
+            <div className="mt-12 p-8 bg-slate-50 rounded-2xl text-center">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    다른 달의 가격도 궁금하신가요?
+                </h3>
+                <p className="text-slate-500 mb-6">
+                    MaxLux는 향후 12개월간의 모든 가격 데이터를 실시간으로 추적합니다.
+                </p>
+                <Link href={`/hotels/${params.slug}`}>
+                    <button className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg">
+                        전체 캘린더 확인하기
+                    </button>
+                </Link>
+            </div>
         </div>
     );
 }

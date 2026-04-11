@@ -51,6 +51,8 @@
             "Sat"
         ],
         "monthFormat": "{month} {year}",
+        "monthlyTitle": "{name} {month} Prices | MaxLux",
+        "monthlyDescription": "Check the monthly prices for {name} in {month}.",
         "filterWeekend": "Weekends",
         "filterHoliday": "Holidays",
         "lastUpdated": "As of {absoluteTime} ({relativeTime})"
@@ -149,8 +151,6 @@
         "tax": "Tax"
     },
     "seo": {
-        "monthlyTitle": "{name} {month} Prices | MaxLux",
-        "monthlyDescription": "Check the monthly prices for {name} in {month}.",
         "monthlyLandingTodo": "Monthly price page is coming soon.",
         "metaTitle": "MaxLux - Luxury Hotel Best Price Sniper",
         "metaDescription": "Track 12-month luxury hotel prices with a heatmap calendar on HotelLux.",
@@ -270,5 +270,15 @@
         "hotels_com": "Hotels.com",
         "trip_com": "Trip.com",
         "expedia": "Expedia"
+    },
+    "priceChanges": {
+        "title": "Recent Price Changes",
+        "description": "History of recently detected price updates. (Latest 20)",
+        "noChanges": "No price changes detected yet.",
+        "stayDate": "Stay on {date}",
+        "changedAt": "{relativeTime}",
+        "priceDrop": "Drop",
+        "priceRise": "Rise",
+        "amount": "{amount} change"
     }
 }

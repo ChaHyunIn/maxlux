@@ -5,8 +5,9 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { fetchOtaPrices as fetchOtaPricesApi } from '@/lib/api/ota'
+import { fetchRoomRates as fetchRoomRatesApi } from '@/lib/api/roomRates'
 import { PRICE_COLORS, REFUNDABLE_ROOM_TYPES } from '@/lib/constants'
-import { isDayDetailKey } from '@/lib/i18nTypes';
+import { getRoomTypeLabel } from '@/lib/hotelUtils'
 import { getPriceLevel } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import { OtaPriceList } from './OtaPriceList'
@@ -69,16 +70,8 @@ export function DayDetailModal({
         if (!open || !rate) return;
         setRoomRatesLoading(true);
         try {
-            const res = await fetch(`/api/room-rates?hotelId=${rate.hotel_id}&stayDate=${rate.stay_date}`)
-            if (res.ok) {
-                const json = await res.json()
-                if (json && typeof json === 'object' && 'data' in json && Array.isArray(json.data)) {
-                    const data: RoomRate[] = json.data;
-                    setRoomRates(data);
-                } else {
-                    setRoomRates([])
-                }
-            }
+            const data = await fetchRoomRatesApi(rate.hotel_id, rate.stay_date);
+            setRoomRates(data);
         } catch {
             setRoomRates([])
         } finally {
@@ -116,19 +109,6 @@ export function DayDetailModal({
 
     const activePrices = allPrices.filter(p => !p.is_sold_out && p.price_krw > 0).map(p => p.price_krw);
     const lowestPrice = activePrices.length > 0 ? Math.min(...activePrices) : 0;
-
-    const getRoomTypeLabel = (type: string | undefined | null) => {
-        if (!type) return '';
-        if (type === 'standard') return t('standardRoom');
-        const camelKey = type.replace(/_([a-z])/g, (_: string, letter: string) => letter.toUpperCase());
-
-        if (isDayDetailKey(camelKey)) {
-            return t(camelKey);
-        }
-        // Systematic block: If fallback type contains Chinese, return empty string
-        if (/[\u4e00-\u9fa5]/.test(type)) return '';
-        return type;
-    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -180,7 +160,7 @@ export function DayDetailModal({
                 )}
 
                 <div className="mt-3 text-xs text-slate-400 text-center">
-                    {t('roomType')}: {getRoomTypeLabel(rate.room_type)}
+                    {t('roomType')}: {getRoomTypeLabel(rate.room_type, t)}
                 </div>
             </DialogContent>
         </Dialog>

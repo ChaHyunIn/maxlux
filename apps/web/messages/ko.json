@@ -53,7 +53,9 @@
             "금",
             "토"
         ],
-        "monthFormat": "{year}년 {month}월"
+        "monthFormat": "{year}년 {month}월",
+        "monthlyTitle": "{name} {month} 가격 | MaxLux",
+        "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요."
     },
     "common": {
         "dataLoading": "데이터 수집 중입니다...",
@@ -149,8 +151,6 @@
         "tax": "세금"
     },
     "seo": {
-        "monthlyTitle": "{name} {month} 가격 | MaxLux",
-        "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요.",
         "monthlyLandingTodo": "월별 가격 페이지는 준비 중입니다.",
         "metaTitle": "MaxLux - 럭셔리 호텔 최저가 스나이퍼",
         "metaDescription": "HotelLux 럭셔리 호텔의 12개월 가격을 히트맵 캘린더로 확인하세요.",
@@ -270,5 +270,15 @@
         "hotels_com": "Hotels.com",
         "trip_com": "Trip.com",
         "expedia": "Expedia"
+    },
+    "priceChanges": {
+        "title": "최근 가격 변동",
+        "description": "최근 수집된 가격 변동 이력입니다. (최근 20건)",
+        "noChanges": "출시 이후 가격 변동 이력이 아직 없습니다.",
+        "stayDate": "{date} 투숙",
+        "changedAt": "{relativeTime}",
+        "priceDrop": "하락",
+        "priceRise": "상승",
+        "amount": "{amount} 변동"
     }
 }

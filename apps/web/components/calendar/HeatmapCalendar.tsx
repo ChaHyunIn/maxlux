@@ -11,7 +11,15 @@ import { MonthGrid } from './MonthGrid';
 import { SniperFilters } from './SniperFilters';
 import type { DailyRate, Hotel } from '@/lib/types';
 
-export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: Hotel }) {
+export function HeatmapCalendar({ 
+    rates, 
+    hotel, 
+    targetMonth 
+}: { 
+    rates: DailyRate[], 
+    hotel: Hotel,
+    targetMonth?: string
+}) {
     const t = useTranslations('calendar');
     const tTime = useTranslations('time');
     const locale = useLocale();
@@ -49,16 +57,36 @@ export function HeatmapCalendar({ rates, hotel }: { rates: DailyRate[], hotel: H
                 </div>
             </div>
             <div className="space-y-8">
-                {groupedByMonth.map(([key, monthRates]) => {
-                    const parts = key.split('-').map(Number);
+                {groupedByMonth
+                    .filter(([key]) => {
+                        if (!targetMonth) return true;
+                        // Normalize targetMonth (YYYY-MM to YYYY-M) to match key
+                        const [y, m] = targetMonth.split('-');
+                        const normalizedTarget = `${y}-${parseInt(m || '0', 10)}`;
+                        return key === normalizedTarget;
+                    })
+                    .map(([key, monthRates]) => {
+                        const parts = key.split('-').map(Number);
                     const year = parts[0];
                     const month = parts[1];
                     if (year === undefined || month === undefined) return null;
-                    return <MonthGrid key={key} year={year} month={month} rates={monthRates} p25={p25} p75={p75} />;
-                })}
-            </div>
+                    return (
+                        <MonthGrid 
+                            key={key} 
+                            year={year} 
+                            month={month} 
+                            rates={monthRates} 
+                            p25={p25} 
+                            p75={p75} 
+                            hotelSlug={hotel.slug}
+                            showDetailsLink={!targetMonth}
+                        />
+                    );
+                })
+            }
+</div>
 
-            <DayDetailModal
+        <DayDetailModal
                 open={modalOpen}
                 onOpenChange={(open) => { if (!open) closeDayDetail(); }}
                 rate={selectedRate}
