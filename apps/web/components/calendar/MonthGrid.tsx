@@ -49,7 +49,7 @@ export function MonthGrid({
     }, [rates]);
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm" role="grid" aria-label={header}>
             <div className="flex items-center justify-between mb-4 ml-1">
                 <h3 className="text-lg font-bold">{header}</h3>
                 {hotelSlug && showDetailsLink && (
@@ -63,14 +63,14 @@ export function MonthGrid({
                     </Link>
                 )}
             </div>
-            <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-2 mb-2" role="row">
                 {weekdays.map((d, i) => (
                     <div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? 'text-red-500/80' : i === 6 ? 'text-blue-500/80' : 'text-slate-500'}`}>
                         {d}
                     </div>
                 ))}
             </div>
-            <div className="grid grid-cols-7 gap-1 sm:gap-2">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-2" role="row">
                 {cells.map((d, idx) => {
                     if (!d) return <div key={`empty-${idx}`} className="min-h-[60px]" />;
                     const dateStr = format(d, 'yyyy-MM-dd');
