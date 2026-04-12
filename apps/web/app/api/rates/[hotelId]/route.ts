@@ -1,5 +1,6 @@
 import { successResponse, errorResponse } from '@/lib/apiResponse';
 import { getRates } from '@/lib/supabase/queries/rates';
+import { isValidUUID } from '@/lib/validation';
 
 interface Props {
     params: Promise<{ hotelId: string }>;
@@ -7,8 +8,7 @@ interface Props {
 
 export async function GET(_req: Request, { params: paramsPromise }: Props) {
     const params = await paramsPromise;
-    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!UUID_REGEX.test(params.hotelId)) {
+    if (!isValidUUID(params.hotelId)) {
         return errorResponse('INVALID_PARAMS', 400);
     }
 

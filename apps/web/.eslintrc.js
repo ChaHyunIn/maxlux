@@ -114,6 +114,8 @@ module.exports = {
             files: ['*.test.ts', '*.test.tsx', '*.spec.ts'],
             rules: {
                 '@typescript-eslint/no-magic-numbers': 'off',
+                '@typescript-eslint/no-explicit-any': 'warn',
+                '@typescript-eslint/consistent-type-assertions': 'off',
             },
         },
         {
@@ -124,7 +126,7 @@ module.exports = {
             },
         },
         {
-            files: ['hooks/useFavorites.ts', 'hooks/useLocalStorage.ts'],
+            files: ['hooks/useFavorites.ts', 'hooks/useLocalStorage.ts', 'components/shared/StoreInitializer.tsx'],
             rules: {
                 'no-restricted-syntax': 'off',
             },

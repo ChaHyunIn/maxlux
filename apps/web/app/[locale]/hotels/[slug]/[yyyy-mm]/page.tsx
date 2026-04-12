@@ -1,10 +1,10 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { Link } from '@/i18n/navigation';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
 import { getHotelName } from '@/lib/hotelUtils';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';

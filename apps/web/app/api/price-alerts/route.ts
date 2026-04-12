@@ -1,7 +1,7 @@
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 import { rateLimit } from '@/lib/rateLimit';
 import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supabase/mutations/alerts';
-import { isValidEmail } from '@/lib/validation';
+import { isValidEmail, isValidUUID } from '@/lib/validation';
 import type { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -33,8 +33,7 @@ export async function POST(req: NextRequest) {
             return errorResponse('MISSING_FIELDS', 400);
         }
 
-        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (!UUID_REGEX.test(hotel_id)) {
+        if (!isValidUUID(hotel_id)) {
             return errorResponse('INVALID_PARAMS', 400);
         }
 

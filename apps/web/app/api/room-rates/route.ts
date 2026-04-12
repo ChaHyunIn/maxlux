@@ -1,5 +1,6 @@
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 import { getRoomRates } from '@/lib/supabase/queries/rates';
+import { isValidUUID, isValidDateString } from '@/lib/validation';
 import type { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -10,10 +11,7 @@ export async function GET(req: NextRequest) {
         return errorResponse('MISSING_PARAMS', 400);
     }
 
-    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-    if (!UUID_REGEX.test(hotelId) || !DATE_REGEX.test(stayDate)) {
+    if (!isValidUUID(hotelId) || !isValidDateString(stayDate)) {
         return errorResponse('INVALID_PARAMS', 400);
     }
 

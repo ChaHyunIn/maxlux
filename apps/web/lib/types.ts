@@ -43,6 +43,7 @@ export interface DailyRate {
     price_krw: number;
     room_type: string;
     tag: Tag;
+    is_refundable: boolean;
     is_sold_out: boolean;
     scraped_at: string;
 }

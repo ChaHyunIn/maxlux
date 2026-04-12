@@ -1,52 +1,12 @@
+import mappings from './data/mappings.json';
 import type { ApiTermKey } from './i18nTypes';
 
-export const CHINESE_TO_KEY: Record<string, ApiTermKey> = {
-    '大床': 'kingBed',
-    '双床': 'twinBed',
-    '单人': 'singleBed',
-    '套房': 'suite',
-    '标准': 'standard',
-    '高级': 'superior',
-    '豪华': 'deluxe',
-    '行政': 'executive',
-    '尊贵': 'premium',
-    '总统': 'presidential',
-    '海景': 'oceanView',
-    '江景': 'riverView',
-    '湖景': 'lakeView',
-    '山景': 'mountainView',
-    '城景': 'cityView',
-    '市景': 'cityView',
-    '园景': 'gardenView',
-    '景观': 'view',
-    '无窗': 'noWindow',
-    '一居室': 'oneBedroom',
-    '两居室': 'twoBedroom',
-    '三居室': 'threeBedroom',
-    '房': 'room',
-    '双早': 'breakfast2',
-    '单早': 'breakfast1',
-    '无早': 'roomOnly',
-    '含早': 'breakfastInc',
-    '含': 'included',
-    '早餐': 'breakfast',
-    '会员专属': 'memberExclusive',
-    '会员专享': 'memberExclusive',
-    '会员价': 'memberRate',
-    '会员': 'member',
-    '特惠': 'specialOffer',
-    '促销': 'promotion',
-    '连住': 'consecutive',
-    '提前预订': 'earlyBird',
-    '早鸟': 'earlyBird',
-    '尊享': 'special',
-    '礼遇': 'benefit',
-    '免费': 'free',
-    '取消': 'cancel',
-    '灵活': 'flexible',
-    '不可': 'non',
-    '预付': 'prepaid'
-};
+/**
+ * Maps Chinese keywords found in OTA API responses/OCR to normalized translation keys.
+ * Data is centralized in mappings.json to maintain consistency with benefit and brand mappers.
+ */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const CHINESE_TO_KEY: Record<string, ApiTermKey> = mappings.apiTerms as Record<string, ApiTermKey>;
 
 export function getLocalizedText(
     en: string | null,

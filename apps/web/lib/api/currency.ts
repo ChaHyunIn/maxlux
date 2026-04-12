@@ -35,8 +35,8 @@ export const getExchangeRate = unstable_cache(
             }
 
             // Bracket notation with explicit dual suppression for strict production lint rules
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
-            const v = val as any;
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            const v = val as Record<string, unknown>;
             const rate = typeof v['rate'] === 'number' ? v['rate'] : FALLBACK_RATE;
             const source = typeof v['source'] === 'string' ? v['source'] : 'db';
             const date = typeof v['date'] === 'string' ? v['date'] : new Date().toISOString();

@@ -1,13 +1,23 @@
 import { formatPrice, getPriceLevel, getRelativeTime } from '@/lib/utils';
 import { isValidEmail } from '@/lib/validation';
+import type { useTranslations } from 'next-intl';
+
+// 타입 안전한 mock 생성
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockT = ((key: string) => key) as unknown as ReturnType<typeof useTranslations>;
 
 describe('formatPrice', () => {
     test('KRW 정상', () => expect(formatPrice(300000)).toBe('₩300,000'));
-    test('USD 변환', () => expect(formatPrice(1400000, 'USD')).toBe('$1,000'));
+    // ko-KR locale에서 USD는 US$로 표기됨
+    test('USD 변환', () => expect(formatPrice(1400000, 'USD')).toBe('US$1,000'));
+    test('USD EN locale', () => expect(formatPrice(1400000, 'USD', 1400, 'en')).toBe('$1,000'));
+    test('KRW EN locale', () => expect(formatPrice(300000, 'KRW', undefined, 'en')).toBe('₩300,000'));
     test('null 처리', () => expect(formatPrice(null)).toBe(''));
     test('undefined 처리', () => expect(formatPrice(undefined)).toBe(''));
     test('0원', () => expect(formatPrice(0)).toBe('₩0'));
-    test('USD with custom rate', () => expect(formatPrice(1500000, 'USD', 1500)).toBe('$1,000'));
+    test('USD with custom rate', () => expect(formatPrice(1500000, 'USD', 1500)).toBe('US$1,000'));
+    test('소수점 없음 KRW', () => expect(formatPrice(333333)).toBe('₩333,333'));
+    test('소수점 없음 USD', () => expect(formatPrice(1400000, 'USD', 1400)).toBe('US$1,000'));
 });
 
 describe('getPriceLevel', () => {
@@ -26,30 +36,23 @@ describe('isValidEmail', () => {
 });
 
 describe('getRelativeTime', () => {
-    const mockT = (key: string) => key;
-
     test('방금 전', () => {
         const now = new Date().toISOString();
-        // @ts-expect-error - mock function
         expect(getRelativeTime(now, mockT)).toBe('justNow');
     });
     test('분 전', () => {
         const d = new Date(Date.now() - 120000).toISOString();
-        // @ts-expect-error - mock function
         expect(getRelativeTime(d, mockT)).toBe('minutesAgo');
     });
     test('시간 전', () => {
         const d = new Date(Date.now() - 7200000).toISOString();
-        // @ts-expect-error - mock function
         expect(getRelativeTime(d, mockT)).toBe('hoursAgo');
     });
     test('일 전', () => {
         const d = new Date(Date.now() - 172800000).toISOString();
-        // @ts-expect-error - mock function
         expect(getRelativeTime(d, mockT)).toBe('daysAgo');
     });
     test('null 처리', () => {
-        // @ts-expect-error - mock function
         expect(getRelativeTime(null, mockT)).toBe('unknown');
     });
 });

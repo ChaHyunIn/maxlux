@@ -1,5 +1,6 @@
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 import { getPriceChanges } from '@/lib/supabase/queries/rates';
+import { isValidUUID } from '@/lib/validation';
 import type { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -12,8 +13,7 @@ export async function GET(req: NextRequest) {
         return errorResponse('MISSING_HOTEL_ID', 400);
     }
 
-    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!UUID_REGEX.test(hotelId)) {
+    if (!isValidUUID(hotelId)) {
         return errorResponse('INVALID_PARAMS', 400);
     }
 
