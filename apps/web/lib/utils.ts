@@ -11,14 +11,20 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(
   price_krw: number | undefined | null, 
   currency: 'KRW' | 'USD' = 'KRW', 
-  exchangeRate?: number
+  exchangeRate?: number,
+  locale: string = 'ko'
 ): string {
   if (price_krw === undefined || price_krw === null) return '';
-  if (currency === 'USD') {
-    const rate = exchangeRate || LOCALE_DEFAULTS.exchangeRateUsd;
-    return `$${Math.round(price_krw / rate).toLocaleString()}`;
-  }
-  return `₩${Math.round(price_krw).toLocaleString()}`;
+
+  const price = currency === 'USD'
+    ? Math.round(price_krw / (exchangeRate || LOCALE_DEFAULTS.exchangeRateUsd))
+    : Math.round(price_krw);
+
+  return new Intl.NumberFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
+    style: 'currency',
+    currency: currency,
+    maximumFractionDigits: 0,
+  }).format(price);
 }
 
 export function getPriceLevel(price: number, p25: number, p75: number): 'low' | 'mid' | 'high' {

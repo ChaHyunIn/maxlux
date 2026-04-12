@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { History, ArrowLeft, CalendarDays } from 'lucide-react';
+import { History, ArrowLeft, CalendarDays, Inbox } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import MonthlyComparisonChart from '@/components/hotel/MonthlyComparisonChart';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,6 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const t = await getTranslations({ locale, namespace: 'compare' });
     const hotelName = getHotelName(hotel, locale);
 
-    // 실제 데이터 기반 최저월 추출 로직 대신 타이틀 위주 구성 (상세 내용은 본문에서 처리)
     return {
         title: t('metaTitle', { name: hotelName }),
         description: t('metaDescriptionGeneric', { name: hotelName }),
@@ -62,8 +61,19 @@ export default async function ComparePage(props: PageProps) {
 
     if (stats.length === 0) {
         return (
-            <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-                <p className="text-slate-500">{t('noData')}</p>
+            <div className="max-w-3xl mx-auto px-4 py-32 text-center">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <Inbox className="w-10 h-10 text-slate-200 stroke-[1]" />
+                </div>
+                <h2 className="text-2xl font-display font-bold text-slate-900 mb-4">{t('noDataTitle', { defaultValue: 'Seeking Perfection...' })}</h2>
+                <p className="text-slate-400 max-w-md mx-auto mb-10 font-light leading-relaxed">
+                    {t('noDataDesc', { defaultValue: 'We are currently analyzing the premium rates for this property. Please return in a few moments for a refined price experience.' })}
+                </p>
+                <Link href={`/hotels/${slug}`}>
+                    <Button variant="outline" className="rounded-full px-10 border-slate-200 hover:bg-slate-50 transition-all font-bold">
+                        {t('backToHotel')}
+                    </Button>
+                </Link>
             </div>
         );
     }
@@ -83,21 +93,24 @@ export default async function ComparePage(props: PageProps) {
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
-            <Link href={`/hotels/${slug}`} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 mb-8 transition-colors group">
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <Link href={`/hotels/${slug}`} className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-slate-400 hover:text-slate-900 mb-12 transition-all uppercase group">
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                 {t('backToHotel')}
             </Link>
 
-            <div className="mb-10">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-indigo-50 rounded-xl">
-                        <History className="w-6 h-6 text-indigo-600" />
+            <div className="mb-14">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-brand/10 rounded-2xl">
+                        <History className="w-6 h-6 text-brand" strokeWidth={1.5} />
                     </div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-                        {t('title', { name: hotelName })}
-                    </h1>
+                    <div>
+                        <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-brand mb-1">Intelligence Report</div>
+                        <h1 className="text-4xl md:text-5xl font-display font-bold text-slate-950 tracking-tight">
+                            {t('title', { name: hotelName })}
+                        </h1>
+                    </div>
                 </div>
-                <p className="text-slate-500 text-lg leading-relaxed">
+                <p className="text-slate-500 text-lg leading-relaxed font-light">
                     {t('metaDescription', { 
                         name: hotelName, 
                         cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : tTime('unknown') 
@@ -105,29 +118,27 @@ export default async function ComparePage(props: PageProps) {
                 </p>
             </div>
 
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 mb-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-lg font-bold text-slate-800">{t('averagePrice')}</h2>
-                    <div className="text-sm text-slate-400 font-medium">{t('perNight')}</div>
+            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-luxury p-10 mb-12">
+                <div className="flex items-center justify-between mb-10">
+                    <h2 className="text-xl font-display font-bold text-slate-900">{t('averagePrice')}</h2>
+                    <div className="text-xs text-slate-400 font-bold tracking-widest uppercase">{t('perNight')}</div>
                 </div>
                 
                 <MonthlyComparisonChart stats={formattedMonthlyStats} />
             </div>
 
             {cheapestStat && (
-                <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-100 flex items-start gap-4 mb-8">
-                    <div className="p-2 bg-emerald-500 rounded-lg text-white">
-                        <CalendarDays className="w-5 h-5" />
+                <div className="bg-luxury-emerald-soft rounded-3xl p-8 border border-luxury-emerald/10 flex items-start gap-5 mb-12 shadow-sm">
+                    <div className="p-3 bg-luxury-emerald rounded-2xl text-white shadow-lg shadow-luxury-emerald/20">
+                        <CalendarDays className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
-                        <h4 className="font-bold text-emerald-900 mb-1">{t('insiderTip')}</h4>
-                        <p className="text-emerald-700 text-sm">
+                        <h4 className="font-display font-bold text-luxury-emerald text-xl mb-2">{t('insiderTip')}</h4>
+                        <p className="text-luxury-emerald font-light text-base leading-relaxed">
                             {t('recommendation', { 
                                 name: hotelName, 
                                 month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10),
-                                // NOTE: 서버 컴포넌트에서 client currency store 접근 불가.
-                                // KRW 원본가 그대로 표시. 향후 cookie 기반 currency 전달 시 교체 필요.
-                                price: formatPrice(cheapestStat.avgPrice, 'KRW', 1)
+                                price: formatPrice(cheapestStat.avgPrice, 'KRW', 1, locale)
                             })}
                         </p>
                     </div>
@@ -136,7 +147,7 @@ export default async function ComparePage(props: PageProps) {
 
             <div className="flex justify-center">
                 <Link href={`/hotels/${slug}`}>
-                    <Button variant="outline" size="lg" className="rounded-full px-8">
+                    <Button size="lg" className="rounded-full px-12 h-14 bg-slate-950 text-white font-bold hover:bg-slate-900 transition-all hover:scale-105 active:scale-95 shadow-xl">
                         {t('viewCalendar')}
                     </Button>
                 </Link>

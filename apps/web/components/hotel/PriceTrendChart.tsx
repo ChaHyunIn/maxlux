@@ -83,10 +83,22 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const xScale = (i: number) => CHART_PADDING.left + (i / (chartData.length - 1)) * innerWidth
     const yScale = (price: number) => CHART_PADDING.top + innerHeight - ((price - yMin) / (yMax - yMin)) * innerHeight
 
-    // Build path
-    const linePath = chartData
-        .map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(1)} ${yScale(d.price).toFixed(1)}`)
-        .join(' ')
+    // Build Path - Curved Bezier for luxury feel
+    const linePath = useMemo(() => {
+        if (chartData.length < 2) return '';
+        let path = `M ${xScale(0).toFixed(1)} ${yScale(chartData[0].price).toFixed(1)}`;
+        
+        for (let i = 0; i < chartData.length - 1; i++) {
+            const x1 = xScale(i);
+            const y1 = yScale(chartData[i].price);
+            const x2 = xScale(i + 1);
+            const y2 = yScale(chartData[i + 1].price);
+            const cp1x = x1 + (x2 - x1) / 2;
+            const cp2x = x1 + (x2 - x1) / 2;
+            path += ` C ${cp1x.toFixed(1)} ${y1.toFixed(1)}, ${cp2x.toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+        }
+        return path;
+    }, [chartData, xScale, yScale]);
 
     // Area fill
     const areaPath = `${linePath} L ${xScale(chartData.length - 1).toFixed(1)} ${(CHART_PADDING.top + innerHeight).toFixed(1)} L ${CHART_PADDING.left.toFixed(1)} ${(CHART_PADDING.top + innerHeight).toFixed(1)} Z`
@@ -116,7 +128,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     }
 
     const formatPriceShort = (price: number) => {
-        if (currency === 'USD') return formatPrice(price, 'USD', exchangeRate)
+        if (currency === 'USD') return formatPrice(price, 'USD', exchangeRate, locale)
         return `${Math.round(price / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     }
 
@@ -130,16 +142,16 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     <BarChart3 className="w-5 h-5 text-slate-500" />
                     {t('title')}
                 </h3>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 font-display italic">
                     {stats.trendPct < -TREND_THRESHOLD && (
-                        <span className="flex items-center gap-1 text-sm text-emerald-600 font-medium">
-                            <TrendingDown className="w-4 h-4" />
+                        <span className="flex items-center gap-1 text-sm text-luxury-emerald font-medium">
+                            <TrendingDown className="w-3.5 h-3.5" />
                             {t('trendDown', { pct: Math.abs(stats.trendPct).toFixed(1) })}
                         </span>
                     )}
                     {stats.trendPct > TREND_THRESHOLD && (
-                        <span className="flex items-center gap-1 text-sm text-red-600 font-medium">
-                            <TrendingUp className="w-4 h-4" />
+                        <span className="flex items-center gap-1 text-sm text-rose-500 font-medium">
+                            <TrendingUp className="w-3.5 h-3.5" />
                             {t('trendUp', { pct: stats.trendPct.toFixed(1) })}
                         </span>
                     )}
@@ -153,20 +165,20 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="text-center p-2 bg-emerald-50 rounded-lg">
-                    <div className="text-xs text-emerald-600 font-medium">{t('lowest')}</div>
-                    <div className="text-sm font-bold text-emerald-800">{formatPrice(stats.min, currency, exchangeRate)}</div>
-                    <div className="text-[10px] text-emerald-500">{formatDateShort(stats.minDate)}</div>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="text-center p-3 bg-brand/5 rounded-2xl border border-brand/5">
+                    <div className="text-[10px] text-brand/70 font-bold uppercase tracking-widest mb-1">{t('lowest')}</div>
+                    <div className="text-base font-display font-bold text-brand-dark">{formatPrice(stats.min, currency, exchangeRate, locale)}</div>
+                    <div className="text-[10px] text-brand/50 mt-1">{formatDateShort(stats.minDate)}</div>
                 </div>
-                <div className="text-center p-2 bg-slate-50 rounded-lg">
-                    <div className="text-xs text-slate-500 font-medium">{t('average')}</div>
-                    <div className="text-sm font-bold text-slate-700">{formatPrice(stats.avg, currency, exchangeRate)}</div>
+                <div className="text-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">{t('average')}</div>
+                    <div className="text-base font-display font-medium text-slate-700">{formatPrice(stats.avg, currency, exchangeRate, locale)}</div>
                 </div>
-                <div className="text-center p-2 bg-red-50 rounded-lg">
-                    <div className="text-xs text-red-600 font-medium">{t('highest')}</div>
-                    <div className="text-sm font-bold text-red-800">{formatPrice(stats.max, currency, exchangeRate)}</div>
-                    <div className="text-[10px] text-red-500">{formatDateShort(stats.maxDate)}</div>
+                <div className="text-center p-3 bg-rose-50/50 rounded-2xl border border-rose-100/50">
+                    <div className="text-[10px] text-rose-400 font-bold uppercase tracking-widest mb-1">{t('highest')}</div>
+                    <div className="text-base font-display font-medium text-rose-700">{formatPrice(stats.max, currency, exchangeRate, locale)}</div>
+                    <div className="text-[10px] text-rose-300 mt-1">{formatDateShort(stats.maxDate)}</div>
                 </div>
             </div>
 
@@ -239,13 +251,14 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     {chartData.map((d, i) => (
                         <rect
                             key={i}
-                            x={xScale(i) - (innerWidth / chartData.length / 2)}
+                            x={xScale(i) - (innerWidth / (chartData.length - 1) / 2)}
                             y={CHART_PADDING.top}
-                            width={innerWidth / chartData.length}
+                            width={innerWidth / (chartData.length - 1)}
                             height={innerHeight}
                             fill="transparent"
                             onMouseEnter={() => setHoveredIndex(i)}
                             onTouchStart={() => setHoveredIndex(i)}
+                            className="transition-colors hover:bg-slate-900/[0.02]"
                         />
                     ))}
 
@@ -275,8 +288,8 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                     {/* Gradient definition */}
                     <defs>
                         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={CHART_COLORS.line} />
-                            <stop offset="100%" stopColor={CHART_COLORS.line} stopOpacity="0" />
+                            <stop offset="0%" stopColor="var(--color-brand)" stopOpacity="0.15" />
+                            <stop offset="100%" stopColor="var(--color-brand)" stopOpacity="0" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -284,14 +297,15 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
                 {/* Tooltip */}
                 {hovered && hoveredIndex !== null && (
                     <div
-                        className="absolute pointer-events-none bg-slate-900 text-white text-xs rounded-lg px-3 py-2 shadow-lg -translate-x-1/2"
+                        className="absolute pointer-events-none bg-white/40 backdrop-blur-2xl border border-white/40 text-slate-900 p-3 rounded-2xl shadow-2xl -translate-x-1/2 flex flex-col items-center gap-1 min-w-[100px] z-50 animate-premium-fade"
                         style={{
                             left: xScale(hoveredIndex),
-                            top: yScale(hovered.price) - 48,
+                            top: yScale(hovered.price) - 70,
                         }}
                     >
-                        <div className="font-bold">{formatPrice(hovered.price, currency, exchangeRate)}</div>
-                        <div className="text-slate-300">{formatDateShort(hovered.date)}</div>
+                        <div className="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">{formatDateShort(hovered.date)}</div>
+                        <div className="text-lg font-display font-medium text-slate-900">{formatPrice(hovered.price, currency, exchangeRate, locale)}</div>
+                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white/40 backdrop-blur-2xl border-r border-b border-white/40 rotate-45" />
                     </div>
                 )}
             </div>

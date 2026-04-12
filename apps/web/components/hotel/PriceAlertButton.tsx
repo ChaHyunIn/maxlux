@@ -142,7 +142,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                         <div className="space-y-4 mt-2">
                             <div>
                                 <label className="text-sm font-medium text-slate-700 mb-2 block">
-                                    {t('targetPriceLabel')} ({currency})
+                                    {t('targetPriceLabel', { currency })}
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-3">
                                     {(currency === 'USD' ? PRICE_SUGGESTIONS.USD : PRICE_SUGGESTIONS.KRW).map(price => (
@@ -154,7 +154,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                                 : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
                                                 }`}
                                         >
-                                            {formatPrice(price, currency, exchangeRate)}
+                                            {formatPrice(price, currency, exchangeRate, locale)}
                                         </button>
                                     ))}
                                 </div>
@@ -171,7 +171,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                 </div>
                                 {currentMinPrice && (
                                     <p className="text-xs text-slate-400 mt-1.5">
-                                        {t('currentMin')}: {formatPrice(currentMinPrice, currency, exchangeRate)}
+                                        {t('currentMin')}: {formatPrice(currentMinPrice, currency, exchangeRate, locale)}
                                     </p>
                                 )}
                             </div>

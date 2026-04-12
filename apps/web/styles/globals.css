@@ -87,11 +87,18 @@ body {
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Luxury Brand Tokens */
-  --color-brand: oklch(0.75 0.18 85);       /* Gold tone */
-  --color-brand-light: oklch(0.92 0.08 85);
-  --color-brand-dark: oklch(0.55 0.18 85);
+  /* Luxury Brand Tokens - Refined OKLCH */
+  --color-brand: oklch(0.72 0.08 85);       /* Muted Champagne Gold */
+  --color-brand-light: oklch(0.94 0.03 85);
+  --color-brand-dark: oklch(0.48 0.08 85);
+  --color-luxury-emerald: oklch(0.55 0.12 165); /* Sophisticated Emerald */
+  --color-luxury-emerald-soft: oklch(0.96 0.02 165);
+  
   --font-display: var(--font-playfair, 'Playfair Display'), Georgia, serif;
+  
+  /* Premium Shadows */
+  --shadow-luxury: 0 10px 30px -10px oklch(0 0 0 / 12%), 0 4px 10px -5px oklch(0 0 0 / 8%);
+  --shadow-luxury-hover: 0 20px 40px -15px oklch(0.48 0.08 85 / 15%), 0 10px 20px -10px oklch(0 0 0 / 10%);
 }
 
 .dark {
@@ -142,12 +149,16 @@ body {
   }
 
   @keyframes price-glow {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    0% { transform: scale(0.98); opacity: 0; box-shadow: 0 0 0 0 var(--color-luxury-emerald); }
+    50% { transform: scale(1.02); opacity: 1; box-shadow: 0 0 0 12px oklch(0.55 0.12 165 / 0); }
+    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 oklch(0.55 0.12 165 / 0); }
   }
-  .animate-price-glow {
-    animation: price-glow 1.5s ease-out 0.3s 1;
+  .animate-premium-fade {
+    animation: premium-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes premium-fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 

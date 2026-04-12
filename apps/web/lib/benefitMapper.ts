@@ -1,34 +1,11 @@
-import type { BenefitKey } from './i18nTypes'
+import mappings from './data/mappings.json';
+import type { BenefitKey } from './i18nTypes';
 
 /**
- * Maps database benefit strings to translation keys.
+ * Maps database benefit strings to normalized translation keys.
+ * Data is centralized in mappings.json to keep this logic file clean of hardcoded literals.
  */
-export const BENEFIT_MAP: Record<string, BenefitKey> = {
-    'VIP': 'exclusive',
-    'EXCLUSIVE': 'exclusive',
-    '럭셔리': 'exclusive',
-    'AMEX FHR': 'amex_fhr',
-    'FHR': 'amex_fhr',
-    '포시즌베네핏': 'fs_benefit',
-    'FS': 'fs_benefit',
-    '무료': 'free',
-    '100USD': 'credit',
-    '100美元': 'credit',
-    '크레딧': 'credit',
-    'UPGRADE': 'upgrade',
-    '升级': 'upgrade',
-    '升級': 'upgrade',
-    '업그레이드': 'upgrade',
-    'EARLY': 'earlyCheckin',
-    '提前入住': 'earlyCheckin',
-    '早到': 'earlyCheckin',
-    '얼리체크인': 'earlyCheckin',
-    'LATE': 'lateCheckout',
-    '延迟退房': 'lateCheckout',
-    '延退': 'lateCheckout',
-    '레이트체크아웃': 'lateCheckout',
-    '会员礼遇': 'exclusive',
-};
+const BENEFIT_MAP: Record<string, BenefitKey> = mappings.benefits as Record<string, BenefitKey>;
 
 /**
  * Returns the translation key for a benefit.

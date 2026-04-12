@@ -87,28 +87,29 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
     if (!stats) return null
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 grid grid-cols-2 md:grid-cols-4 gap-6 shadow-sm">
+        <div className="bg-white rounded-3xl border border-slate-100 p-8 grid grid-cols-2 md:grid-cols-4 gap-8 shadow-sm">
             <StatItem 
-                icon={<TrendingDown className="w-4 h-4 text-emerald-500" />}
+                icon={<TrendingDown className="w-3.5 h-3.5 text-brand" />}
                 label={t('lowestPrice')}
-                value={formatPrice(stats.lowest.price, currency, exchangeRate)}
+                value={formatPrice(stats.lowest.price, currency, exchangeRate, locale)}
                 subValue={t('onDate', { date: stats.lowest.date })}
+                variant="brand"
             />
             <StatItem 
-                icon={<Hash className="w-4 h-4 text-indigo-500" />}
+                icon={<Hash className="w-3.5 h-3.5 text-slate-500" />}
                 label={t('averagePrice')}
-                value={formatPrice(stats.average, currency, exchangeRate)}
+                value={formatPrice(stats.average, currency, exchangeRate, locale)}
                 subValue={t('perNightAvg')}
             />
             <StatItem 
-                icon={<ArrowDown className="w-4 h-4 text-rose-500" />}
+                icon={<ArrowDown className="w-3.5 h-3.5 text-rose-500" />}
                 label={t('recentChanges')}
                 value={stats.drops > 0 ? t('dropsCount', { count: stats.drops }) : t('noChanges')}
                 subValue={t('last48Hours')}
             />
             {stats.expensiveDay && (
                 <StatItem 
-                    icon={<Calendar className="w-4 h-4 text-slate-500" />}
+                    icon={<Calendar className="w-3.5 h-3.5 text-slate-500" />}
                     label={t('expensiveDay')}
                     value={stats.expensiveDay.name}
                     subValue={t('higherThanAvg', { pct: stats.expensiveDay.pct })}
@@ -118,16 +119,16 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
     )
 }
 
-function StatItem({ icon, label, value, subValue }: { icon: React.ReactNode, label: string, value: string, subValue?: string }) {
+function StatItem({ icon, label, value, subValue, variant }: { icon: React.ReactNode, label: string, value: string, subValue?: string, variant?: 'brand' }) {
     return (
         <div className="flex flex-col items-center text-center group">
-            <div className="flex items-center gap-1.5 mb-2 px-3 py-1 rounded-full bg-slate-50 group-hover:bg-slate-100 transition-colors">
-                {icon}
+            <div className={`flex items-center gap-1.5 mb-3 px-3 py-1.5 rounded-full backdrop-blur-sm transition-colors ${variant === 'brand' ? 'bg-brand/10' : 'bg-slate-50'} group-hover:bg-slate-100`}>
+                <div className="stroke-[1.5]">{icon}</div>
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
             </div>
-            <div className="text-xl md:text-2xl font-black text-slate-900 leading-tight tracking-tight">{value}</div>
+            <div className="text-2xl md:text-3xl font-display font-medium text-slate-950 leading-tight tracking-tight">{value}</div>
             {subValue && (
-                <div className="text-[11px] text-slate-400 mt-1.5 font-medium whitespace-nowrap">
+                <div className="text-[11px] text-slate-400 mt-2 font-light whitespace-nowrap">
                     {subValue}
                 </div>
             )}

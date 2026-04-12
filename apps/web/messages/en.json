@@ -73,7 +73,8 @@
         "notFound": "Page not found.",
         "notFoundCode": "404",
         "somethingWentWrong": "Something went wrong!",
-        "tryAgain": "Try again"
+        "tryAgain": "Try Again",
+        "close": "Close"
     },
     "layout": {
         "brandName": "MaxLux",
@@ -93,7 +94,7 @@
         "button": "Price Alert",
         "title": "Set Price Alert",
         "description": "Get notified when {hotel} drops below your target price.",
-        "targetPriceLabel": "Target Price",
+        "targetPriceLabel": "Target Price ({currency})",
         "emailLabel": "Email Address",
         "emailPlaceholder": "you@example.com",
         "emailRequired": "Please enter your email.",
