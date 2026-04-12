@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { TrendingDown, Calendar, Hash, ArrowDown } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
+import { filterActiveRates } from '@/lib/rateUtils'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import type { DailyRate, PriceChange } from '@/lib/types'
@@ -25,7 +26,7 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
     const { currency, exchangeRate } = useSettingStore()
 
     const stats = useMemo(() => {
-        const activeRates = rates.filter(r => !r.is_sold_out && r.price_krw > 0)
+        const activeRates = filterActiveRates(rates)
         if (activeRates.length === 0) return null
 
         // 1. 최저가 정보 추출

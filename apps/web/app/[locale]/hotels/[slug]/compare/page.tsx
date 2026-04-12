@@ -5,6 +5,7 @@ import MonthlyComparisonChart from '@/components/hotel/MonthlyComparisonChart';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { getHotelName } from '@/lib/hotelUtils';
+import { filterActiveRates } from '@/lib/rateUtils';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates } from '@/lib/supabase/queries/rates';
 import { formatPrice } from '@/lib/utils';
@@ -41,7 +42,7 @@ export default async function ComparePage(props: PageProps) {
     const rates = await getRates(hotel.id);
     
     // 월별 평균가 집계
-    const activeRates = rates.filter(r => !r.is_sold_out && r.price_krw > 0);
+    const activeRates = filterActiveRates(rates);
     const monthlyData: Record<string, { sum: number; count: number }> = {};
     
     activeRates.forEach(r => {

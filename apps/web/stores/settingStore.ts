@@ -23,11 +23,15 @@ export const useSettingStore = create<SettingState>()(
             migrate: (persistedState: unknown, _version: number) => {
                 // v0 → v1: 이전 키 'maxlux-settings'에서 마이그레이션
                 if (typeof window !== 'undefined') {
-                    // eslint-disable-next-line no-restricted-syntax
-                    const oldData = localStorage.getItem(STORAGE_KEYS.LEGACY_SETTINGS);
-                    if (oldData) {
+                    try {
                         // eslint-disable-next-line no-restricted-syntax
-                        localStorage.removeItem(STORAGE_KEYS.LEGACY_SETTINGS);
+                        const oldData = localStorage.getItem(STORAGE_KEYS.LEGACY_SETTINGS);
+                        if (oldData) {
+                            // eslint-disable-next-line no-restricted-syntax
+                            localStorage.removeItem(STORAGE_KEYS.LEGACY_SETTINGS);
+                        }
+                    } catch {
+                        // Storage access denied
                     }
                 }
                 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

@@ -1,20 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { STORAGE_KEYS } from '@/lib/constants';
+import { useLocalStorage } from './useLocalStorage';
 
 const STORAGE_KEY = STORAGE_KEYS.FAVORITES;
 
 export function useFavorites() {
     const [favorites, setFavorites] = useState<string[]>([]);
+    const { getItem, setItem } = useLocalStorage();
 
     const loadFavorites = useCallback(() => {
-        if (typeof window === 'undefined') return [];
         try {
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = getItem(STORAGE_KEY);
             return saved ? JSON.parse(saved) : [];
         } catch {
             return [];
         }
-    }, []);
+    }, [getItem]);
 
     useEffect(() => {
         setFavorites(loadFavorites());
@@ -48,7 +49,7 @@ export function useFavorites() {
             updated = [...current, id];
         }
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        setItem(STORAGE_KEY, JSON.stringify(updated));
         setFavorites(updated);
 
         // Dispatch custom event for components in the same window

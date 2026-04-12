@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HotelList } from '@/components/hotel/HotelList';
 import { getCityKey } from '@/lib/cityMapper';
@@ -29,7 +30,9 @@ export default async function CityPage(props: { params: Promise<{ locale: string
     try {
         hotels = await getHotelsByCity(params.city);
     } catch (e) {
-        console.error('Failed to fetch hotels for city:', params.city, e);
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[CityPage] Failed to fetch hotels:', params.city, e);
+        Sentry.captureException(e, { tags: { page: 'city', city: params.city } });
     }
 
     return (

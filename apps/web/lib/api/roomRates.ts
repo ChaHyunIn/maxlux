@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import type { RoomRate } from "../types";
 
 /**
@@ -13,7 +14,10 @@ export async function fetchRoomRates(hotelId: string, stayDate: string): Promise
             return json.data;
         }
         return [];
-    } catch {
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[RoomRates] fetchRoomRates failed:', e);
+        Sentry.captureException(e, { tags: { api: 'fetchRoomRates', hotelId } });
         return [];
     }
 }

@@ -84,9 +84,8 @@ export function HeatmapCalendar({
                     );
                 })
             }
-</div>
-
-        <DayDetailModal
+            </div>
+            <DayDetailModal
                 open={modalOpen}
                 onOpenChange={(open) => { if (!open) closeDayDetail(); }}
                 rate={selectedRate}

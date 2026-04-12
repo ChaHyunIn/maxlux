@@ -18,7 +18,7 @@ export function formatPrice(
     const rate = exchangeRate || LOCALE_DEFAULTS.exchangeRateUsd;
     return `$${Math.round(price_krw / rate).toLocaleString()}`;
   }
-  return `₩${price_krw.toLocaleString()}`;
+  return `₩${Math.round(price_krw).toLocaleString()}`;
 }
 
 export function getPriceLevel(price: number, p25: number, p75: number): 'low' | 'mid' | 'high' {

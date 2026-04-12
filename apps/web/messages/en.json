@@ -319,6 +319,7 @@
         "last48Hours": "Last 48 hours"
     },
     "alertManager": {
+        "emailPlaceholder": "example@email.com",
         "title": "Manage My Alerts",
         "description": "Enter your email to view your currently active price alerts.",
         "manageLink": "Already have alerts?",

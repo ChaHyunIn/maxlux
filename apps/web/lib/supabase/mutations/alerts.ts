@@ -47,7 +47,7 @@ export async function getActiveAlerts(email: string, hotelId?: string) {
         // Uses service role key because RLS might prevent anon from reading others emails.
         let query = adminSupabase
             .from('price_alerts')
-            .select('*')
+            .select('*, hotels(name_ko, name_en)')
             .eq('email', email.toLowerCase().trim())
             .eq('is_active', true)
             .order('created_at', { ascending: false });

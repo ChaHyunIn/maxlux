@@ -3,6 +3,7 @@ import { useState, useMemo, useRef, useEffect, useId } from 'react'
 import { TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
 import { LOCALE_DEFAULTS, CHART_CONFIG, CHART_COLORS } from '@/lib/constants'
+import { filterActiveRates } from '@/lib/rateUtils'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import type { DailyRate } from '@/lib/types'
@@ -12,6 +13,7 @@ interface PriceTrendChartProps {
 }
 
 const { height: CHART_HEIGHT, padding: CHART_PADDING, trendThreshold: TREND_THRESHOLD } = CHART_CONFIG
+
 
 export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const gradientId = useId()
@@ -37,8 +39,7 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
     // Filter and prepare data
     const chartData = useMemo(() => {
-        return rates
-            .filter(r => !r.is_sold_out && r.price_krw > 0)
+        return filterActiveRates(rates)
             .sort((a, b) => a.stay_date.localeCompare(b.stay_date))
             .map(r => ({
                 date: r.stay_date,

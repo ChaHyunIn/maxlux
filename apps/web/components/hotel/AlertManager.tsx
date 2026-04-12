@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Bell, Loader2, X, ChevronLeft, Trash2, Building2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
@@ -16,7 +16,7 @@ interface AlertManagerProps {
     onOpenChange: (open: boolean) => void
 }
 
-interface PriceAlert {
+interface AlertWithHotel {
     id: number
     hotel_id: string
     target_price: number
@@ -31,11 +31,12 @@ interface PriceAlert {
 export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
     const t = useTranslations('alertManager')
     const tErr = useTranslations('errors')
+    const locale = useLocale()
     const { exchangeRate } = useSettingStore()
     
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)
-    const [alerts, setAlerts] = useState<PriceAlert[]>([])
+    const [alerts, setAlerts] = useState<AlertWithHotel[]>([])
     const [step, setStep] = useState<'input' | 'list'>('input')
 
     const fetchAlerts = async () => {
@@ -102,7 +103,7 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
                         <div className="space-y-4">
                             <Input
                                 type="email"
-                                placeholder="example@email.com"
+                                placeholder={t('emailPlaceholder')}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && fetchAlerts()}
@@ -129,7 +130,7 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-bold truncate max-w-[180px]">
-                                                        {alert.hotels?.name_ko || 'Hotel'}
+                                                        {alert.hotels ? (locale === 'en' ? alert.hotels.name_en : alert.hotels.name_ko) : t('hotelName')}
                                                     </p>
                                                     <p className="text-xs text-indigo-600 font-medium">
                                                         {formatPrice(alert.target_price, alert.currency, exchangeRate)}

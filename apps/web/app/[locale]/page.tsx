@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HotelList } from '@/components/hotel/HotelList';
 import HeroSection from '@/components/shared/HeroSection';
@@ -16,7 +17,9 @@ export default async function HomePage(props: { params: Promise<{ locale: string
     try {
         hotels = await getHotels();
     } catch (e) {
-        console.error('Failed to fetch hotels:', e);
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[HomePage] Failed to fetch hotels:', e);
+        Sentry.captureException(e, { tags: { page: 'home' } });
     }
 
     if (hotels.length === 0) {

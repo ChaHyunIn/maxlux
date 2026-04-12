@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import type { OtaPrice } from '../types';
 
 /**
@@ -12,14 +13,15 @@ export async function fetchOtaPrices(hotelId: string, stayDate: string): Promise
         if (!res.ok) {
             const data = await res.json();
             // eslint-disable-next-line no-console
-            console.error('fetchOtaPrices_error', data.error);
+            if (process.env.NODE_ENV === 'development') console.error('[OTA] fetchOtaPrices error:', data.error);
             return [];
         }
         const data = await res.json();
         return Array.isArray(data.prices) ? data.prices : [];
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('fetchOtaPrices_failed', e);
+        if (process.env.NODE_ENV === 'development') console.error('[OTA] fetchOtaPrices failed:', e);
+        Sentry.captureException(e, { tags: { api: 'fetchOtaPrices', hotelId } });
         return [];
     }
 }
