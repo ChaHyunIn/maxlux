@@ -1,16 +1,18 @@
+import mappings from './data/mappings.json';
+import type { CityKey } from './i18nTypes';
+
 /**
- * Centralized city name display mapping with locale support.
- * Used in HotelHeroHeader.
+ * City mappings from raw DB strings to normalized translation keys.
+ * Data is centralized in mappings.json to keep this logic file clean of hardcoded literals.
  */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const CITY_MAP: Record<string, CityKey> = mappings.cities as Record<string, CityKey>;
 
-const CITY_DISPLAY_MAP: Record<string, { ko: string; en: string }> = {
-    seoul: { ko: '서울', en: 'Seoul' },
-    busan: { ko: '부산', en: 'Busan' },
-    jeju: { ko: '제주', en: 'Jeju' },
-};
-
-export function getCityDisplayName(citySlug: string, locale: string = 'ko'): string {
-    const entry = CITY_DISPLAY_MAP[citySlug.toLowerCase()];
-    if (!entry) return citySlug;
-    return locale === 'en' ? entry.en : entry.ko;
+/**
+ * Returns the translation key for a given city string.
+ * Usage: t(`cities.${getCityKey(city)}`)
+ */
+export function getCityKey(city: string | null | undefined): CityKey | null {
+    if (!city) return null;
+    return CITY_MAP[city] || CITY_MAP[city.toLowerCase()] || null;
 }

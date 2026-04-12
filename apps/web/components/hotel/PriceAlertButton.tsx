@@ -1,0 +1,227 @@
+'use client'
+import { useState, useEffect, useCallback } from 'react'
+import { Bell, BellRing, Check, Loader2 } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { trackEvent } from '@/lib/analytics'
+import { PRICE_SUGGESTIONS, LOCALE_DEFAULTS } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
+import { isValidEmail } from '@/lib/validation'
+import { useSettingStore } from '@/stores/settingStore'
+import { AlertManager } from './AlertManager'
+
+interface PriceAlertButtonProps {
+    hotelId: string
+    hotelName: string
+    currentMinPrice?: number
+}
+
+const DEFAULT_ALERT_PRICE = { KRW: 300000, USD: 250 } as const;
+
+export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceAlertButtonProps) {
+    const t = useTranslations('priceAlert')
+    const tErr = useTranslations('errors')
+    const tAM = useTranslations('alertManager')
+    const locale = useLocale()
+    const { currency, exchangeRate } = useSettingStore();
+    const [open, setOpen] = useState(false)
+    const [managerOpen, setManagerOpen] = useState(false)
+    const [email, setEmail] = useState('')
+
+    const getDefaultTarget = useCallback(() => {
+        if (currentMinPrice) return Math.round(currentMinPrice * 0.9)
+        return DEFAULT_ALERT_PRICE[currency]
+    }, [currentMinPrice, currency])
+
+    const [targetPrice, setTargetPrice] = useState(getDefaultTarget())
+    const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false)
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+        if (open) {
+            setTargetPrice(getDefaultTarget())
+        }
+    }, [open, getDefaultTarget])
+
+    const handleSubmit = async () => {
+        if (!email.trim()) {
+            setError(t('emailRequired'))
+            return
+        }
+
+        if (!isValidEmail(email)) {
+            setError(t('emailInvalid'))
+            return
+        }
+
+        setLoading(true)
+        setError('')
+
+        try {
+            const priceToSend = currency === 'USD'
+                ? Math.round(targetPrice * exchangeRate)
+                : targetPrice;
+
+            const res = await fetch('/api/price-alerts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    hotel_id: hotelId,
+                    email: email.trim(),
+                    target_price: priceToSend,
+                    locale,
+                }),
+            })
+
+            const data = await res.json()
+            if (res.ok) {
+                setSuccess(true)
+                trackEvent('alert_created', {
+                    hotelId,
+                    hotelName,
+                    targetPrice: priceToSend,
+                    currency
+                })
+                setTimeout(() => {
+                    setOpen(false)
+                    setSuccess(false)
+                }, 2000)
+            } else {
+                const errorKey = data.error;
+                try {
+                    setError(tErr(errorKey));
+                } catch {
+                    setError(t('submitError'));
+                }
+            }
+        } catch {
+            setError(t('submitError'))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <>
+            <Button
+                variant="secondary"
+                size="sm"
+                className="gap-1.5 text-slate-900"
+                onClick={() => setOpen(true)}
+            >
+                <Bell className="w-4 h-4" />
+                {t('button')}
+            </Button>
+
+            <AlertManager open={managerOpen} onOpenChange={setManagerOpen} />
+
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent onClose={() => setOpen(false)} className="max-w-sm">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 pr-8">
+                            <BellRing className="w-5 h-5 text-amber-500" />
+                            {t('title')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('description', { hotel: hotelName })}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {success ? (
+                        <div className="flex flex-col items-center gap-3 py-8">
+                            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <Check className="w-6 h-6 text-emerald-600" />
+                            </div>
+                            <p className="text-sm font-medium text-emerald-700">{t('successMessage')}</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4 mt-2">
+                            <div>
+                                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                                    {t('targetPriceLabel', { currency })}
+                                </label>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {(currency === 'USD' ? PRICE_SUGGESTIONS.USD : PRICE_SUGGESTIONS.KRW).map(price => (
+                                        <button
+                                            key={price}
+                                            onClick={() => setTargetPrice(price)}
+                                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${targetPrice === price
+                                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                                : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+                                                }`}
+                                        >
+                                            {formatPrice(price, currency, exchangeRate, locale)}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        type="number"
+                                        value={targetPrice}
+                                        onChange={(e) => setTargetPrice(parseInt(e.target.value, 10) || 0)}
+                                        className="flex-1"
+                                        min={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}
+                                        step={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}
+                                    />
+                                    <Badge variant="outline" className="whitespace-nowrap">{currency}</Badge>
+                                </div>
+                                {currentMinPrice && (
+                                    <p className="text-xs text-slate-400 mt-1.5">
+                                        {t('currentMin')}: {formatPrice(currentMinPrice, currency, exchangeRate, locale)}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                                    {t('emailLabel')}
+                                </label>
+                                <Input
+                                    type="email"
+                                    placeholder={t('emailPlaceholder')}
+                                    value={email}
+                                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                                />
+                            </div>
+
+                            {error && (
+                                <p className="text-sm text-red-500">{error}</p>
+                            )}
+
+                            <Button
+                                className="w-full"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                ) : (
+                                    <Bell className="w-4 h-4 mr-2" />
+                                )}
+                                {t('submitButton')}
+                            </Button>
+
+                            <p className="text-[11px] text-slate-400 text-center">
+                                {t('disclaimer')}
+                            </p>
+
+                            <div className="flex justify-center border-t border-slate-50 pt-3">
+                                <button
+                                    type="button"
+                                    onClick={() => { setOpen(false); setManagerOpen(true); }}
+                                    className="text-[11px] text-indigo-500 hover:text-indigo-600 font-medium underline underline-offset-2"
+                                >
+                                    {tAM('manageLink')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </>
+    )
+}

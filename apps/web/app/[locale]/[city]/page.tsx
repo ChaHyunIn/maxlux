@@ -1,35 +1,38 @@
-import { getHotelsByCity } from '@/lib/supabase/server';
-import { HotelList } from '@/components/hotel/HotelList';
+import * as Sentry from '@sentry/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Metadata } from 'next';
+import { HotelList } from '@/components/hotel/HotelList';
+import { getCityKey } from '@/lib/cityMapper';
+import { REVALIDATE_SECONDS } from '@/lib/constants';
+import { getHotelsByCity } from '@/lib/supabase/queries/hotels';
 import type { Hotel } from '@/lib/types';
-import { getCityDisplayName } from '@/lib/cityMapper';
+import type { Metadata } from 'next';
 
-export const revalidate = 300;
+export const revalidate = REVALIDATE_SECONDS.cityPage;
 
-export async function generateMetadata({ params }: { params: { locale: string; city: string } }): Promise<Metadata> {
-    const cityName = getCityDisplayName(params.city, params.locale);
-    const title = params.locale === 'ko'
-        ? `${cityName} 호텔 가격 비교 | 최저가 스나이퍼`
-        : `${cityName} Hotel Deals | Best Price Sniper`;
+export async function generateMetadata(props: { params: Promise<{ locale: string; city: string }> }): Promise<Metadata> {
+    const params = await props.params;
+    const tCity = await getTranslations({ locale: params.locale, namespace: 'city' });
+    const tSeo = await getTranslations({ locale: params.locale, namespace: 'seo' });
+    const cityKey = getCityKey(params.city);
+    const cityName = cityKey ? tCity(cityKey) : params.city;
 
     return {
-        title,
-        description: params.locale === 'ko'
-            ? `${cityName} 럭셔리 호텔의 최신 가격 정보 및 최저가 비교`
-            : `Compare the best luxury hotel prices in ${cityName}.`,
+        title: tSeo('cityTitle', { city: cityName }),
+        description: tSeo('cityDescription', { city: cityName }),
     };
 }
 
-export default async function CityPage({ params }: { params: { locale: string; city: string } }) {
+export default async function CityPage(props: { params: Promise<{ locale: string; city: string }> }) {
+    const params = await props.params;
     setRequestLocale(params.locale);
-    const t = await getTranslations('common');
 
     let hotels: (Hotel & { min_price?: number })[] = [];
     try {
         hotels = await getHotelsByCity(params.city);
     } catch (e) {
-        console.error("Failed to load hotels for city:", params.city, e);
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[CityPage] Failed to fetch hotels:', params.city, e);
+        Sentry.captureException(e, { tags: { page: 'city', city: params.city } });
     }
 
     return (

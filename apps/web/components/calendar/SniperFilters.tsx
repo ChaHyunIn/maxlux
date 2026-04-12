@@ -1,12 +1,14 @@
 'use client'
-import { Badge } from '@/components/ui/badge';
-import { useCalendarStore } from '@/stores/calendarStore';
-import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { useCalendarStore } from '@/stores/calendarStore';
 
 export function SniperFilters() {
-    const { sniperMode, setSniperMode } = useCalendarStore();
+    const { sniperMode, setSniperMode, _hydrated } = useCalendarStore();
     const t = useTranslations('calendar');
+
+    if (!_hydrated) return null;
 
     const handleToggle = (mode: 'fri_sat' | 'holiday_low' | 'cheapest_sat') => {
         setSniperMode(sniperMode === mode ? 'none' : mode);

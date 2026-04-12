@@ -10,6 +10,9 @@ const config: Config = {
             fontFamily: {
                 sans: ['Pretendard', 'system-ui', 'sans-serif'],
             },
+            screens: {
+                'xs': '480px',
+            },
         },
     },
     plugins: [],

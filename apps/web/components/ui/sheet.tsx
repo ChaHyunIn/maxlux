@@ -2,21 +2,35 @@
 
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
-function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+function SheetTrigger({
+  asChild,
+  children,
+  ...props
+}: SheetPrimitive.Trigger.Props & { asChild?: boolean }) {
+  if (asChild && React.isValidElement(children)) {
+    return <SheetPrimitive.Trigger data-slot="sheet-trigger" render={children} {...props} />
+  }
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props}>{children}</SheetPrimitive.Trigger>
 }
 
-function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+function SheetClose({
+  asChild,
+  children,
+  ...props
+}: SheetPrimitive.Close.Props & { asChild?: boolean }) {
+  if (asChild && React.isValidElement(children)) {
+    return <SheetPrimitive.Close data-slot="sheet-close" render={children} {...props} />
+  }
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props}>{children}</SheetPrimitive.Close>
 }
 
 function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
@@ -46,6 +60,7 @@ function SheetContent({
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
 }) {
+  const t = useTranslations("common")
   return (
     <SheetPortal>
       <SheetOverlay />
@@ -60,20 +75,12 @@ function SheetContent({
       >
         {children}
         {showCloseButton && (
-          <SheetPrimitive.Close
-            data-slot="sheet-close"
-            render={
-              <Button
-                variant="ghost"
-                className="absolute top-3 right-3"
-                size="icon-sm"
-              />
-            }
-          >
-            <XIcon
-            />
-            <span className="sr-only">Close</span>
-          </SheetPrimitive.Close>
+          <SheetClose asChild className="absolute top-3 right-3">
+            <Button variant="ghost" size="icon-sm">
+              <XIcon />
+              <span className="sr-only">{t("close")}</span>
+            </Button>
+          </SheetClose>
         )}
       </SheetPrimitive.Popup>
     </SheetPortal>

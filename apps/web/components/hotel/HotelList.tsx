@@ -1,28 +1,24 @@
 'use client'
-import { useMemo, useState, useEffect } from 'react';
-import type { Hotel } from '@/lib/types';
+
+import { useMemo } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useLocale } from 'next-intl';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { useFavorites } from '@/hooks/useFavorites';
+import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
+import { getHotelName } from '@/lib/hotelUtils';
+import { useFilterStore } from '@/stores/filterStore';
 import { HotelCard } from './HotelCard';
 import { HotelFilters } from './HotelFilters';
-import { useFilterStore } from '@/stores/filterStore';
-import { EmptyState } from '@/components/shared/EmptyState';
-import { useLocale } from 'next-intl';
-import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
+import type { Hotel } from '@/lib/types';
 
 export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })[] }) {
     const { searchQuery, selectedBrand, selectedCity, sortBy, priceRange, showFavoritesOnly } = useFilterStore();
     const locale = useLocale();
-    const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-
-    // Load favorites from localStorage on mount
-    useEffect(() => {
-        if (showFavoritesOnly) {
-            const favs = JSON.parse(localStorage.getItem('maxlux_favorites') || '[]');
-            setFavoriteIds(favs);
-        }
-    }, [showFavoritesOnly]);
+    const { favorites: favoriteIds } = useFavorites();
 
     const brands = useMemo(() => {
-        const unique = new Set(hotels.map(h => h.brand).filter(Boolean) as string[]);
+        const unique = new Set(hotels.map(h => h.brand).filter((b): b is string => typeof b === 'string' && b.length > 0));
         return Array.from(unique).sort();
     }, [hotels]);
 
@@ -33,8 +29,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
         if (searchQuery.trim()) {
             const lowerQ = searchQuery.toLowerCase();
             result = result.filter(h =>
-                h.name_ko.toLowerCase().includes(lowerQ) ||
-                h.name_en.toLowerCase().includes(lowerQ)
+                getHotelName(h, locale).toLowerCase().includes(lowerQ)
             );
         }
 
@@ -50,7 +45,7 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
 
         // Price range filter
         const [minPrice, maxPrice] = priceRange;
-        if (minPrice > 0 || maxPrice < 2000000) {
+        if (minPrice > 0 || maxPrice < DEFAULT_FILTER_PRICE_RANGE[1]) {
             result = result.filter(h => {
                 if (!h.min_price) return minPrice === 0;
                 return h.min_price >= minPrice && h.min_price <= maxPrice;
@@ -58,27 +53,29 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
         }
 
         // Favorites filter
-        if (showFavoritesOnly && favoriteIds.length >= 0) {
+        if (showFavoritesOnly) {
             result = result.filter(h => favoriteIds.includes(h.id));
         }
 
         // Sort
         result.sort((a, b) => {
             if (sortBy === 'price') {
+                // min_price가 없는(가격 미수집) 호텔은 Infinity로 처리하여 항상 마지막에 배치
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'discount') {
+                // Secondary sort: Hot deals first (price <= threshold), then low to high
                 const aIsHot = a.min_price && a.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
                 const bIsHot = b.min_price && b.min_price <= HOT_DEAL_THRESHOLD ? 1 : 0;
                 if (aIsHot !== bIsHot) return bIsHot - aIsHot;
                 return (a.min_price ?? Infinity) - (b.min_price ?? Infinity);
             }
             if (sortBy === 'benefit') {
-                const aVal = (a as any).benefit_value_krw ?? 0;
-                const bVal = (b as any).benefit_value_krw ?? 0;
+                const aVal = a.benefit_value_krw ?? 0;
+                const bVal = b.benefit_value_krw ?? 0;
                 return bVal - aVal;
             }
-            return locale === 'en' ? a.name_en.localeCompare(b.name_en) : a.name_ko.localeCompare(b.name_ko);
+            return getHotelName(a, locale).localeCompare(getHotelName(b, locale));
         });
 
         return result;
@@ -86,14 +83,25 @@ export function HotelList({ hotels }: { hotels: (Hotel & { min_price?: number })
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-            <HotelFilters brands={brands} resultCount={filteredHotels.length} locale={locale} />
+            <HotelFilters brands={brands} resultCount={filteredHotels.length} locale={locale} hotels={hotels} />
             {filteredHotels.length === 0 ? (
                 <EmptyState />
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredHotels.map(hotel => (
-                        <HotelCard key={hotel.id} hotel={hotel} />
-                    ))}
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {filteredHotels.map(hotel => (
+                            <motion.div
+                                key={hotel.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.96 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.96 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <HotelCard hotel={hotel} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             )}
         </div>

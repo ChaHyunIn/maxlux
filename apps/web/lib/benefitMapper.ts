@@ -1,27 +1,40 @@
+import mappings from './data/mappings.json';
+import type { BenefitKey } from './i18nTypes';
+
 /**
- * Maps raw HotelLux benefit objects/strings to user-friendly text with locale support.
+ * Maps database benefit strings to normalized translation keys.
+ * Data is centralized in mappings.json to keep this logic file clean of hardcoded literals.
  */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const BENEFIT_MAP: Record<string, BenefitKey> = mappings.benefits as Record<string, BenefitKey>;
 
-interface RawBenefit {
-    name?: string;
-    type?: string;
-    [key: string]: unknown;
-}
+/**
+ * Returns the translation key for a benefit.
+ * Usage: t(`benefits.${getBenefitKey(benefit)}`)
+ */
+export function getBenefitKey(benefit: string | null | undefined): BenefitKey | null {
+    if (!benefit) return null;
 
-const BENEFIT_NAME_MAP: Record<string, { ko: string; en: string }> = {
-    '会员礼遇': { ko: 'HotelLux VIP 특별 혜택', en: 'HotelLux VIP Exclusive Benefit' },
-    'FHR': { ko: '아멕스 FHR 혜택 (해당 시)', en: 'Amex FHR Benefit (where applicable)' },
-};
+    // Systematic Guardrail: If it contains Chinese characters and is NOT in our map, block it.
+    const hasChinese = /[\u4e00-\u9fa5]/.test(benefit);
 
-export function mapBenefitText(benefit: string | RawBenefit, locale: string = 'ko'): string {
-    if (typeof benefit === 'string') {
-        return benefit;
+    // Check direct mapping
+    if (benefit in BENEFIT_MAP) {
+        const mapped = BENEFIT_MAP[benefit];
+        if (mapped) return mapped;
     }
-    if (benefit?.name) {
-        const mapped = BENEFIT_NAME_MAP[benefit.name];
-        if (mapped) return locale === 'en' ? mapped.en : mapped.ko;
-        if (benefit?.type === 'luxury') return locale === 'en' ? 'HotelLux VIP Exclusive Benefit' : 'HotelLux VIP 특별 혜택';
-        return benefit.name;
+
+    // Fallback search
+    for (const [key, value] of Object.entries(BENEFIT_MAP)) {
+        if (benefit.toUpperCase().includes(key.toUpperCase())) {
+            return value;
+        }
     }
-    return locale === 'en' ? 'Exclusive Partner Benefit' : '독점 제휴 혜택';
+
+    // If it contains Chinese and we reached here, it's unmapped -> block it to ensure Chinese-free UI
+    if (hasChinese) {
+        return null;
+    }
+
+    return null;
 }

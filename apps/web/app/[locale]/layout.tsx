@@ -1,23 +1,32 @@
-import type { Metadata } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
-import '../../styles/globals.css';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { Playfair_Display, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
+import '@/styles/globals.css';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { StoreInitializer } from '@/components/shared/StoreInitializer';
+import { getExchangeRate } from '@/lib/api/currency';
+import type { Metadata } from 'next';
 
-export function generateStaticParams() {
-    return routing.locales.map((locale) => ({ locale }));
-}
+const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-inter',
+    display: 'swap',
+});
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-    const t = await getTranslations({ locale: params.locale, namespace: 'seo' });
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    weight: ['600', '700', '800'],
+    variable: '--font-playfair',
+    display: 'swap',
+});
+
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale } = await props.params;
+    const tSeo = await getTranslations({ locale, namespace: 'seo' });
     return {
-        title: t('metaTitle'),
-        description: t('metaDescription'),
+        title: tSeo('metaTitle'),
+        description: tSeo('metaDescription'),
     };
 }
 
@@ -26,36 +35,21 @@ export default async function LocaleLayout({
     params,
 }: {
     children: React.ReactNode;
-    params: { locale: string };
+    params: Promise<{ locale: string }>;
 }) {
-    const { locale } = params;
-
-    if (!routing.locales.includes(locale as any)) {
-        notFound();
-    }
-
-    setRequestLocale(locale);
-
+    const { locale } = await params;
     const messages = await getMessages();
+    const { rate } = await getExchangeRate();
 
     return (
-        <html lang={locale}>
-            <head>
-                <link
-                    rel="stylesheet"
-                    as="style"
-                    crossOrigin="anonymous"
-                    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
-                />
-            </head>
-            <body className="font-sans antialiased min-h-screen flex flex-col">
+        <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
+            <body>
                 <NextIntlClientProvider messages={messages}>
-                    <Header />
-                    <main className="flex-1">
-                        <ErrorBoundary>{children}</ErrorBoundary>
-                    </main>
-                    <Footer />
-                    <Analytics />
+                    <StoreInitializer exchangeRate={rate} locale={locale} />
+                    <ErrorBoundary>
+                        {children}
+                        <Analytics />
+                    </ErrorBoundary>
                 </NextIntlClientProvider>
             </body>
         </html>

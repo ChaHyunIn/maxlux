@@ -1,12 +1,15 @@
 # Hotel name Korean mapping (English → Korean)
-# TODO: For multi-city expansion, migrate this mapping to a `hotel_translations` DB table.
-# API currently requires hardcoded names for some instances.
+# 신규 호텔 추가 시 초기 한국어명을 여기에 입력합니다.
+# 이미 DB에 등록된 호텔은 DB의 name_ko 값이 우선적으로 사용됩니다. (hotel_sync.py 참고)
+
+# NOTE: BRAND_MAPPING은 apps/web/lib/brandMapper.ts의 BRAND_DISPLAY_MAP과 동기화 필요.
+# TODO: 장기적으로 DB에 brand_key 컬럼을 두고 프론트엔드는 DB 값을 그대로 사용하도록 개선.
+
 HOTEL_KO_MAPPING = {
     "Andaz Seoul Gangnam": "안다즈 서울 강남",
     "Grand Hyatt Seoul": "그랜드 하얏트 서울",
     "Four Seasons Hotel Seoul": "포시즌스 호텔 서울",
     "Josun Palace, a Luxury Collection Hotel, Seoul Gangnam": "조선 팰리스 서울 강남",
-    " JW Marriott Hotel Seoul": "JW 메리어트 호텔 서울",
     "JW Marriott Hotel Seoul": "JW 메리어트 호텔 서울",
     "The Westin Josun Seoul": "웨스틴 조선 서울",
     "Jw Marriott Dongdaemun Square": "JW 메리어트 동대문 스퀘어",
@@ -71,6 +74,7 @@ CITY_MAPPING = {
     "Jeju": "jeju",
     "jeju": "jeju",
 }
+
 
 def get_city(raw_city: str) -> str:
     return CITY_MAPPING.get(raw_city, raw_city.lower())

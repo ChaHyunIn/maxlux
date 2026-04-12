@@ -1,0 +1,138 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, genspark_ai_developer]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── Frontend ───
+  web-lint:
+    name: Web - Lint & Typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: ESLint
+        run: npx eslint . --ext .ts,.tsx --max-warnings 0
+
+      - name: TypeScript typecheck
+        run: npx tsc --noEmit
+
+      - name: Next.js build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
+          NEXT_PUBLIC_SITE_URL: 'https://maxlux.kr'
+
+  # ─── Scraper ───
+  scraper-lint:
+    name: Scraper - Lint & Typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scraper
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: scraper/requirements.txt
+
+      - run: pip install -r requirements.txt ruff mypy
+
+      - name: Ruff lint
+        run: ruff check src/ --output-format=github
+
+      - name: Ruff format check
+        run: ruff format src/ --check
+
+      - name: Mypy typecheck
+        run: mypy src/ --ignore-missing-imports
+        continue-on-error: true  # 초기 도입이므로 warning만
+
+  # ─── i18n 무결성 검증 ───
+  i18n-check:
+    name: i18n Key Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check ko.json and en.json key parity
+        run: |
+          ko_keys=$(python3 -c "
+          import json, sys
+          def get_keys(obj, prefix=''):
+              keys = []
+              for k, v in obj.items():
+                  full = f'{prefix}.{k}' if prefix else k
+                  if isinstance(v, dict):
+                      keys.extend(get_keys(v, full))
+                  else:
+                      keys.append(full)
+              return sorted(keys)
+          with open('apps/web/messages/ko.json') as f:
+              print('\n'.join(get_keys(json.load(f))))
+          ")
+
+          en_keys=$(python3 -c "
+          import json, sys
+          def get_keys(obj, prefix=''):
+              keys = []
+              for k, v in obj.items():
+                  full = f'{prefix}.{k}' if prefix else k
+                  if isinstance(v, dict):
+                      keys.extend(get_keys(v, full))
+                  else:
+                      keys.append(full)
+              return sorted(keys)
+          with open('apps/web/messages/en.json') as f:
+              print('\n'.join(get_keys(json.load(f))))
+          ")
+
+          diff_output=$(diff <(echo "$ko_keys") <(echo "$en_keys") || true)
+          if [ -n "$diff_output" ]; then
+            echo "::error::i18n key mismatch between ko.json and en.json"
+            echo "$diff_output"
+            exit 1
+          fi
+          echo "✅ i18n keys are in sync"
+
+  # ─── constants 중복 정의 감지 ===
+  duplicate-exports-check:
+    name: Duplicate Export Names
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for duplicate exported names across files
+        run: |
+          # 동일 이름이 여러 파일에서 export되면 경고
+          grep -rn "^export " apps/web/lib/ apps/web/stores/ apps/web/hooks/ \
+            --include="*.ts" --include="*.tsx" \
+            | sed 's/.*export \(const\|function\|type\|interface\|class\) //' \
+            | sed 's/[(<: =].*//' | sed 's/ .*//' | sort | uniq -d \
+            | while read name; do
+                echo "::warning::Duplicate export name '$name' found in multiple files:"
+                grep -rn "export.*\b${name}\b" apps/web/lib/ apps/web/stores/ apps/web/hooks/ --include="*.ts" --include="*.tsx"
+              done

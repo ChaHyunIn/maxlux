@@ -1,13 +1,34 @@
 'use client'
 import { useMemo } from 'react';
-import type { DailyRate } from '@/lib/types';
-import { DayCell } from './DayCell';
-import { getDaysInMonth, startOfMonth, getDay } from 'date-fns';
+import Link from 'next/link';
+import { getDaysInMonth, startOfMonth, getDay, format } from 'date-fns';
+import { ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { DayCell } from './DayCell';
+import type { DailyRate } from '@/lib/types';
 
-export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, month: number, rates: DailyRate[], p25: number, p75: number }) {
+export function MonthGrid({ 
+    year, 
+    month, 
+    rates, 
+    p25, 
+    p75,
+    hotelSlug,
+    showDetailsLink = true
+}: { 
+    year: number, 
+    month: number, 
+    rates: DailyRate[], 
+    p25: number, 
+    p75: number,
+    hotelSlug?: string,
+    showDetailsLink?: boolean
+}) {
     const t = useTranslations('calendar');
-    const weekdays: string[] = t.raw('weekdays');
+    const rawWeekdays = t.raw('weekdays');
+    const weekdays: string[] = Array.isArray(rawWeekdays)
+        ? rawWeekdays.filter((d): d is string => typeof d === 'string')
+        : [];
     const header = t('monthFormat', { year: String(year), month: String(month) });
 
     const daysInMonth = getDaysInMonth(new Date(year, month - 1));
@@ -28,19 +49,31 @@ export function MonthGrid({ year, month, rates, p25, p75 }: { year: number, mont
     }, [rates]);
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <h3 className="text-lg font-bold mb-4 ml-1">{header}</h3>
-            <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm" role="grid" aria-label={header}>
+            <div className="flex items-center justify-between mb-4 ml-1">
+                <h3 className="text-lg font-bold">{header}</h3>
+                {hotelSlug && showDetailsLink && (
+                    <Link 
+                        href={`/hotels/${hotelSlug}/${year}-${String(month).padStart(2, '0')}`}
+                        className="text-emerald-600 hover:text-emerald-700 p-1 flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                        title={t('monthlyTitle', { name: '', month: header })}
+                    >
+                        <span>{t('title')}</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                )}
+            </div>
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-2 mb-2" role="row">
                 {weekdays.map((d, i) => (
                     <div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? 'text-red-500/80' : i === 6 ? 'text-blue-500/80' : 'text-slate-500'}`}>
                         {d}
                     </div>
                 ))}
             </div>
-            <div className="grid grid-cols-7 gap-1 sm:gap-2">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-2" role="row">
                 {cells.map((d, idx) => {
                     if (!d) return <div key={`empty-${idx}`} className="min-h-[60px]" />;
-                    const dateStr = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+                    const dateStr = format(d, 'yyyy-MM-dd');
                     const rate = rateMap.get(dateStr) || null;
                     return <DayCell key={dateStr} date={d} rate={rate} p25={p25} p75={p75} />;
                 })}

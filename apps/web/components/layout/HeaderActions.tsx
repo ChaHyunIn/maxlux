@@ -1,11 +1,11 @@
 'use client';
-import { useSettingStore } from '@/stores/settingStore';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Globe, DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Globe, DollarSign } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useRouter, usePathname } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
+import { isGlobalKey, isLocale } from '@/lib/i18nTypes';
+import { useSettingStore } from '@/stores/settingStore';
 
 export function HeaderActions() {
     const { currency, setCurrency } = useSettingStore();
@@ -19,13 +19,14 @@ export function HeaderActions() {
     if (!mounted) return null;
 
     const handleLocaleChange = (newLocale: string | null) => {
-        if (newLocale) {
-            router.replace(pathname, { locale: newLocale as any });
-            // Auto-sync currency with locale
-            if (newLocale === 'en') setCurrency('USD');
-            if (newLocale === 'ko') setCurrency('KRW');
+        if (isLocale(newLocale)) {
+            router.replace(pathname, { locale: newLocale });
         }
     };
+
+    const currentLocaleKey = isGlobalKey(locale) ? locale : null;
+    const currencyLower = currency.toLowerCase();
+    const currentCurrencyKey = isGlobalKey(currencyLower) ? currencyLower : null;
 
     return (
         <div className="flex items-center gap-3">
@@ -33,25 +34,31 @@ export function HeaderActions() {
                 <SelectTrigger className="w-[110px] h-9 bg-muted/50 border-none shadow-sm focus:ring-1 transition-all">
                     <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-primary" />
-                        <SelectValue />
+                        <SelectValue>
+                            {mounted && currentLocaleKey && t(currentLocaleKey)}
+                        </SelectValue>
                     </div>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="ko">한국어</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="ko">{t('ko')}</SelectItem>
+                    <SelectItem value="en">{t('en')}</SelectItem>
                 </SelectContent>
             </Select>
 
-            <Select value={currency} onValueChange={(v) => v && setCurrency(v as "KRW" | "USD")}>
+            <Select value={currency} onValueChange={(v) => {
+                if (v === 'KRW' || v === 'USD') setCurrency(v);
+            }}>
                 <SelectTrigger className="w-[100px] h-9 bg-muted/50 border-none shadow-sm focus:ring-1 transition-all">
                     <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-primary" />
-                        <SelectValue />
+                        <SelectValue>
+                            {mounted && currentCurrencyKey && t(currentCurrencyKey)}
+                        </SelectValue>
                     </div>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="KRW">KRW (₩)</SelectItem>
-                    <SelectItem value="USD">USD ($)</SelectItem>
+                    <SelectItem value="KRW">{t('krw')}</SelectItem>
+                    <SelectItem value="USD">{t('usd')}</SelectItem>
                 </SelectContent>
             </Select>
         </div>

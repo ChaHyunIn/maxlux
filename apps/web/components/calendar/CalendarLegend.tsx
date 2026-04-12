@@ -1,7 +1,7 @@
 'use client'
+import { useTranslations } from 'next-intl';
 import { PRICE_COLORS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
 export function CalendarLegend() {
     const t = useTranslations('calendar');

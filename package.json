@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{ts,tsx}": [
+      "bash -c 'cd apps/web && npx eslint . --max-warnings 0'",
+      "bash -c 'cd apps/web && npx tsc --noEmit'"
+    ],
+    "apps/web/messages/*.json": [
+      "node scripts/check-i18n-keys.js"
+    ],
+    "scraper/src/**/*.py": [
+      "/Users/cha/Library/Python/3.13/bin/ruff check --fix",
+      "/Users/cha/Library/Python/3.13/bin/ruff format"
+    ]
+  }
+}
