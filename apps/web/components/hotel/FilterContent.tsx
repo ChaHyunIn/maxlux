@@ -100,6 +100,7 @@ export function FilterContent({
     const brandLabel = selectedBrand === 'all'
         ? t('allBrands')
         : (brandBKey ? tBrand(brandBKey) : selectedBrand);
+    const priceKey = `${priceRange[0]}-${priceRange[1]}`;
 
     return (
         <div className="flex flex-col gap-4 w-full">

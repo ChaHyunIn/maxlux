@@ -1,31 +1,33 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
 import { TrendingDown, Bell, BarChart3, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { STORAGE_KEYS } from '@/lib/constants'
 
 /**
  * HeroSection 컴포넌트
  * 
  * 서비스의 핵심 가치를 전달하며, 첫 방문 여부에 따라 가변적인 레이아웃을 제공합니다.
- * 'maxlux_visited' localStorage 키를 사용하여 상태를 관리합니다.
  */
 
 export default function HeroSection() {
     const t = useTranslations('hero')
     const [isFirstVisit, setIsFirstVisit] = useState<boolean | null>(null)
+    const { getItem, setItem } = useLocalStorage()
 
     useEffect(() => {
-        const visited = localStorage.getItem('maxlux_visited')
+        const visited = getItem(STORAGE_KEYS.VISITED)
         if (!visited) {
             setIsFirstVisit(true)
-            localStorage.setItem('maxlux_visited', 'true')
+            setItem(STORAGE_KEYS.VISITED, 'true')
         } else {
             setIsFirstVisit(false)
         }
-    }, [])
+    }, [getItem, setItem])
 
     const scrollToContent = () => {
         const element = document.getElementById('hotel-list')
@@ -114,7 +116,9 @@ export default function HeroSection() {
                         >
                             <div className="text-center md:text-left">
                                 <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                                    {t('headline')}
+                                    {t.rich('headline', {
+                                        highlight: (chunks) => <span className="text-emerald-500">{chunks}</span>
+                                    })}
                                 </h2>
                                 <p className="text-slate-400 text-sm md:text-base">
                                     {t('subheadline')}

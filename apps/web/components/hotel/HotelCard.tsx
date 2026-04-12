@@ -8,13 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Link } from '@/i18n/navigation';
+import { trackEvent } from '@/lib/analytics';
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';
 import { HOT_DEAL_THRESHOLD } from '@/lib/constants';
 import { getHotelName } from '@/lib/hotelUtils';
 import { formatPrice, getRelativeTime } from '@/lib/utils';
 import { useSettingStore } from '@/stores/settingStore';
-import { trackEvent } from '@/lib/analytics';
 import type { Hotel } from '@/lib/types';
 
 export function HotelCard({ hotel }: { hotel: Hotel & { min_price?: number; recent_drops?: number } }) {

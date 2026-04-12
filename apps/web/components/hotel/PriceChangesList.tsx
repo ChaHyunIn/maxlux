@@ -1,3 +1,5 @@
+'use client'
+
 import { TrendingDown, TrendingUp, History } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useTranslations } from 'next-intl'

@@ -1,5 +1,8 @@
-import { useLocale } from 'next-intl';
+'use client'
+
+import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useLocale } from 'next-intl';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useFavorites } from '@/hooks/useFavorites';
 import { HOT_DEAL_THRESHOLD, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';

@@ -56,6 +56,7 @@ export const STORAGE_KEYS = {
     FAVORITES: 'maxlux_favorites',
     SETTINGS: 'maxlux_settings_v1',
     LEGACY_SETTINGS: 'maxlux-settings',
+    VISITED: 'maxlux_visited',
 } as const;
 
 export const CHART_CONFIG = {

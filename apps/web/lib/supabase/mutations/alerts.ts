@@ -32,7 +32,6 @@ export async function createPriceAlert(data: {
         if (error) throw error;
         return result;
     } catch (error) {
-        console.error('createPriceAlert error:', error);
         Sentry.captureException(error, {
             tags: { mutation: 'createPriceAlert', hotelId: data.hotel_id },
             extra: { email: '[REDACTED]' }
@@ -59,7 +58,6 @@ export async function getActiveAlerts(email: string, hotelId?: string) {
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error('getActiveAlerts error:', error);
         Sentry.captureException(error, {
             tags: { query: 'getActiveAlerts', hotelId },
             extra: { email: '[REDACTED]' }
@@ -82,7 +80,6 @@ export async function deactivateAlert(alertId: number, email: string) {
         }
         return count;
     } catch (error) {
-        console.error('deactivateAlert error:', error, alertId);
         Sentry.captureException(error, {
             tags: { mutation: 'deactivateAlert', alertId: String(alertId) },
             extra: { email: '[REDACTED]' }

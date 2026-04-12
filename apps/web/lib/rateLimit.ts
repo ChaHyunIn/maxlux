@@ -9,10 +9,10 @@ import { Redis } from '@upstash/redis';
  */
 
 // Upstash 환경변수가 없으면 폴백으로 항상 허용
-const redis = process.env.UPSTASH_REDIS_REST_URL
+const redis = process.env['UPSTASH_REDIS_REST_URL']
   ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      url: process.env['UPSTASH_REDIS_REST_URL'],
+      token: process.env['UPSTASH_REDIS_REST_TOKEN'] || '',
     })
   : null;
 
@@ -53,7 +53,6 @@ export async function rateLimit(
     return success;
   } catch (err) {
     // Redis 장애 시에도 서비스가 중단되지 않도록 통과
-    console.error('RateLimit Error:', err);
     return true;
   }
 }

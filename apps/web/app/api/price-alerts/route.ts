@@ -4,6 +4,8 @@ import { createPriceAlert, getActiveAlerts, deactivateAlert } from '@/lib/supaba
 import { isValidEmail } from '@/lib/validation';
 import type { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * 가격 알림 API
  *

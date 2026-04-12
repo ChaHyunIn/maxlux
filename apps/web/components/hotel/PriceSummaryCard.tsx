@@ -1,11 +1,11 @@
 'use client'
 
-import { useTranslations, useLocale } from 'next-intl'
-import { useSettingStore } from '@/stores/settingStore'
-import { formatPrice } from '@/lib/utils'
-import type { DailyRate, PriceChange } from '@/lib/types'
-import { TrendingDown, Calendar, Hash, ArrowDown } from 'lucide-react'
 import { useMemo } from 'react'
+import { TrendingDown, Calendar, Hash, ArrowDown } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
+import { formatPrice } from '@/lib/utils'
+import { useSettingStore } from '@/stores/settingStore'
+import type { DailyRate, PriceChange } from '@/lib/types'
 
 /**
  * PriceSummaryCard 컴포넌트
@@ -39,15 +39,18 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
         // 3. 48시간 내 가격 하락 건수 집계
         const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000)
         const recentDrops = changes.filter(c => 
-            new Date(c.changed_at) >= fortyEightHoursAgo && c.new_price < c.old_price
+            c.old_price !== null && new Date(c.changed_at) >= fortyEightHoursAgo && c.new_price < c.old_price
         ).length
 
         // 4. 주간 가격 분석 (가장 비싼 요일 추출)
-        const dayAverages = Array(7).fill(0).map(() => ({ sum: 0, count: 0 }))
+        const dayAverages = Array.from({ length: 7 }, () => ({ sum: 0, count: 0 }))
         activeRates.forEach(r => {
             const day = new Date(r.stay_date).getDay()
-            dayAverages[day].sum += r.price_krw
-            dayAverages[day].count++
+            const dayData = dayAverages[day]
+            if (dayData) {
+                dayData.sum += r.price_krw
+                dayData.count++
+            }
         })
 
         let maxAvg = -1

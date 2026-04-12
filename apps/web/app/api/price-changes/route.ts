@@ -2,6 +2,8 @@ import { errorResponse, successResponse } from '@/lib/apiResponse';
 import { getPriceChanges } from '@/lib/supabase/queries/rates';
 import type { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     const hotelId = req.nextUrl.searchParams.get('hotelId');
     const limit = parseInt(req.nextUrl.searchParams.get('limit') || '20', 10);

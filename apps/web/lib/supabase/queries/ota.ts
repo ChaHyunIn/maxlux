@@ -13,7 +13,6 @@ export async function getOtaPrices(hotelId: string, stayDate: string): Promise<O
         if (error) throw error;
         return data || [];
     } catch (error) {
-        console.error('getOtaPrices error:', error, { hotelId, stayDate });
         Sentry.captureException(error, { tags: { query: 'getOtaPrices', hotelId, stayDate } });
         return [];
     }
@@ -28,7 +27,6 @@ export async function getOtaSources(): Promise<{ code: string; name_ko: string; 
         if (error) throw error;
         return data || [];
     } catch (error) {
-        console.error('getOtaSources error:', error);
         Sentry.captureException(error, { tags: { query: 'getOtaSources' } });
         return [];
     }

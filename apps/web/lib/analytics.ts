@@ -24,13 +24,7 @@ export function trackEvent(
   try {
     // Vercel Analytics track 호출
     track(name, properties);
-    
-    // 개발 모드 로깅
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Analytics] ${name}`, properties);
-    }
   } catch (error) {
     // 분석 에러가 사용자 서비스 경험을 방해하지 않도록 swallow
-    console.error('Analytics tracking failed:', error);
   }
 }

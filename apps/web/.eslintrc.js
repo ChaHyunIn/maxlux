@@ -124,7 +124,7 @@ module.exports = {
             },
         },
         {
-            files: ['hooks/useFavorites.ts'],
+            files: ['hooks/useFavorites.ts', 'hooks/useLocalStorage.ts'],
             rules: {
                 'no-restricted-syntax': 'off',
             },

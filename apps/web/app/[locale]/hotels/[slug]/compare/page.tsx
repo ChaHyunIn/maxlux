@@ -71,10 +71,13 @@ export default async function ComparePage(props: PageProps) {
     const cheapestStat = stats.find(s => s.avgPrice === minAvg);
     if (cheapestStat) cheapestStat.isCheapest = true;
 
-    const formattedMonthlyStats = stats.map(s => ({
-        ...s,
-        month: t('monthlyAvg', { month: parseInt(s.month.split('-')[1]) })
-    }));
+    const formattedMonthlyStats = stats.map(s => {
+        const monthPart = s.month.split('-')[1] ?? '01';
+        return {
+            ...s,
+            month: t('monthlyAvg', { month: parseInt(monthPart) })
+        };
+    });
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
@@ -95,7 +98,7 @@ export default async function ComparePage(props: PageProps) {
                 <p className="text-slate-500 text-lg leading-relaxed">
                     {t('metaDescription', { 
                         name: hotelName, 
-                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1]) }) : '...' 
+                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01') }) : '...' 
                     })}
                 </p>
             </div>
@@ -119,7 +122,7 @@ export default async function ComparePage(props: PageProps) {
                         <p className="text-emerald-700 text-sm">
                             {t('recommendation', { 
                                 name: hotelName, 
-                                month: parseInt(cheapestStat.month.split('-')[1]),
+                                month: parseInt(cheapestStat.month.split('-')[1] ?? '01'),
                                 price: formatPrice(cheapestStat.avgPrice, 'KRW', 1) // Base KRW, exchange handled in store if needed
                             })}
                         </p>

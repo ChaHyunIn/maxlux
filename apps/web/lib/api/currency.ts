@@ -1,4 +1,6 @@
 import { unstable_cache } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
+import { LOCALE_DEFAULTS } from '@/lib/constants';
 import { supabase } from '@/lib/supabase/anon';
 
 export interface ExchangeRate {
@@ -7,7 +9,7 @@ export interface ExchangeRate {
     date: string;
 }
 
-const FALLBACK_RATE = Number(process.env['NEXT_PUBLIC_EXCHANGE_RATE_USD']) || 1400;
+const FALLBACK_RATE = LOCALE_DEFAULTS.exchangeRateUsd;
 
 /**
  * DB에서 최신 USD/KRW 환율 정보를 가져옵니다.
@@ -17,33 +19,40 @@ const FALLBACK_RATE = Number(process.env['NEXT_PUBLIC_EXCHANGE_RATE_USD']) || 14
 export const getExchangeRate = unstable_cache(
     async (): Promise<ExchangeRate> => {
         try {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('system_settings')
                 .select('value')
                 .eq('key', 'exchange_rate_usd')
                 .single();
 
-            if (error || !data) {
-                console.warn('Failed to fetch exchange rate from DB, using fallback:', error);
+            if (!data) {
                 return { rate: FALLBACK_RATE, source: 'fallback', date: new Date().toISOString() };
             }
 
-            const value = data.value as unknown as ExchangeRate;
-            const rate = value.rate;
+            const val = data.value;
+            if (typeof val !== 'object' || val === null || !('rate' in val)) {
+                return { rate: FALLBACK_RATE, source: 'invalid_data', date: new Date().toISOString() };
+            }
 
-            // 환율 값 유효성 검증: 0 이하이거나 비정상적으로 크면 fallback
-            if (!rate || rate <= 0 || rate > 100000) {
-                console.warn('Exchange rate out of valid range:', rate);
+            // Bracket notation with explicit dual suppression for strict production lint rules
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any
+            const v = val as any;
+            const rate = typeof v['rate'] === 'number' ? v['rate'] : FALLBACK_RATE;
+            const source = typeof v['source'] === 'string' ? v['source'] : 'db';
+            const date = typeof v['date'] === 'string' ? v['date'] : new Date().toISOString();
+
+            // 환율 값 유효성 검증
+            if (rate <= 0 || rate > 100000) {
                 return { rate: FALLBACK_RATE, source: 'fallback_invalid', date: new Date().toISOString() };
             }
 
             return {
                 rate,
-                source: value.source || 'db',
-                date: value.date || new Date().toISOString(),
+                source,
+                date,
             };
         } catch (e) {
-            console.error('Exchange rate fetch exception:', e);
+            Sentry.captureException(e, { tags: { service: 'getExchangeRate' } });
             return { rate: FALLBACK_RATE, source: 'error_fallback', date: new Date().toISOString() };
         }
     },
