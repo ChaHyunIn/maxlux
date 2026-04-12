@@ -14,7 +14,7 @@ interface PriceChangesListProps {
 export function PriceChangesList({ changes }: PriceChangesListProps) {
     const { currency, exchangeRate } = useSettingStore()
     const t = useTranslations('priceChanges')
-    const tCommon = useTranslations('common')
+    const tTime = useTranslations('time')
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 mt-8">
@@ -58,7 +58,7 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                                             {t('stayDate', { date: change.stay_date })}
                                         </span>
                                         <span className="text-[10px] text-slate-400">
-                                            {getRelativeTime(change.changed_at, tCommon)}
+                                            {getRelativeTime(change.changed_at, tTime)}
                                         </span>
                                     </div>
                                 </div>

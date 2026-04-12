@@ -8,6 +8,10 @@ interface Props {
     params: Promise<{ slug: string }>;
 }
 
+/**
+ * ⚠️  아래 텍스트는 messages/ko.json → og.subtitle / og.tagline 과 반드시 동기화되어야 합니다.
+ *     Edge Runtime 제약으로 next-intl 서버 API를 사용할 수 없어 하드코딩합니다.
+ */
 const OG_TEXT: Record<string, { subtitle: string; tagline: string }> = {
     ko: { subtitle: '가격 추이 탐색기', tagline: '럭셔리 호텔 최저가 스나이퍼' },
     en: { subtitle: 'Price Trends Explorer', tagline: 'Luxury Hotel Price Sniper' },

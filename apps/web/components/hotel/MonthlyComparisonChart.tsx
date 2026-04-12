@@ -22,6 +22,7 @@ export default function MonthlyComparisonChart({ stats }: MonthlyComparisonChart
     if (stats.length === 0) return null
 
     const maxPrice = Math.max(...stats.map(s => s.avgPrice))
+    if (maxPrice <= 0) return null
 
     return (
         <div className="space-y-6">

@@ -91,7 +91,7 @@ body {
   --color-brand: oklch(0.75 0.18 85);       /* Gold tone */
   --color-brand-light: oklch(0.92 0.08 85);
   --color-brand-dark: oklch(0.55 0.18 85);
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: var(--font-playfair, 'Playfair Display'), Georgia, serif;
 }
 
 .dark {

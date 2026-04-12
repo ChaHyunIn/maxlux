@@ -162,7 +162,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
                                     <Input
                                         type="number"
                                         value={targetPrice}
-                                        onChange={(e) => setTargetPrice(parseInt(e.target.value) || 0)}
+                                        onChange={(e) => setTargetPrice(parseInt(e.target.value, 10) || 0)}
                                         className="flex-1"
                                         min={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}
                                         step={currency === 'USD' ? 10 : LOCALE_DEFAULTS.priceUnitManDivisor}

@@ -32,6 +32,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 export default async function ComparePage(props: PageProps) {
     const { locale, slug } = await props.params;
     const t = await getTranslations({ locale, namespace: 'compare' });
+    const tTime = await getTranslations({ locale, namespace: 'time' });
     
     const hotel = await getHotelBySlug(slug);
     if (!hotel) notFound();
@@ -98,7 +99,7 @@ export default async function ComparePage(props: PageProps) {
                 <p className="text-slate-500 text-lg leading-relaxed">
                     {t('metaDescription', { 
                         name: hotelName, 
-                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : t('unknown', { ns: 'time' }) 
+                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : tTime('unknown') 
                     })}
                 </p>
             </div>
@@ -123,7 +124,9 @@ export default async function ComparePage(props: PageProps) {
                             {t('recommendation', { 
                                 name: hotelName, 
                                 month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10),
-                                price: formatPrice(cheapestStat.avgPrice, 'KRW', 1) // Base KRW, exchange handled in store if needed
+                                // NOTE: 서버 컴포넌트에서 client currency store 접근 불가.
+                                // KRW 원본가 그대로 표시. 향후 cookie 기반 currency 전달 시 교체 필요.
+                                price: formatPrice(cheapestStat.avgPrice, 'KRW', 1)
                             })}
                         </p>
                     </div>

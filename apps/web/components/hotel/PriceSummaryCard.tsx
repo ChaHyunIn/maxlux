@@ -65,6 +65,10 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
             }
         })
 
+        if (maxDay < 0) {
+            return { lowest: { price: lowestRes.price_krw, date: lowestRes.stay_date }, average: avgPrice, drops: recentDrops, expensiveDay: null }
+        }
+
         const diffPct = Math.round(((maxAvg - avgPrice) / avgPrice) * 100)
         
         // 날짜 객체를 이용해 로케일에 맞는 요일 이름 생성
@@ -101,12 +105,14 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
                 value={stats.drops > 0 ? t('dropsCount', { count: stats.drops }) : t('noChanges')}
                 subValue={t('last48Hours')}
             />
-            <StatItem 
-                icon={<Calendar className="w-4 h-4 text-slate-500" />}
-                label={t('expensiveDay')}
-                value={stats.expensiveDay.name}
-                subValue={t('higherThanAvg', { pct: stats.expensiveDay.pct })}
-            />
+            {stats.expensiveDay && (
+                <StatItem 
+                    icon={<Calendar className="w-4 h-4 text-slate-500" />}
+                    label={t('expensiveDay')}
+                    value={stats.expensiveDay.name}
+                    subValue={t('higherThanAvg', { pct: stats.expensiveDay.pct })}
+                />
+            )}
         </div>
     )
 }
