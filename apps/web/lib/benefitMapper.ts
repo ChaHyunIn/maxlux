@@ -5,6 +5,7 @@ import type { BenefitKey } from './i18nTypes';
  * Maps database benefit strings to normalized translation keys.
  * Data is centralized in mappings.json to keep this logic file clean of hardcoded literals.
  */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const BENEFIT_MAP: Record<string, BenefitKey> = mappings.benefits as Record<string, BenefitKey>;
 
 /**

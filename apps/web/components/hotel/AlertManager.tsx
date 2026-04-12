@@ -133,7 +133,7 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
                                                         {alert.hotels ? (locale === 'en' ? alert.hotels.name_en : alert.hotels.name_ko) : t('hotelName')}
                                                     </p>
                                                     <p className="text-xs text-indigo-600 font-medium">
-                                                        {formatPrice(alert.target_price, alert.currency, exchangeRate)}
+                                                        {formatPrice(alert.target_price, alert.currency, exchangeRate, locale)}
                                                     </p>
                                                 </div>
                                             </div>

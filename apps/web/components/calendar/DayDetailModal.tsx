@@ -71,7 +71,7 @@ export function DayDetailModal({
         } finally {
             setLoading(false)
         }
-    }, [rate, hotelId, open])
+    }, [rate, hotelId, hotelName, open])
 
     useEffect(() => {
         fetchOtaPrices()
@@ -81,14 +81,14 @@ export function DayDetailModal({
         if (!open || !rate) return;
         setRoomRatesLoading(true);
         try {
-            const data = await fetchRoomRatesApi(rate.hotel_id, rate.stay_date);
+            const data = await fetchRoomRatesApi(hotelId, rate.stay_date);
             setRoomRates(data);
         } catch {
             setRoomRates([])
         } finally {
             setRoomRatesLoading(false);
         }
-    }, [open, rate]);
+    }, [open, rate, hotelId]);
 
     useEffect(() => {
         fetchRoomRates()
@@ -151,6 +151,7 @@ export function DayDetailModal({
                     currency={currency}
                     exchangeRate={exchangeRate}
                     t={t}
+                    locale={locale}
                 />
 
                 <RoomRateList
@@ -160,6 +161,7 @@ export function DayDetailModal({
                     tTerm={tTerm}
                     currency={currency}
                     exchangeRate={exchangeRate}
+                    locale={locale}
                 />
 
                 {bookingUrl && !rate.is_sold_out && (

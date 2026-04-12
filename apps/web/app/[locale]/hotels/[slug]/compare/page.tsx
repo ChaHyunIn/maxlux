@@ -65,9 +65,9 @@ export default async function ComparePage(props: PageProps) {
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
                     <Inbox className="w-10 h-10 text-slate-200 stroke-[1]" />
                 </div>
-                <h2 className="text-2xl font-display font-bold text-slate-900 mb-4">{t('noDataTitle', { defaultValue: 'Seeking Perfection...' })}</h2>
+                <h2 className="text-2xl font-display font-bold text-slate-900 mb-4">{t('noDataTitle')}</h2>
                 <p className="text-slate-400 max-w-md mx-auto mb-10 font-light leading-relaxed">
-                    {t('noDataDesc', { defaultValue: 'We are currently analyzing the premium rates for this property. Please return in a few moments for a refined price experience.' })}
+                    {t('noDataDesc')}
                 </p>
                 <Link href={`/hotels/${slug}`}>
                     <Button variant="outline" className="rounded-full px-10 border-slate-200 hover:bg-slate-50 transition-all font-bold">
@@ -104,7 +104,7 @@ export default async function ComparePage(props: PageProps) {
                         <History className="w-6 h-6 text-brand" strokeWidth={1.5} />
                     </div>
                     <div>
-                        <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-brand mb-1">Intelligence Report</div>
+                        <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-brand mb-1">{t('sectionLabel')}</div>
                         <h1 className="text-4xl md:text-5xl font-display font-bold text-slate-950 tracking-tight">
                             {t('title', { name: hotelName })}
                         </h1>

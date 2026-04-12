@@ -84,7 +84,7 @@ export function FilterContent({
             value: opt.value,
             label: t(opt.labelKey)
         };
-    }), [t, currency]);
+    }), [t, currency, exchangeRate]);
 
     const handlePriceChange = (val: string) => {
         const parts = val.split('-').map(Number);

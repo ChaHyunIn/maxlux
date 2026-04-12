@@ -2,7 +2,7 @@
 
 import { TrendingDown, TrendingUp, History } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice, getRelativeTime } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 import type { PriceChange } from '@/lib/types'
@@ -15,6 +15,7 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
     const { currency, exchangeRate } = useSettingStore()
     const t = useTranslations('priceChanges')
     const tTime = useTranslations('time')
+    const locale = useLocale()
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 mt-8">
@@ -67,16 +68,16 @@ export function PriceChangesList({ changes }: PriceChangesListProps) {
                                     <div className="flex items-center justify-end gap-1.5">
                                         {!isNew && (
                                             <span className="text-xs text-slate-400 line-through">
-                                                {formatPrice(change.old_price, currency, exchangeRate)}
+                                                {formatPrice(change.old_price, currency, exchangeRate, locale)}
                                             </span>
                                         )}
                                         <span className={`font-bold text-sm ${isDrop ? 'text-emerald-600' : isRise ? 'text-red-600' : 'text-slate-800'}`}>
-                                            {formatPrice(change.new_price, currency, exchangeRate)}
+                                            {formatPrice(change.new_price, currency, exchangeRate, locale)}
                                         </span>
                                     </div>
                                     <div className={`text-[10px] font-medium ${isDrop ? 'text-emerald-500' : isRise ? 'text-red-500' : 'text-slate-400'}`}>
                                         {isNew ? t('newRegistration') : (isDrop ? t('priceDrop') : t('priceRise'))} 
-                                        {!isNew && ` ${formatPrice(Math.abs(diff), currency, exchangeRate)}`}
+                                        {!isNew && ` ${formatPrice(Math.abs(diff), currency, exchangeRate, locale)}`}
                                     </div>
                                 </div>
                             </motion.div>

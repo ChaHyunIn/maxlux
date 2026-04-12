@@ -14,7 +14,6 @@ interface PriceTrendChartProps {
 
 const { height: CHART_HEIGHT, padding: CHART_PADDING, trendThreshold: TREND_THRESHOLD } = CHART_CONFIG
 
-
 export function PriceTrendChart({ rates }: PriceTrendChartProps) {
     const gradientId = useId()
     const { currency, exchangeRate } = useSettingStore()
@@ -68,12 +67,38 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
         return { min, max, avg, minDate, maxDate, trendPct }
     }, [chartData])
 
-    if (chartData.length < 3 || !stats) {
-        return null // Not enough data to show a chart
-    }
-
     const innerWidth = chartWidth - CHART_PADDING.left - CHART_PADDING.right
     const innerHeight = CHART_HEIGHT - CHART_PADDING.top - CHART_PADDING.bottom
+
+    // Build Path - Curved Bezier for luxury feel
+    const linePath = useMemo(() => {
+        if (!stats || chartData.length < 2) return '';
+        const xs = (i: number) => CHART_PADDING.left + (i / (chartData.length - 1)) * innerWidth
+        
+        const priceRange = stats.max - stats.min || 1
+        const pricePadding = priceRange * 0.1
+        const yMinLocal = stats.min - pricePadding
+        const yMaxLocal = stats.max + pricePadding
+        
+        const ysActual = (price: number) => CHART_PADDING.top + innerHeight - ((price - yMinLocal) / (yMaxLocal - yMinLocal)) * innerHeight
+
+        let path = `M ${xs(0).toFixed(1)} ${ysActual(chartData[0]?.price ?? 0).toFixed(1)}`;
+        
+        for (let i = 0; i < chartData.length - 1; i++) {
+            const x1 = xs(i);
+            const y1 = ysActual(chartData[i]?.price ?? 0);
+            const x2 = xs(i + 1);
+            const y2 = ysActual(chartData[i + 1]?.price ?? 0);
+            const cp1x = x1 + (x2 - x1) / 2;
+            const cp2x = x1 + (x2 - x1) / 2;
+            path += ` C ${cp1x.toFixed(1)} ${y1.toFixed(1)}, ${cp2x.toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+        }
+        return path;
+    }, [chartData, innerWidth, innerHeight, stats]);
+
+    if (!stats || chartData.length < 3) {
+        return null // Not enough data to show a chart
+    }
 
     const priceRange = stats.max - stats.min || 1
     const pricePadding = priceRange * 0.1
@@ -82,23 +107,6 @@ export function PriceTrendChart({ rates }: PriceTrendChartProps) {
 
     const xScale = (i: number) => CHART_PADDING.left + (i / (chartData.length - 1)) * innerWidth
     const yScale = (price: number) => CHART_PADDING.top + innerHeight - ((price - yMin) / (yMax - yMin)) * innerHeight
-
-    // Build Path - Curved Bezier for luxury feel
-    const linePath = useMemo(() => {
-        if (chartData.length < 2) return '';
-        let path = `M ${xScale(0).toFixed(1)} ${yScale(chartData[0].price).toFixed(1)}`;
-        
-        for (let i = 0; i < chartData.length - 1; i++) {
-            const x1 = xScale(i);
-            const y1 = yScale(chartData[i].price);
-            const x2 = xScale(i + 1);
-            const y2 = yScale(chartData[i + 1].price);
-            const cp1x = x1 + (x2 - x1) / 2;
-            const cp2x = x1 + (x2 - x1) / 2;
-            path += ` C ${cp1x.toFixed(1)} ${y1.toFixed(1)}, ${cp2x.toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
-        }
-        return path;
-    }, [chartData, xScale, yScale]);
 
     // Area fill
     const areaPath = `${linePath} L ${xScale(chartData.length - 1).toFixed(1)} ${(CHART_PADDING.top + innerHeight).toFixed(1)} L ${CHART_PADDING.left.toFixed(1)} ${(CHART_PADDING.top + innerHeight).toFixed(1)} Z`

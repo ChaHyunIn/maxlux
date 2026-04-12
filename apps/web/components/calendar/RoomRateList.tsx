@@ -1,4 +1,4 @@
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getBenefitKey } from '@/lib/benefitMapper';
@@ -14,11 +14,11 @@ interface RoomRateListProps {
     tTerm: ReturnType<typeof useTranslations>;
     currency: 'KRW' | 'USD';
     exchangeRate?: number;
+    locale: string;
 }
 
-export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency, exchangeRate }: RoomRateListProps) {
+export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency, exchangeRate, locale }: RoomRateListProps) {
     const tBenefits = useTranslations('benefits');
-    const locale = useLocale();
     
     return (
         <div className="border rounded-xl overflow-hidden mt-4">
@@ -76,7 +76,7 @@ export function RoomRateList({ roomRatesLoading, roomRates, t, tTerm, currency, 
                                                 </div>
                                                 <div className="text-right whitespace-nowrap pt-0.5 shrink-0">
                                                     <div className="font-bold text-slate-800 text-[14px]">
-                                                        {formatPrice(rate.price_krw, currency, exchangeRate)}
+                                                        {formatPrice(rate.price_krw, currency, exchangeRate, locale)}
                                                     </div>
                                                 </div>
                                             </div>

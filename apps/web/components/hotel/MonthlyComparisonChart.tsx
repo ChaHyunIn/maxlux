@@ -1,7 +1,9 @@
 'use client'
 
+'use client'
+
 import { motion } from 'motion/react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice } from '@/lib/utils'
 import { useSettingStore } from '@/stores/settingStore'
 
@@ -17,6 +19,7 @@ interface MonthlyComparisonChartProps {
 
 export default function MonthlyComparisonChart({ stats }: MonthlyComparisonChartProps) {
     const t = useTranslations('compare')
+    const locale = useLocale()
     const { currency, exchangeRate } = useSettingStore()
 
     if (stats.length === 0) return null
@@ -38,7 +41,7 @@ export default function MonthlyComparisonChart({ stats }: MonthlyComparisonChart
                                     {stat.isCheapest && <span className="ml-2 text-[10px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full">{t('cheapestMonth')}</span>}
                                 </span>
                                 <span className="text-sm font-black text-slate-900">
-                                    {formatPrice(stat.avgPrice, currency, exchangeRate)}
+                                    {formatPrice(stat.avgPrice, currency, exchangeRate, locale)}
                                 </span>
                             </div>
                             

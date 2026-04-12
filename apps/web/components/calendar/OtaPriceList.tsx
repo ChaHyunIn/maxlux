@@ -21,9 +21,10 @@ interface OtaPriceListProps {
     currency: 'KRW' | 'USD';
     exchangeRate?: number;
     t: ReturnType<typeof useTranslations>;
+    locale: string;
 }
 
-export function OtaPriceList({ loading, allPrices, lowestPrice, currency, exchangeRate, t }: OtaPriceListProps) {
+export function OtaPriceList({ loading, allPrices, lowestPrice, currency, exchangeRate, t, locale }: OtaPriceListProps) {
     const tOta = useTranslations('ota');
 
     return (
@@ -69,7 +70,7 @@ export function OtaPriceList({ loading, allPrices, lowestPrice, currency, exchan
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className={`font-bold ${isLowest ? 'text-emerald-700' : 'text-slate-800'}`}>
-                                        {p.is_sold_out ? t('soldOut') : formatPrice(p.price_krw, currency, exchangeRate)}
+                                        {p.is_sold_out ? t('soldOut') : formatPrice(p.price_krw, currency, exchangeRate, locale)}
                                     </span>
                                     {p.url && !p.is_sold_out && (
                                         <a

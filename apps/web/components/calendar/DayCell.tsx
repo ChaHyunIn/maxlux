@@ -1,5 +1,5 @@
 'use client'
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { PRICE_COLORS, LOCALE_DEFAULTS } from '@/lib/constants';
 import { getPriceLevel, cn, formatPrice } from '@/lib/utils';
 import { useCalendarStore } from '@/stores/calendarStore';
@@ -10,6 +10,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
     const { sniperMode, openDayDetail } = useCalendarStore();
     const { currency, exchangeRate } = useSettingStore();
     const t = useTranslations('calendar');
+    const locale = useLocale();
 
     const day = date.getDate();
     const dayOfWeek = date.getDay();
@@ -51,7 +52,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
 
     const priceText = is_sold_out ? t('soldOut') : (
         currency === 'USD'
-            ? formatPrice(price_krw, 'USD', exchangeRate)
+            ? formatPrice(price_krw, 'USD', exchangeRate, locale)
             : `${Math.round(price_krw / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     );
 

@@ -44,7 +44,7 @@ export default function HeroSection() {
             {/* Cinematic Background - Deep Gradients & Subtle Noise */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-brand-dark)_0%,_transparent_40%),_radial-gradient(circle_at_bottom_left,_var(--color-luxury-emerald-soft)_0%,_transparent_30%)] opacity-20" />
             <div className="absolute inset-0 bg-[#020617] -z-10" />
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/stardust.png")' }} />
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
             <div className="container relative mx-auto px-4 z-10">
                 <AnimatePresence mode="wait">
@@ -159,7 +159,7 @@ export default function HeroSection() {
                                     animate={{ opacity: 1, x: 0 }}
                                     className="mb-4 inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-brand/60"
                                 >
-                                    Experience the Exceptional
+                                    {t('compactBadge')}
                                 </motion.div>
                                 <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight">
                                     {t.rich('headline', {
