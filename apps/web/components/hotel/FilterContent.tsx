@@ -4,13 +4,13 @@ import { useTranslations } from 'next-intl';
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { trackEvent } from '@/lib/analytics'
 import { getBrandKey } from '@/lib/brandMapper';
 import { getCityKey } from '@/lib/cityMapper';
 import { SUPPORTED_CITIES, PRICE_FILTER_RANGES, DEFAULT_FILTER_PRICE_RANGE } from '@/lib/constants';
 import { formatPrice } from '@/lib/utils';
 import { useFilterStore } from "@/stores/filterStore"
 import { useSettingStore } from "@/stores/settingStore"
-import { trackEvent } from '@/lib/analytics'
 import { SearchAutocomplete } from './SearchAutocomplete';
 import type { Hotel } from '@/lib/types';
 
@@ -100,7 +100,6 @@ export function FilterContent({
     const brandLabel = selectedBrand === 'all'
         ? t('allBrands')
         : (brandBKey ? tBrand(brandBKey) : selectedBrand);
-    const priceKey = `${priceRange[0]}-${priceRange[1]}`;
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -189,10 +188,10 @@ export function FilterContent({
                     </SelectContent>
                 </Select>
 
-                <Select value={priceKey} onValueChange={(val) => { if (val) handlePriceChange(val); onClose?.(); }}>
+                <Select value={`${priceRange[0]}-${priceRange[1]}`} onValueChange={(val) => { if (val) handlePriceChange(val); onClose?.(); }}>
                     <SelectTrigger className="w-[140px] bg-white text-slate-900">
                         <SelectValue placeholder={t('priceAll')}>
-                            {PRICE_OPTIONS.find((opt: { value: string; label: string }) => opt.value === priceKey)?.label}
+                            {PRICE_OPTIONS.find((opt: { value: string; label: string }) => opt.value === `${priceRange[0]}-${priceRange[1]}`)?.label}
                         </SelectValue>
                     </SelectTrigger>
                     <SelectContent>

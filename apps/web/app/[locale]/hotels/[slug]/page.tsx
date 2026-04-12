@@ -1,16 +1,17 @@
 import { notFound } from 'next/navigation';
+import { ChevronRight } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { HeatmapCalendar } from '@/components/calendar/HeatmapCalendar';
 import { HotelHeroHeader } from '@/components/hotel/HotelHeroHeader';
 import { PriceChangesList } from '@/components/hotel/PriceChangesList';
-import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
 import PriceSummaryCard from '@/components/hotel/PriceSummaryCard';
+import { PriceTrendChart } from '@/components/hotel/PriceTrendChart';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { Link } from '@/i18n/navigation';
 import { REVALIDATE_SECONDS } from '@/lib/constants';
+import { getHotelName } from '@/lib/hotelUtils';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates, getPriceChanges } from '@/lib/supabase/queries/rates';
-import { Link } from '@/i18n/navigation';
-import { ChevronRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const revalidate = REVALIDATE_SECONDS.hotelDetail;
@@ -77,7 +78,7 @@ export default async function HotelDetailPage(props: { params: Promise<{ locale:
                         href={`/hotels/${params.slug}/compare`} 
                         className="group flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-indigo-600 transition-colors"
                     >
-                        {tCompare('title', { name: hotel.name_ko })}
+                        {tCompare('title', { name: getHotelName(hotel, params.locale) })}
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>

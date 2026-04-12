@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { track } from '@vercel/analytics';
 
 /**
@@ -24,7 +25,12 @@ export function trackEvent(
   try {
     // Vercel Analytics track 호출
     track(name, properties);
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log(`[Analytics] ${name}`, properties);
+    }
   } catch (error) {
-    // 분석 에러가 사용자 서비스 경험을 방해하지 않도록 swallow
+    // 분석 에러가 사용자 서비스 경험을 방해하지 않도록 swallow하되 Sentry 보고
+    Sentry.captureException(error, { tags: { service: 'analytics', event: name } });
   }
 }

@@ -32,6 +32,8 @@ export async function createPriceAlert(data: {
         if (error) throw error;
         return result;
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, {
             tags: { mutation: 'createPriceAlert', hotelId: data.hotel_id },
             extra: { email: '[REDACTED]' }
@@ -58,6 +60,8 @@ export async function getActiveAlerts(email: string, hotelId?: string) {
         if (error) throw error;
         return data;
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, {
             tags: { query: 'getActiveAlerts', hotelId },
             extra: { email: '[REDACTED]' }
@@ -80,6 +84,8 @@ export async function deactivateAlert(alertId: number, email: string) {
         }
         return count;
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, {
             tags: { mutation: 'deactivateAlert', alertId: String(alertId) },
             extra: { email: '[REDACTED]' }

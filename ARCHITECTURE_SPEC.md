@@ -1,5 +1,5 @@
 # MaxLux 프로젝트 아키텍처 상세 명세서
-> 마지막 업데이트: 2026-04-13
+> 마지막 업데이트: 2026-04-12
 
 이 문서는 MaxLux 모노레포의 아키텍처와 각 디렉터리/파일의 목적을 상세히 설명하는 최종 기술 명세서입니다.
 
@@ -39,7 +39,7 @@
 - **`hotel/`**: 호텔 특화 UI.
     - `PriceSummaryCard.tsx`: [NEW] 가격 통계 요약 대시보드 (최저/평균/변동성/요일별 패턴).
     - `MonthlyComparisonChart.tsx`: [NEW] 월별 가격 비교 막대 차트 (Framer Motion 적용).
-    - `PriceChangesList.tsx`: 최근 가격 변동 이력 시각회 (Staggered Animation 적용).
+    - `PriceChangesList.tsx`: 최근 가격 변동 이력 시각화 (Staggered Animation 적용).
     - `PriceTrendChart.tsx`: 기간별 가격 추이 라인 차트.
     - `HotelHeroHeader.tsx`: 호텔 기본 정보 및 고해상도 이미지 표시.
 
@@ -77,7 +77,9 @@
 
 1. **DB First Mapping**: 하드코딩된 Python 딕셔너리 의존성을 줄이고 DB에 저장된 한국어명을 우선적으로 신뢰하도록 설계.
 2. **Atomic Migrations**: 모든 DB 변경 사항은 `supabase/migrations`를 통해 관리되어 환경 간 일관성 보장.
-3. **Luxury Aesthetics**: `Playfair Display` serif 폰트와 골드 톤 디자인 시스템을 통한 프리미엄 UX 제공.
-4. **Performance optimized**: Materialized Views와 Redis 기반 Rate Limiting을 통해 수천 명의 동시 접속 시에도 안정적인 성능 유지.
-5. **SEO First**: 동적 사이트맵, OG 이미지, 월별 상세/비교 페이지 연쇄 구조를 통한 유기적 검색 트래픽 극대화.
-6. **Modular OTA Clients**: `BaseClient` 상속 구조를 통해 새로운 예약 사이트 추가가 용이하도록 모듈화.
+3. **SEO Optimized**: 동적 사이트맵, OG 이미지 API, 월간 전용 경로, 월별 비교 페이지를 통해 검색 엔진 노출 최적화.
+4. **Security Hardened**: RLS(Row Level Security)를 전 테이블에 적용하고, `price_alerts` 테이블의 고유 제약 조건을 강화하여 중복 방지. Turnstile 도입 로드맵 수립.
+5. **Observability**: Sentry SDK를 연동하여 빌드 타임 소스맵 업로드 및 런타임 에러 캡처 자동화. Production 샘플링(10%) 최적화.
+6. **Performance Optimized**: Materialized Views와 Redis 기반 Rate Limiting을 통해 수천 명의 동시 접속 시에도 안정적인 성능 유지.
+7. **Luxury Aesthetics**: `Playfair Display` serif 폰트와 골드 톤 디자인 시스템을 통한 프리미엄 UX 제공.
+8. **Modular OTA Clients**: `BaseClient` 상속 구조를 통해 새로운 예약 사이트 추가가 용이하도록 모듈화.

@@ -13,6 +13,8 @@ export async function getHotels(): Promise<(Hotel & { min_price?: number })[]> {
         if (error) throw error;
         return data || [];
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getHotels' } });
         throw error;
     }
@@ -30,6 +32,8 @@ export async function getHotelsByCity(city: string): Promise<(Hotel & { min_pric
         if (error) throw error;
         return data || [];
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getHotelsByCity', city } });
         throw error;
     }
@@ -45,6 +49,8 @@ export async function getHotelBySlug(slug: string): Promise<Hotel | null> {
         if (error) throw error;
         return data;
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getHotelBySlug', slug } });
         return null;
     }

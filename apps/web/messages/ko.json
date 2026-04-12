@@ -312,7 +312,9 @@
         "noChanges": "변동 없음",
         "expensiveDay": "가장 비싼 요일",
         "higherThanAvg": "평균 대비 {pct}% 높음",
-        "onDate": "{date}"
+        "onDate": "{date}",
+        "perNightAvg": "1박 평균",
+        "last48Hours": "최근 48시간"
     },
     "alertManager": {
         "title": "내 알림 관리하기",
@@ -336,6 +338,9 @@
         "recommendation": "{name}은(는) {month}월이 가장 저렴합니다 (평균 {price})",
         "noData": "비교할 충분한 데이터가 없습니다",
         "backToHotel": "호텔 상세로 돌아가기",
-        "viewCalendar": "전체 캘린더 보기"
+        "viewCalendar": "전체 캘린더 보기",
+        "perNight": "1박 기준",
+        "insiderTip": "MaxLux 인사이더 팁",
+        "metaDescriptionGeneric": "{name}의 월별 평균 가격을 비교하고 가장 저렴한 투숙 시기를 확인하세요."
     }
 }

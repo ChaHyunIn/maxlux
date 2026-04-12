@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
@@ -9,10 +10,10 @@ import { Redis } from '@upstash/redis';
  */
 
 // Upstash 환경변수가 없으면 폴백으로 항상 허용
-const redis = process.env['UPSTASH_REDIS_REST_URL']
+const redis = process.env['UPSTASH_REDIS_REST_URL'] && process.env['UPSTASH_REDIS_REST_TOKEN']
   ? new Redis({
       url: process.env['UPSTASH_REDIS_REST_URL'],
-      token: process.env['UPSTASH_REDIS_REST_TOKEN'] || '',
+      token: process.env['UPSTASH_REDIS_REST_TOKEN'],
     })
   : null;
 
@@ -52,7 +53,8 @@ export async function rateLimit(
     const { success } = await limiter.limit(key);
     return success;
   } catch (err) {
-    // Redis 장애 시에도 서비스가 중단되지 않도록 통과
+    // Redis 장애 시에도 서비스가 중단되지 않도록 통과하지만 Sentry에 보고
+    Sentry.captureException(err, { tags: { service: 'rateLimit', type } });
     return true;
   }
 }

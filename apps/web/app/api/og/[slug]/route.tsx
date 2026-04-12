@@ -29,7 +29,11 @@ export async function GET(req: Request, { params: paramsPromise }: Props) {
         }
 
         const name = getHotelName(hotel, locale);
-        const text = OG_TEXT[locale] || OG_TEXT['en']!;
+        const text = OG_TEXT[locale] || OG_TEXT['en'];
+
+        if (!text) {
+            return new Response('Configuration Error', { status: 500 });
+        }
 
         return new ImageResponse(
             (

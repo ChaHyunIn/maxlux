@@ -1,5 +1,5 @@
 # MaxLux – 프로젝트 현황 및 로드맵
-> 마지막 업데이트: 2026-04-13
+> 마지막 업데이트: 2026-04-12
 
 ## 프로젝트 개요
 HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로 시각화하여
@@ -35,6 +35,37 @@ HotelLux 럭셔리 호텔의 12개월 가격 데이터를 히트맵 캘린더로
 - [x] **Materialized View 전환**: `hotels_with_min_price` 성능 최적화 (Concurrent Refresh)
 - [x] **통합 에러 핸들링**: 전 쿼리 계층 Sentry Exception Reporting 연동
 - [x] **비즈니스 분석**: Vercel Analytics 기반 사용자 행동 트래킹 레이어 구축
+- [x] **실시간 환율 동기화 및 1시간 단위 캐싱 (`unstable_cache`)**
+- [x] **Supabase RLS 보안 강화 및 `system_settings` 변조 방지**
+
+---
+
+<details>
+<summary>Phase 6~7 이력 (아카이브)</summary>
+
+## Phase 6 – 배포 & 운영 (100% 완료)
+
+| 태스크 | 상태 | 비고 |
+|--------|------|------|
+| Supabase RLS 정책 적용 | ✅ | 보안 강화 완료 |
+| OG 이미지 API 완성 | ✅ | 동적 생성 완료 |
+| 월별 랜딩 페이지 구현 | ✅ | SEO 강화 |
+| Google Search Console + sitemap | ✅ | 자동 생성 완료 |
+| Vercel 배포 + 환경변수 설정 | ✅ | Production 기동 완료 |
+| 에러 모니터링 (Sentry) | ✅ | 실시간 에러 추적 활성화 |
+
+## Phase 7 – 시스템 고도화 (100% 완료)
+
+| 태스크 | 상태 | 비고 |
+|--------|------|------|
+| 에러 핸들링 통일 (Sentry) | ✅ | Batch #1 |
+| 비즈니스 이벤트 추적 | ✅ | Batch #2 (Analytics) |
+| Hero 섹션 & 온보딩 | ✅ | Batch #3 |
+| 모바일 UI & 접근성 | ✅ | Batch #4 (Patterns) |
+| 알림 관리 UI | ✅ | Batch #5 |
+| DB 성능 최적화 (MV) | ✅ | Batch #6 |
+
+</details>
 
 ---
 

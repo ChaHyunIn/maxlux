@@ -27,5 +27,14 @@ export function useLocalStorage() {
     }
   }, [])
 
-  return { getItem, setItem }
+  const removeItem = useCallback((key: string): void => {
+    if (typeof window === 'undefined') return
+    try {
+      localStorage.removeItem(key)
+    } catch {
+      // silently ignore — storage may be full or blocked
+    }
+  }, [])
+
+  return { getItem, setItem, removeItem }
 }

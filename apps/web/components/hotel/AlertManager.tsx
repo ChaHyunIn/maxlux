@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import { Bell, Loader2, X, ChevronLeft, Trash2, Building2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { useSettingStore } from '@/stores/settingStore'
+import { Input } from '@/components/ui/input'
 import { formatPrice } from '@/lib/utils'
 import { isValidEmail } from '@/lib/validation'
-import { toast } from 'sonner'
+import { useSettingStore } from '@/stores/settingStore'
 
 interface AlertManagerProps {
     open: boolean
@@ -30,7 +30,7 @@ interface PriceAlert {
 
 export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
     const t = useTranslations('alertManager')
-    const { currency, exchangeRate } = useSettingStore()
+    const { exchangeRate } = useSettingStore()
     
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)

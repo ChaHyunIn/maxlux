@@ -93,22 +93,23 @@ export async function DELETE(req: NextRequest) {
         return errorResponse('RATE_LIMITED', 429);
     }
 
-    const alertId = req.nextUrl.searchParams.get('id');
-    const email = req.nextUrl.searchParams.get('email');
-
-    if (!alertId || !email) {
-        return errorResponse('MISSING_FIELDS', 400);
-    }
-
-    if (!isValidEmail(email)) {
-        return errorResponse('INVALID_EMAIL', 400);
-    }
-
     try {
-        const parsed = parseInt(alertId, 10);
+        const body = await req.json();
+        const { id, email } = body;
+
+        if (!id || !email) {
+            return errorResponse('MISSING_FIELDS', 400);
+        }
+
+        if (!isValidEmail(email)) {
+            return errorResponse('INVALID_EMAIL', 400);
+        }
+
+        const parsed = typeof id === 'number' ? id : parseInt(String(id), 10);
         if (isNaN(parsed) || parsed <= 0) {
             return errorResponse('INVALID_ID', 400);
         }
+
         await deactivateAlert(parsed, email);
         return successResponse();
     } catch {

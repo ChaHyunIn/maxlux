@@ -1,14 +1,14 @@
-import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { History, ArrowLeft, CalendarDays } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import MonthlyComparisonChart from '@/components/hotel/MonthlyComparisonChart';
+import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/navigation';
+import { getHotelName } from '@/lib/hotelUtils';
 import { getHotelBySlug } from '@/lib/supabase/queries/hotels';
 import { getRates } from '@/lib/supabase/queries/rates';
-import { getHotelName } from '@/lib/hotelUtils';
 import { formatPrice } from '@/lib/utils';
-import MonthlyComparisonChart from '@/components/hotel/MonthlyComparisonChart';
-import { History, ArrowLeft, CalendarDays } from 'lucide-react';
-import { Link } from '@/i18n/navigation';
-import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{ locale: string; slug: string }>;
@@ -25,7 +25,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     // 실제 데이터 기반 최저월 추출 로직 대신 타이틀 위주 구성 (상세 내용은 본문에서 처리)
     return {
         title: t('metaTitle', { name: hotelName }),
-        description: t('metaDescription', { name: hotelName, cheapestMonth: '...' }),
+        description: t('metaDescriptionGeneric', { name: hotelName }),
     };
 }
 
@@ -75,7 +75,7 @@ export default async function ComparePage(props: PageProps) {
         const monthPart = s.month.split('-')[1] ?? '01';
         return {
             ...s,
-            month: t('monthlyAvg', { month: parseInt(monthPart) })
+            month: t('monthlyAvg', { month: parseInt(monthPart, 10) })
         };
     });
 
@@ -98,7 +98,7 @@ export default async function ComparePage(props: PageProps) {
                 <p className="text-slate-500 text-lg leading-relaxed">
                     {t('metaDescription', { 
                         name: hotelName, 
-                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01') }) : '...' 
+                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : '...' 
                     })}
                 </p>
             </div>
@@ -106,7 +106,7 @@ export default async function ComparePage(props: PageProps) {
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 mb-8">
                 <div className="flex items-center justify-between mb-8">
                     <h2 className="text-lg font-bold text-slate-800">{t('averagePrice')}</h2>
-                    <div className="text-sm text-slate-400 font-medium">Per Night</div>
+                    <div className="text-sm text-slate-400 font-medium">{t('perNight')}</div>
                 </div>
                 
                 <MonthlyComparisonChart stats={formattedMonthlyStats} />
@@ -118,11 +118,11 @@ export default async function ComparePage(props: PageProps) {
                         <CalendarDays className="w-5 h-5" />
                     </div>
                     <div>
-                        <h4 className="font-bold text-emerald-900 mb-1">MaxLux Insider Tip</h4>
+                        <h4 className="font-bold text-emerald-900 mb-1">{t('insiderTip')}</h4>
                         <p className="text-emerald-700 text-sm">
                             {t('recommendation', { 
                                 name: hotelName, 
-                                month: parseInt(cheapestStat.month.split('-')[1] ?? '01'),
+                                month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10),
                                 price: formatPrice(cheapestStat.avgPrice, 'KRW', 1) // Base KRW, exchange handled in store if needed
                             })}
                         </p>

@@ -93,13 +93,13 @@ export default function PriceSummaryCard({ rates, changes }: PriceSummaryCardPro
                 icon={<Hash className="w-4 h-4 text-indigo-500" />}
                 label={t('averagePrice')}
                 value={formatPrice(stats.average, currency, exchangeRate)}
-                subValue="Per night avg"
+                subValue={t('perNightAvg')}
             />
             <StatItem 
                 icon={<ArrowDown className="w-4 h-4 text-rose-500" />}
                 label={t('recentChanges')}
                 value={stats.drops > 0 ? t('dropsCount', { count: stats.drops }) : t('noChanges')}
-                subValue="Last 48 hours"
+                subValue={t('last48Hours')}
             />
             <StatItem 
                 icon={<Calendar className="w-4 h-4 text-slate-500" />}

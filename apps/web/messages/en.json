@@ -312,7 +312,9 @@
         "noChanges": "No changes",
         "expensiveDay": "Most Expensive Day",
         "higherThanAvg": "{pct}% above avg",
-        "onDate": "{date}"
+        "onDate": "{date}",
+        "perNightAvg": "Per night avg",
+        "last48Hours": "Last 48 hours"
     },
     "alertManager": {
         "title": "Manage My Alerts",
@@ -336,6 +338,9 @@
         "recommendation": "{month} is the cheapest time to stay at {name} (Avg {price})",
         "noData": "Not enough data for comparison",
         "backToHotel": "Back to Hotel Details",
-        "viewCalendar": "View Full Calendar"
+        "viewCalendar": "View Full Calendar",
+        "perNight": "Per Night",
+        "insiderTip": "MaxLux Insider Tip",
+        "metaDescriptionGeneric": "Compare monthly average rates for {name} and find the cheapest time to stay."
     }
 }

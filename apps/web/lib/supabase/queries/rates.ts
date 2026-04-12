@@ -14,6 +14,8 @@ export async function getRates(hotelId: string): Promise<DailyRate[]> {
         if (error) throw error;
         return data;
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getRates', hotelId } });
         throw error;
     }
@@ -44,6 +46,8 @@ export async function getRoomRates(hotelId: string, stayDate: string): Promise<R
         if (error) throw error;
         return data || [];
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getRoomRates', hotelId, stayDate } });
         return [];
     }
@@ -60,6 +64,8 @@ export async function getPriceChanges(hotelId: string, limit = 20): Promise<Pric
         if (error) throw error;
         return data || [];
     } catch (error) {
+        // eslint-disable-next-line no-console
+        if (process.env.NODE_ENV === 'development') console.error('[Supabase]', error);
         Sentry.captureException(error, { tags: { query: 'getPriceChanges', hotelId } });
         return [];
     }

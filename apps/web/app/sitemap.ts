@@ -76,6 +76,7 @@ export default async function sitemap({ id: locale }: { id: string }): Promise<M
         // Monthly comparison page
         entries.push({
             url: `${baseUrl}/compare`,
+            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.7,
         });
