@@ -28,7 +28,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, exchangeRate, s
                     <span className="text-xs text-slate-500 whitespace-nowrap mr-2">{t('nonRefundable')}</span>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
                         <div className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-sm font-semibold truncate ${style.bg} ${style.text}`}>
-                            {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency, exchangeRate)}
+                            {rate.is_sold_out ? t('soldOut') : formatPrice(rate.price_krw, currency, exchangeRate, locale)}
                         </div>
                         <Badge variant="outline" className="gap-1 truncate max-w-[100px] sm:max-w-none">
                             <Tag className="w-3 h-3 shrink-0" />
@@ -56,7 +56,7 @@ export function PriceHeader({ rate, refundableRate, t, currency, exchangeRate, s
                     <div className="flex flex-wrap items-center justify-between w-full mt-1">
                         <span className="text-xs text-slate-500">{t('refundable')}</span>
                         <div className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-50 text-blue-800">
-                            {formatPrice(refundableRate.price_krw, currency, exchangeRate)}
+                            {formatPrice(refundableRate.price_krw, currency, exchangeRate, locale)}
                         </div>
                     </div>
                 )}

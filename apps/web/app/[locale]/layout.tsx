@@ -45,7 +45,7 @@ export default async function LocaleLayout({
         <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
             <body>
                 <NextIntlClientProvider messages={messages}>
-                    <StoreInitializer exchangeRate={rate} />
+                    <StoreInitializer exchangeRate={rate} locale={locale} />
                     <ErrorBoundary>
                         {children}
                         <Analytics />

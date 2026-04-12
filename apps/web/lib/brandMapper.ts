@@ -13,5 +13,10 @@ const BRAND_DISPLAY_MAP: Record<string, BrandKey> = mappings.brands as Record<st
  */
 export function getBrandKey(brandName: string | null | undefined): BrandKey | null {
     if (!brandName) return null;
-    return BRAND_DISPLAY_MAP[brandName] || BRAND_DISPLAY_MAP[brandName.toLowerCase()] || null;
+    const result = BRAND_DISPLAY_MAP[brandName] || BRAND_DISPLAY_MAP[brandName.toLowerCase()] || null;
+    if (!result && process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn(`[brandMapper] Unmapped brand: "${brandName}" — add to mappings.json`);
+    }
+    return result;
 }

@@ -26,7 +26,7 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const tErr = useTranslations('errors')
     const tAM = useTranslations('alertManager')
     const locale = useLocale()
-    const { currency, exchangeRate, setCurrency } = useSettingStore();
+    const { currency, exchangeRate } = useSettingStore();
     const [open, setOpen] = useState(false)
     const [managerOpen, setManagerOpen] = useState(false)
     const [email, setEmail] = useState('')
@@ -40,13 +40,6 @@ export function PriceAlertButton({ hotelId, hotelName, currentMinPrice }: PriceA
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
-
-    useEffect(() => {
-        // 프리미엄 경험을 위해 로케일이 영어인 경우 기본 통화를 USD로 자동 전환 (사용자가 명시적으로 바꾸지 않은 경우)
-        if (locale === 'en' && currency === 'KRW') {
-            setCurrency('USD');
-        }
-    }, [locale, currency, setCurrency]);
 
     useEffect(() => {
         if (open) {

@@ -73,8 +73,8 @@ export function FilterContent({
             const min = parts[0] ?? 0;
             const max = parts[1] ?? DEFAULT_FILTER_PRICE_RANGE[1];
             if (min === 0 && max >= DEFAULT_FILTER_PRICE_RANGE[1]) return { value: opt.value, label: t('priceAll') };
-            const minFormatted = formatPrice(min, 'USD', exchangeRate);
-            const maxFormatted = formatPrice(max, 'USD', exchangeRate);
+            const minFormatted = formatPrice(min, 'USD', exchangeRate, locale);
+            const maxFormatted = formatPrice(max, 'USD', exchangeRate, locale);
             return {
                 value: opt.value,
                 label: max >= DEFAULT_FILTER_PRICE_RANGE[1] ? `${minFormatted}+` : `${minFormatted}-${maxFormatted}`
@@ -84,7 +84,7 @@ export function FilterContent({
             value: opt.value,
             label: t(opt.labelKey)
         };
-    }), [t, currency, exchangeRate]);
+    }), [t, currency, exchangeRate, locale]);
 
     const handlePriceChange = (val: string) => {
         const parts = val.split('-').map(Number);

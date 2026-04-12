@@ -1,7 +1,5 @@
 'use client'
 
-'use client'
-
 import { motion } from 'motion/react'
 import { useTranslations, useLocale } from 'next-intl'
 import { formatPrice } from '@/lib/utils'
