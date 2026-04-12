@@ -1,28 +1,25 @@
-/** @jest-environment node */
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { NextRequest } from 'next/server';
 import type { PriceChange } from '@/lib/types';
 // route handler 직접 import
 import { GET } from '@/app/api/price-changes/route';
 import { getPriceChanges } from '@/lib/supabase/queries/rates';
 
 // Supabase 쿼리 모킹
-jest.mock('@/lib/supabase/queries/rates', () => ({
-  getPriceChanges: jest.fn(),
+vi.mock('@/lib/supabase/queries/rates', () => ({
+  getPriceChanges: vi.fn(),
 }));
 
-const mockGetPriceChanges = getPriceChanges as jest.Mock;
+const mockGetPriceChanges = vi.mocked(getPriceChanges);
 
-/**
- * NextRequest와 유사하게 nextUrl을 갖는 객체 생성
- */
 function createRequest(url: string) {
-  const req = new Request(url) as any;
-  req.nextUrl = new URL(url);
-  return req;
+  // Use unknown as intermediate to avoid direct 'any' lint errors
+  return new Request(url) as unknown as NextRequest;
 }
 
 describe('GET /api/price-changes', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('hotelId 누락 시 400 반환', async () => {
@@ -45,7 +42,6 @@ describe('GET /api/price-changes', () => {
     const mockData = [
       { id: 1, hotel_id: '550e8400-e29b-41d4-a716-446655440000', old_price: 300000, new_price: 250000 }
     ];
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockGetPriceChanges.mockResolvedValue(mockData as unknown as PriceChange[]);
 
     const req = createRequest('http://localhost/api/price-changes?hotelId=550e8400-e29b-41d4-a716-446655440000');

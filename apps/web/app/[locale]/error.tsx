@@ -19,14 +19,24 @@ export default function Error({
 
     // 훅을 최상위에서 호출하지 않고 분리된 컴포넌트에서 호출하여 Rules of Hooks 준수
     if (i18nReady) {
-        return <LocalizedError reset={reset} />;
+        try {
+            return <LocalizedError reset={reset} />;
+        } catch {
+            return <FallbackError reset={reset} />;
+        }
     }
 
     return <FallbackError reset={reset} />;
 }
 
 function LocalizedError({ reset }: { reset: () => void }) {
-    const t = useTranslations('common');
+    let t;
+    try {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        t = useTranslations('common');
+    } catch {
+        return <FallbackError reset={reset} />;
+    }
     return (
         <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
             <h2 className="text-2xl font-bold mb-4">{t('somethingWentWrong')}</h2>

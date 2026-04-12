@@ -6,7 +6,7 @@ import type { ApiTermKey } from './i18nTypes';
  * Data is centralized in mappings.json to maintain consistency with benefit and brand mappers.
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const CHINESE_TO_KEY: Record<string, ApiTermKey> = mappings.apiTerms as Record<string, ApiTermKey>;
+export const CHINESE_TO_KEY: Record<string, ApiTermKey> = mappings.apiTerms as Record<string, ApiTermKey>;
 
 export function getLocalizedText(
     en: string | null,
