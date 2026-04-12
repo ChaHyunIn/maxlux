@@ -1,3 +1,4 @@
+import { Playfair_Display, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -6,6 +7,19 @@ import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { StoreInitializer } from '@/components/shared/StoreInitializer';
 import { getExchangeRate } from '@/lib/api/currency';
 import type { Metadata } from 'next';
+
+const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-inter',
+    display: 'swap',
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    weight: ['600', '700', '800'],
+    variable: '--font-playfair',
+    display: 'swap',
+});
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await props.params;
@@ -28,13 +42,7 @@ export default async function LocaleLayout({
     const { rate } = await getExchangeRate();
 
     return (
-        <html lang={locale}>
-            <head>
-                <link 
-                    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap" 
-                    rel="stylesheet" 
-                />
-            </head>
+        <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
             <body>
                 <NextIntlClientProvider messages={messages}>
                     <StoreInitializer exchangeRate={rate} />

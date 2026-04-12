@@ -61,7 +61,7 @@ export default function HeroSection() {
                                 transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                                 className="mb-6 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold tracking-wider uppercase"
                             >
-                                MaxLux Premium Optimizer
+                                {t('badgeText')}
                             </motion.div>
 
                             <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>

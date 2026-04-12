@@ -30,6 +30,7 @@ interface PriceAlert {
 
 export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
     const t = useTranslations('alertManager')
+    const tErr = useTranslations('errors')
     const { exchangeRate } = useSettingStore()
     
     const [email, setEmail] = useState('')
@@ -39,7 +40,7 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
 
     const fetchAlerts = async () => {
         if (!isValidEmail(email)) {
-            toast.error('Invalid email')
+            toast.error(tErr('INVALID_EMAIL'))
             return
         }
 
@@ -51,10 +52,10 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
                 setAlerts(data.alerts || [])
                 setStep('list')
             } else {
-                toast.error('Failed to fetch alerts')
+                toast.error(tErr('FETCH_FAILED'))
             }
         } catch {
-            toast.error('Fetch error')
+            toast.error(tErr('FETCH_FAILED'))
         } finally {
             setLoading(false)
         }
@@ -71,10 +72,10 @@ export function AlertManager({ open, onOpenChange }: AlertManagerProps) {
                 setAlerts(prev => prev.filter(a => a.id !== alertId))
                 toast.success(t('successDeactivate'))
             } else {
-                toast.error('Deactivate failed')
+                toast.error(tErr('DELETE_FAILED'))
             }
         } catch {
-            toast.error('Error deactivating')
+            toast.error(tErr('DELETE_FAILED'))
         }
     }
 

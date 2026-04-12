@@ -22,8 +22,10 @@ export function useLocalStorage() {
     if (typeof window === 'undefined') return
     try {
       localStorage.setItem(key, value)
-    } catch {
-      // Error handling
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[LocalStorage] setItem failed:', e)
+      }
     }
   }, [])
 
@@ -31,8 +33,10 @@ export function useLocalStorage() {
     if (typeof window === 'undefined') return
     try {
       localStorage.removeItem(key)
-    } catch {
-      // silently ignore — storage may be full or blocked
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[LocalStorage] removeItem failed:', e)
+      }
     }
   }, [])
 

@@ -1,8 +1,9 @@
+import { cache } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { supabase } from '../anon';
 import type { Hotel } from '../../types';
 
-export async function getHotels(): Promise<(Hotel & { min_price?: number })[]> {
+export const getHotels = async (): Promise<(Hotel & { min_price?: number })[]> => {
     try {
         const { data, error } = await supabase
             .from('hotels_with_min_price')
@@ -20,7 +21,7 @@ export async function getHotels(): Promise<(Hotel & { min_price?: number })[]> {
     }
 }
 
-export async function getHotelsByCity(city: string): Promise<(Hotel & { min_price?: number })[]> {
+export const getHotelsByCity = async (city: string): Promise<(Hotel & { min_price?: number })[]> => {
     try {
         const { data, error } = await supabase
             .from('hotels_with_min_price')
@@ -39,7 +40,7 @@ export async function getHotelsByCity(city: string): Promise<(Hotel & { min_pric
     }
 }
 
-export async function getHotelBySlug(slug: string): Promise<Hotel | null> {
+export const getHotelBySlug = cache(async (slug: string): Promise<Hotel | null> => {
     try {
         const { data, error } = await supabase
             .from('hotels')
@@ -54,4 +55,4 @@ export async function getHotelBySlug(slug: string): Promise<Hotel | null> {
         Sentry.captureException(error, { tags: { query: 'getHotelBySlug', slug } });
         return null;
     }
-}
+});

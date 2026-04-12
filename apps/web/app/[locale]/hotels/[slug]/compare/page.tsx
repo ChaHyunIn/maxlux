@@ -98,7 +98,7 @@ export default async function ComparePage(props: PageProps) {
                 <p className="text-slate-500 text-lg leading-relaxed">
                     {t('metaDescription', { 
                         name: hotelName, 
-                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : '...' 
+                        cheapestMonth: cheapestStat ? t('monthlyAvg', { month: parseInt(cheapestStat.month.split('-')[1] ?? '01', 10) }) : t('unknown', { ns: 'time' }) 
                     })}
                 </p>
             </div>

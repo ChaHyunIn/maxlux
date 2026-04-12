@@ -55,7 +55,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
             : `${Math.round(price_krw / LOCALE_DEFAULTS.priceUnitManDivisor)}${t('priceUnit')}`
     );
 
-    const ariaPriceLabel = is_sold_out ? t('soldOut') : `${priceText} (${t(level)})`;
+    const ariaPriceLabel = is_sold_out ? t('soldOut') : `${priceText} (${t('legend' + level.charAt(0).toUpperCase() + level.slice(1))})`;
 
     const handleClick = () => {
         openDayDetail(rate);
@@ -69,7 +69,7 @@ export function DayCell({ date, rate, p25, p75 }: { date: Date, rate: DailyRate 
                 "min-h-[52px] sm:min-h-[64px] rounded-md p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all hover:ring-2 hover:ring-black/20 hover:scale-[1.02] active:scale-[0.98] relative",
                 style.bg, style.text, opacityClass, patternClass
             )}
-            aria-label={`${day}일, ${ariaPriceLabel}`}
+            aria-label={`${day}${t('daySuffix')}, ${ariaPriceLabel}`}
             role="gridcell"
             tabIndex={0}
         >

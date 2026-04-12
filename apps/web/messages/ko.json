@@ -59,7 +59,8 @@
         ],
         "monthFormat": "{year}년 {month}월",
         "monthlyTitle": "{name} {month} 가격 | MaxLux",
-        "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요."
+        "monthlyDescription": "{name}의 {month} 월별 가격을 확인하세요.",
+        "daySuffix": "일"
     },
     "common": {
         "dataLoading": "데이터 수집 중입니다...",
@@ -297,6 +298,7 @@
         "headline": "럭셔리 호텔, <highlight>최저가</highlight>로 만나보세요",
         "subheadline": "12개월 가격 히트맵으로 완벽한 예약 타이밍을 찾으세요",
         "cta": "호텔 가격 확인하기",
+        "badgeText": "MaxLux Premium Optimizer",
         "feature1Title": "실시간 가격 추적",
         "feature1Desc": "매일 업데이트되는 5성급 호텔 가격을 한눈에 비교하세요",
         "feature2Title": "스마트 알림",
